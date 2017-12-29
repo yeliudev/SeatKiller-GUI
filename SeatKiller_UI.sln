@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeatKiller_UI", "SeatKiller_UI\SeatKiller_UI.csproj", "{827CC4EA-0310-4CE6-A386-A41A99221AF7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{827CC4EA-0310-4CE6-A386-A41A99221AF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{827CC4EA-0310-4CE6-A386-A41A99221AF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{827CC4EA-0310-4CE6-A386-A41A99221AF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{827CC4EA-0310-4CE6-A386-A41A99221AF7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C9F6601D-7B1E-437F-843B-4A48A6CEFAE5}
+	EndGlobalSection
+EndGlobal
