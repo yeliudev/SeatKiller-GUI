@@ -84,15 +84,16 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject response = JObject.Parse(json);
-                token = response["data"]["token"].ToString();
-
+                if (response["status"].ToString()=="success")
+                {
+                    token = response["data"]["token"].ToString();
+                }
                 return response["status"].ToString();
             }
             catch
             {
                 return "Connection lost";
             }
-
         }
     }
 }
