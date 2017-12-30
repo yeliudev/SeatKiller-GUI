@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace SeatKiller_UI
 {
-    class SeatKiller
+    public class SeatKiller
     {
         string login_url = "https://seat.lib.whu.edu.cn:8443/rest/auth";  // 图书馆移动端登陆API
         string usr_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/user";  // 用户信息API
@@ -30,7 +30,7 @@ namespace SeatKiller_UI
         string[] zt = { "39", "40", "51", "52", "56", "59", "60", "61", "62", "65", "66" };
 
         string[] freeSeats = { };
-        string token = "75PLJJO8PV12084027";  // 预先移动端抓包获取
+        static string token = "75PLJJO8PV12084027";  // 预先移动端抓包获取
         string username, password, name, to_addr;
 
         public SeatKiller(string username, string password)
@@ -78,17 +78,17 @@ namespace SeatKiller_UI
 
             try
             {
-                HttpWebResponse res = (HttpWebResponse)request.GetResponse();
-                Stream stream = res.GetResponseStream();
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream stream = response.GetResponseStream();
                 Encoding encoding = Encoding.GetEncoding("UTF-8");
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
-                JObject response = JObject.Parse(json);
-                if (response["status"].ToString()=="success")
+                JObject jObject = JObject.Parse(json);
+                if (jObject["status"].ToString()=="success")
                 {
-                    token = response["data"]["token"].ToString();
+                    token = jObject["data"]["token"].ToString();
                 }
-                return response["status"].ToString();
+                return jObject["status"].ToString();
             }
             catch
             {

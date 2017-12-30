@@ -19,6 +19,7 @@ namespace SeatKiller_UI
 
         private void Login_Load(object sender, EventArgs e)
         {
+            textBox1.Focus();
             SeatKiller test = new SeatKiller("", "");
             if (test.GetToken() == "fail")
             {
@@ -35,7 +36,27 @@ namespace SeatKiller_UI
         private void button1_Click(object sender, EventArgs e)
         {
             SeatKiller SK = new SeatKiller(textBox1.Text, textBox2.Text);
-            textBox3.Text = SK.GetToken();
+            string response = SK.GetToken();
+            if (response == "fail")
+            {
+                MessageBox.Show("登录失败，请检查用户名和密码", "登录失败");
+            }
+            else if (response == "Connection lost")
+            {
+                MessageBox.Show("登录失败，连接丢失", "登录失败");
+            }
+            else
+            {
+                Config config = new Config();
+                config.Show();
+                Close();
+            }
+        }
+
+        private void Login_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (ActiveForm.Name != "config")
+                Application.Exit();
         }
     }
 }
