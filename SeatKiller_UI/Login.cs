@@ -20,8 +20,7 @@ namespace SeatKiller_UI
         private void Login_Load(object sender, EventArgs e)
         {
             textBox1.Focus();
-            SeatKiller test = new SeatKiller("", "");
-            if (test.GetToken() == "fail")
+            if (SeatKiller.GetToken() == "fail")
             {
                 label4.Text = "Enable";
                 label4.ForeColor = Color.ForestGreen;
@@ -35,8 +34,9 @@ namespace SeatKiller_UI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            SeatKiller SK = new SeatKiller(textBox1.Text, textBox2.Text);
-            string response = SK.GetToken();
+            SeatKiller.username = textBox1.Text;
+            SeatKiller.password = textBox2.Text;
+            string response = SeatKiller.GetToken();
             if (response == "fail")
             {
                 MessageBox.Show("登录失败，请检查用户名和密码", "登录失败");
@@ -55,7 +55,7 @@ namespace SeatKiller_UI
 
         private void Login_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (ActiveForm.Name != "config")
+            if (ActiveForm.Name != "Config")
                 Application.Exit();
         }
     }
