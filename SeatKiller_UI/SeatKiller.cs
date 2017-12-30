@@ -145,6 +145,8 @@ namespace SeatKiller_UI
                             seats.Add(new DictionaryEntry(num.First["id"].ToString(), num.First["name"].ToString()));
                         }
                     }
+                    NewComparer newComparer = new NewComparer();
+                    seats.Sort(newComparer);
                     return true;
                 }
                 return false;

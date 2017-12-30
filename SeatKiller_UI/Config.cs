@@ -178,8 +178,8 @@ namespace SeatKiller_UI
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             ArrayList seats = new ArrayList();
-            seats.Add(new DictionaryEntry("0", "(自动选择)"));
             SeatKiller.GetSeats(comboBox2.SelectedValue.ToString(), seats);
+            seats.Insert(0, new DictionaryEntry("0", "(自动选择)"));
             comboBox6.DataSource = seats;
             comboBox6.DisplayMember = "Value";
             comboBox6.ValueMember = "Key";
