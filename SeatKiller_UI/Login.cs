@@ -37,9 +37,15 @@ namespace SeatKiller_UI
             SeatKiller.username = textBox1.Text;
             SeatKiller.password = textBox2.Text;
             string response = SeatKiller.GetToken();
-            if (response == "fail")
+            if (response == "success")
             {
-                MessageBox.Show("登录失败，请检查用户名和密码", "登录失败");
+                Config config = new Config();
+                config.Show();
+                Close();
+            }
+            else if (response == "fail")
+            {
+                MessageBox.Show("登录失败，请检查用户名和密码是否正确", "登录失败");
             }
             else if (response == "Connection lost")
             {
@@ -47,9 +53,7 @@ namespace SeatKiller_UI
             }
             else
             {
-                Config config = new Config();
-                config.Show();
-                Close();
+                MessageBox.Show("登录失败，未知错误", "登录失败");
             }
         }
 

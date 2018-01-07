@@ -81,8 +81,12 @@ namespace SeatKiller_UI
                 if (jObject["status"].ToString() == "success")
                 {
                     token = jObject["data"]["token"].ToString();
+                    return "success";
                 }
-                return jObject["status"].ToString();
+                else
+                {
+                    return "fail";
+                }
             }
             catch
             {
@@ -149,11 +153,104 @@ namespace SeatKiller_UI
                     seats.Sort(newComparer);
                     return true;
                 }
-                return false;
+                else
+                {
+                    return false;
+                }
             }
             catch
             {
                 return false;
+            }
+        }
+
+        public static bool SearchFreeSeat(string buildingId, string roomId, string date, string startTime, string endTime)
+        {
+            string url = search_url + date + "/" + startTime + "/" + endTime;
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "POST";
+            SetHeaderValues(request);
+            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+
+            StringBuilder buffer = new StringBuilder();
+            buffer.AppendFormat("{0}={1}", "t", "1");
+            buffer.AppendFormat("&{0}={1}", "roomId", roomId);
+            buffer.AppendFormat("&{0}={1}", "buildingId", buildingId);
+            buffer.AppendFormat("&{0}={1}", "batch", "9999");
+            buffer.AppendFormat("&{0}={1}", "page", "1");
+            buffer.AppendFormat("&{0}={1}", "t2", "2");
+            byte[] data = Encoding.UTF8.GetBytes(buffer.ToString());
+            request.ContentLength = data.Length;
+            request.GetRequestStream().Write(data, 0, data.Length);
+
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream stream = response.GetResponseStream();
+                Encoding encoding = Encoding.GetEncoding("UTF-8");
+                StreamReader streamReader = new StreamReader(stream, encoding);
+                string json = streamReader.ReadToEnd();
+                JObject jObject = JObject.Parse(json);
+                if (jObject["data"]["seats"].ToString() != "")
+                {
+                    JToken seats = jObject["data"]["seats"];
+                    foreach (var num in seats)
+                    {
+                        List<string> temp = freeSeats.ToList();
+                        temp.Add(num.First["id"].ToString());
+                        freeSeats = temp.ToArray();
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static string BookSeat(string seatId, string date, string startTime, string endTime)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(book_url);
+            request.Method = "POST";
+            SetHeaderValues(request);
+            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+
+            StringBuilder buffer = new StringBuilder();
+            buffer.AppendFormat("{0}={1}", "t", "1");
+            buffer.AppendFormat("&{0}={1}", "startTime", startTime);
+            buffer.AppendFormat("&{0}={1}", "endTime", endTime);
+            buffer.AppendFormat("&{0}={1}", "seat", seatId);
+            buffer.AppendFormat("&{0}={1}", "date", date);
+            buffer.AppendFormat("&{0}={1}", "t2", "2");
+            byte[] data = Encoding.UTF8.GetBytes(buffer.ToString());
+            request.ContentLength = data.Length;
+            request.GetRequestStream().Write(data, 0, data.Length);
+
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream stream = response.GetResponseStream();
+                Encoding encoding = Encoding.GetEncoding("UTF-8");
+                StreamReader streamReader = new StreamReader(stream, encoding);
+                string json = streamReader.ReadToEnd();
+                JObject jObject = JObject.Parse(json);
+                if (jObject["status"].ToString() == "success")
+                {
+                    return jObject["data"]["id"].ToString();
+                }
+                else
+                {
+                    return "fail";
+                }
+            }
+            catch
+            {
+                return "fail";
             }
         }
     }

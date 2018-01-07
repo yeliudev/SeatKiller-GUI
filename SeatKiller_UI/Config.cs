@@ -33,9 +33,9 @@ namespace SeatKiller_UI
             comboBox1.DataSource = building_list;
             comboBox1.DisplayMember = "Value";
 
-            comboBox3.Items.Add(DateTime.Now.AddDays(1).ToString("yyyy-MM-dd"));
-            comboBox3.Items.Add(DateTime.Now.ToString("yyyy-MM-dd"));
-            comboBox3.SelectedIndex = 0;
+            comboBox3.Items.Add(DateTime.Now.ToString("yyyy-MM-dd")+" (今天)");
+            comboBox3.Items.Add(DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")+" (明天)");
+            comboBox3.SelectedIndex = 1;
 
             startTime.Add(new DictionaryEntry("480", "8:00"));
             startTime.Add(new DictionaryEntry("510", "8:30"));
@@ -81,6 +81,10 @@ namespace SeatKiller_UI
             {
                 textBox1.Enabled = true;
             }
+            else
+            {
+                textBox1.Enabled = false;
+            }
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -89,6 +93,7 @@ namespace SeatKiller_UI
             {
                 case 0:
                     ArrayList xt_list = new ArrayList();
+                    xt_list.Add(new DictionaryEntry("0", "(自动选择)"));
                     xt_list.Add(new DictionaryEntry("5", "一楼创新学习讨论区"));
                     xt_list.Add(new DictionaryEntry("4", "一楼3C创客空间"));
                     xt_list.Add(new DictionaryEntry("14", "3C创客-双屏电脑（20台）"));
@@ -104,10 +109,10 @@ namespace SeatKiller_UI
                     comboBox2.DataSource = xt_list;
                     comboBox2.DisplayMember = "Value";
                     comboBox2.ValueMember = "Key";
-                    comboBox2.SelectedIndex = 0;
                     break;
                 case 1:
                     ArrayList gt_list = new ArrayList();
+                    gt_list.Add(new DictionaryEntry("0", "(自动选择)"));
                     gt_list.Add(new DictionaryEntry("19", "201室-东部自科图书借阅区"));
                     gt_list.Add(new DictionaryEntry("29", "2楼-中部走廊"));
                     gt_list.Add(new DictionaryEntry("31", "205室-中部电子阅览室笔记本区"));
@@ -120,10 +125,10 @@ namespace SeatKiller_UI
                     comboBox2.DataSource = gt_list;
                     comboBox2.DisplayMember = "Value";
                     comboBox2.ValueMember = "Key";
-                    comboBox2.SelectedIndex = 0;
                     break;
                 case 2:
                     ArrayList yt_list = new ArrayList();
+                    yt_list.Add(new DictionaryEntry("0", "(自动选择)"));
                     yt_list.Add(new DictionaryEntry("20", "204教学参考书借阅区"));
                     yt_list.Add(new DictionaryEntry("21", "302中文科技图书借阅B区"));
                     yt_list.Add(new DictionaryEntry("23", "305科技期刊阅览区"));
@@ -133,10 +138,10 @@ namespace SeatKiller_UI
                     comboBox2.DataSource = yt_list;
                     comboBox2.DisplayMember = "Value";
                     comboBox2.ValueMember = "Key";
-                    comboBox2.SelectedIndex = 0;
                     break;
                 case 3:
                     ArrayList zt_list = new ArrayList();
+                    zt_list.Add(new DictionaryEntry("0", "(自动选择)"));
                     zt_list.Add(new DictionaryEntry("39", "A1-座位区"));
                     zt_list.Add(new DictionaryEntry("62", "A1-沙发区"));
                     zt_list.Add(new DictionaryEntry("66", "A1-苹果区"));
@@ -151,7 +156,6 @@ namespace SeatKiller_UI
                     comboBox2.DataSource = zt_list;
                     comboBox2.DisplayMember = "Value";
                     comboBox2.ValueMember = "Key";
-                    comboBox2.SelectedIndex = 0;
                     break;
             }
         }
@@ -183,7 +187,6 @@ namespace SeatKiller_UI
             comboBox6.DataSource = seats;
             comboBox6.DisplayMember = "Value";
             comboBox6.ValueMember = "Key";
-            comboBox6.SelectedIndex = 0;
         }
     }
 }
