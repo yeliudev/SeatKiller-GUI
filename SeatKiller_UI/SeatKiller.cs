@@ -61,7 +61,7 @@ namespace SeatKiller_UI
             return true;
         }
 
-        public static string GetToken()
+        public static string GetToken(bool test = false)
         {
             string url = login_url + "?username=" + username + "&password=" + password;
 
@@ -78,6 +78,10 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
+                if (!test)
+                {
+                    Config.config.textBox2.AppendText("\r\nTry getting token.....Status : " + jObject["status"].ToString());
+                }
                 if (jObject["status"].ToString() == "success")
                 {
                     token = jObject["data"]["token"].ToString();
@@ -85,11 +89,15 @@ namespace SeatKiller_UI
                 }
                 else
                 {
-                    return "fail";
+                    return jObject["message"].ToString();
                 }
             }
             catch
             {
+                if (!test)
+                {
+                    Config.config.textBox2.AppendText("\r\nTry getting token.....Status : Connection lost");
+                }
                 return "Connection lost";
             }
         }
@@ -109,6 +117,7 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
+                Config.config.textBox2.AppendText("\r\nTry getting user information.....Status : " + jObject["status"].ToString());
                 if (jObject["status"].ToString() == "success")
                 {
                     name = jObject["data"]["name"].ToString();
@@ -119,6 +128,7 @@ namespace SeatKiller_UI
             }
             catch
             {
+                Config.config.textBox2.AppendText("\r\nTry getting user information.....Status : Connection lost");
                 return false;
             }
         }
@@ -139,6 +149,7 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
+                Config.config.textBox2.AppendText("\r\nTry getting seat information.....Status : " + jObject["status"].ToString());
                 if (jObject["status"].ToString() == "success")
                 {
                     JToken layout = jObject["data"]["layout"];
@@ -155,6 +166,7 @@ namespace SeatKiller_UI
                 }
                 else
                 {
+                    Config.config.textBox2.AppendText("\r\nTry getting seat information.....Status : Connection lost");
                     return false;
                 }
             }
@@ -191,6 +203,7 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
+                Config.config.textBox2.AppendText("\r\nTry searching for free seats in room "+roomId+".....Status : " + jObject["status"].ToString());
                 if (jObject["data"]["seats"].ToString() != "")
                 {
                     JToken seats = jObject["data"]["seats"];
@@ -209,6 +222,7 @@ namespace SeatKiller_UI
             }
             catch
             {
+                Config.config.textBox2.AppendText("\r\nTry searching for free seats in room "+roomId+".....Status : Connection lost");
                 return false;
             }
         }
@@ -239,6 +253,7 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
+                Config.config.textBox2.AppendText("\r\nTry booking seat.....Status : " + jObject["status"].ToString());
                 if (jObject["status"].ToString() == "success")
                 {
                     return jObject["data"]["id"].ToString();
@@ -250,7 +265,8 @@ namespace SeatKiller_UI
             }
             catch
             {
-                return "fail";
+                Config.config.textBox2.AppendText("\r\nTry getting seat information.....Status : Connection lost");
+                return "Connection lost";
             }
         }
     }

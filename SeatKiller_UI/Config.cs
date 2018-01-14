@@ -13,14 +13,18 @@ namespace SeatKiller_UI
 {
     public partial class Config : Form
     {
+        public static Config config;
         public ArrayList startTime = new ArrayList();
         public Config()
         {
             InitializeComponent();
+            config = this;
         }
 
         private void Config_Load(object sender, EventArgs e)
         {
+            textBox2.AppendText("Try getting token.....Status : success");
+
             SeatKiller.GetUsrInf();
             label1.Text = "你好，" + SeatKiller.name + "  上次登录时间 : " + SeatKiller.last_login_time;
             checkBox1.Checked = true;
