@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -10,6 +11,7 @@ using System.Net.Security;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SeatKiller_UI
@@ -25,14 +27,14 @@ namespace SeatKiller_UI
         private static string book_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/freeBook";  // 座位预约API
 
         // 已预先爬取的roomId
-        private static string[] xt = { "6", "7", "8", "9", "10", "11", "12", "4", "5" };
-        private static string[] gt = { "19", "29", "31", "32", "33", "34", "35", "37", "38" };
-        private static string[] yt = { "20", "21", "23", "24", "26", "27" };
-        private static string[] zt = { "39", "40", "51", "52", "56", "59", "60", "61", "62", "65", "66" };
+        public static string[] xt = { "6", "7", "8", "9", "10", "11", "12", "4", "5" };
+        public static string[] gt = { "19", "29", "31", "32", "33", "34", "35", "37", "38" };
+        public static string[] yt = { "20", "21", "23", "24", "26", "27" };
+        public static string[] zt = { "39", "40", "51", "52", "56", "59", "60", "61", "62", "65", "66" };
 
-        public static string[] freeSeats = { };
+        public static ArrayList freeSeats = new ArrayList();
         public static string token = "75PLJJO8PV12084027";  // 预先移动端抓包获取
-        public static string to_addr, username = "", password = "", name = "unknown", last_login_time = "unknown";
+        public static string to_addr, username = "", password = "", name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
 
         private static void SetHeaderValue(WebHeaderCollection header, string name, string value)
         {
@@ -61,6 +63,19 @@ namespace SeatKiller_UI
             return true;
         }
 
+        public static bool Wait(string hour, string minute, string second, bool nextDay = false)
+        {
+            DateTime time = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " " + hour + ":" + minute + ":" + second);
+            if (DateTime.Compare(DateTime.Now, time) > 0)
+            {
+                time.AddDays(1);
+            }
+            TimeSpan delta = time.Subtract(DateTime.Now);
+            Config.config.textBox2.AppendText("\r\n\r\n正在等待系统开放，剩余" + delta.TotalSeconds.ToString() + "秒\r\n");
+            Thread.Sleep((int)delta.TotalMilliseconds);
+            return true;
+        }
+
         public static string GetToken(bool test = false)
         {
             string url = login_url + "?username=" + username + "&password=" + password;
@@ -70,6 +85,10 @@ namespace SeatKiller_UI
             SetHeaderValues(request);
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
 
+            if (!test)
+            {
+                Config.config.textBox2.AppendText("\r\nTry getting token.....Status : ");
+            }
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -80,7 +99,7 @@ namespace SeatKiller_UI
                 JObject jObject = JObject.Parse(json);
                 if (!test)
                 {
-                    Config.config.textBox2.AppendText("\r\nTry getting token.....Status : " + jObject["status"].ToString());
+                    Config.config.textBox2.AppendText(jObject["status"].ToString());
                 }
                 if (jObject["status"].ToString() == "success")
                 {
@@ -89,6 +108,10 @@ namespace SeatKiller_UI
                 }
                 else
                 {
+                    if (!test)
+                    {
+                        Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                    }
                     return jObject["message"].ToString();
                 }
             }
@@ -96,7 +119,7 @@ namespace SeatKiller_UI
             {
                 if (!test)
                 {
-                    Config.config.textBox2.AppendText("\r\nTry getting token.....Status : Connection lost");
+                    Config.config.textBox2.AppendText("Connection lost");
                 }
                 return "Connection lost";
             }
@@ -109,6 +132,7 @@ namespace SeatKiller_UI
             SetHeaderValues(request);
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
 
+            Config.config.textBox2.AppendText("\r\nTry getting user information.....Status : ");
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -117,18 +141,104 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
-                Config.config.textBox2.AppendText("\r\nTry getting user information.....Status : " + jObject["status"].ToString());
+                Config.config.textBox2.AppendText(jObject["status"].ToString());
                 if (jObject["status"].ToString() == "success")
                 {
                     name = jObject["data"]["name"].ToString();
                     last_login_time = jObject["data"]["lastLogin"].ToString();
+                    if (jObject["data"]["checkedIn"].ToString() == "true")
+                    {
+                        state = "已进入" + jObject["data"]["lastInBuildingName"].ToString();
+                    }
+                    else
+                    {
+                        state = "未入馆";
+                    }
+                    violationCount = jObject["data"]["violationCount"].ToString();
                     return true;
                 }
-                return false;
+                else
+                {
+                    Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                    return false;
+                }
             }
             catch
             {
-                Config.config.textBox2.AppendText("\r\nTry getting user information.....Status : Connection lost");
+                Config.config.textBox2.AppendText("Connection lost");
+                return false;
+            }
+        }
+
+        public static bool GetBuildings()
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(filters_url);
+            request.Method = "GET";
+            SetHeaderValues(request);
+            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+
+            Config.config.textBox2.AppendText("\r\nTry getting building information.....Status : ");
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream stream = response.GetResponseStream();
+                Encoding encoding = Encoding.GetEncoding("UTF-8");
+                StreamReader streamReader = new StreamReader(stream, encoding);
+                string json = streamReader.ReadToEnd();
+                JObject jObject = JObject.Parse(json);
+                Config.config.textBox2.AppendText(jObject["status"].ToString());
+                if (jObject["status"].ToString() == "success")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                Config.config.textBox2.AppendText("Connection lost");
+                return false;
+            }
+        }
+
+        public static bool GetRooms(string buildingId)
+        {
+            string url = stats_url + buildingId;
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "GET";
+            SetHeaderValues(request);
+            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+
+            Config.config.textBox2.AppendText("\r\nTry getting room information.....Status : ");
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream stream = response.GetResponseStream();
+                Encoding encoding = Encoding.GetEncoding("UTF-8");
+                StreamReader streamReader = new StreamReader(stream, encoding);
+                string json = streamReader.ReadToEnd();
+                JObject jObject = JObject.Parse(json);
+                Config.config.textBox2.AppendText(jObject["status"].ToString());
+                if (jObject["status"].ToString() == "success")
+                {
+                    JToken jToken = jObject["data"];
+                    Config.config.textBox2.AppendText("\r\n\r\n当前座位状态：");
+                    foreach (var room in jToken)
+                    {
+                        Config.config.textBox2.AppendText("\r\n\r\n" + room["room"].ToString() + "\r\n楼层：" + room["floor"].ToString() + "\r\n总座位数：" + room["totalSeats"].ToString() + "\r\n已预约：" + room["reserved"].ToString() + "\r\n正在使用：" + room["inUse"].ToString() + "\r\n暂离：" + room["away"].ToString() + "\r\n空闲：" + room["free"].ToString());
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                Config.config.textBox2.AppendText("Connection lost");
                 return false;
             }
         }
@@ -141,6 +251,7 @@ namespace SeatKiller_UI
             SetHeaderValues(request);
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
 
+            Config.config.textBox2.AppendText("\r\nTry getting seat information in room " + roomId + ".....Status : ");
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -149,7 +260,7 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
-                Config.config.textBox2.AppendText("\r\nTry getting seat information.....Status : " + jObject["status"].ToString());
+                Config.config.textBox2.AppendText(jObject["status"].ToString());
                 if (jObject["status"].ToString() == "success")
                 {
                     JToken layout = jObject["data"]["layout"];
@@ -166,17 +277,18 @@ namespace SeatKiller_UI
                 }
                 else
                 {
-                    Config.config.textBox2.AppendText("\r\nTry getting seat information.....Status : Connection lost");
+                    Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
                     return false;
                 }
             }
             catch
             {
+                Config.config.textBox2.AppendText("Connection lost");
                 return false;
             }
         }
 
-        public static bool SearchFreeSeat(string buildingId, string roomId, string date, string startTime, string endTime)
+        public static string SearchFreeSeat(string buildingId, string roomId, string date, string startTime, string endTime)
         {
             string url = search_url + date + "/" + startTime + "/" + endTime;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -195,6 +307,7 @@ namespace SeatKiller_UI
             request.ContentLength = data.Length;
             request.GetRequestStream().Write(data, 0, data.Length);
 
+            Config.config.textBox2.AppendText("\r\nTry searching for free seats in room " + roomId + ".....Status : ");
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -203,27 +316,26 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
-                Config.config.textBox2.AppendText("\r\nTry searching for free seats in room "+roomId+".....Status : " + jObject["status"].ToString());
+                Config.config.textBox2.AppendText(jObject["status"].ToString());
                 if (jObject["data"]["seats"].ToString() != "")
                 {
                     JToken seats = jObject["data"]["seats"];
                     foreach (var num in seats)
                     {
-                        List<string> temp = freeSeats.ToList();
-                        temp.Add(num.First["id"].ToString());
-                        freeSeats = temp.ToArray();
+                        freeSeats.Add(num.First["id"].ToString());
                     }
-                    return true;
+                    return "Success";
                 }
                 else
                 {
-                    return false;
+                    Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                    return "Failed";
                 }
             }
             catch
             {
-                Config.config.textBox2.AppendText("\r\nTry searching for free seats in room "+roomId+".....Status : Connection lost");
-                return false;
+                Config.config.textBox2.AppendText("Connection lost");
+                return "Connection lost";
             }
         }
 
@@ -245,6 +357,7 @@ namespace SeatKiller_UI
             request.ContentLength = data.Length;
             request.GetRequestStream().Write(data, 0, data.Length);
 
+            Config.config.textBox2.AppendText("\r\n\r\nTry booking seat.....Status : ");
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -253,19 +366,20 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
-                Config.config.textBox2.AppendText("\r\nTry booking seat.....Status : " + jObject["status"].ToString());
+                Config.config.textBox2.AppendText(jObject["status"].ToString() + "\r\n");
                 if (jObject["status"].ToString() == "success")
                 {
-                    return jObject["data"]["id"].ToString();
+                    return "Success";
                 }
                 else
                 {
-                    return "fail";
+                    Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                    return "Failed";
                 }
             }
             catch
             {
-                Config.config.textBox2.AppendText("\r\nTry getting seat information.....Status : Connection lost");
+                Config.config.textBox2.AppendText("Connection lost\r\n");
                 return "Connection lost";
             }
         }

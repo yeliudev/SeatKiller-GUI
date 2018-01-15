@@ -8,6 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
+using System.Globalization;
+using System.Threading;
 
 namespace SeatKiller_UI
 {
@@ -15,9 +18,12 @@ namespace SeatKiller_UI
     {
         public static Config config;
         public ArrayList startTime = new ArrayList();
+        [DllImport("user32", EntryPoint = "HideCaret")]
+        private static extern bool HideCaret(IntPtr hWnd);
         public Config()
         {
             InitializeComponent();
+            CheckForIllegalCrossThreadCalls = false;
             config = this;
         }
 
@@ -26,7 +32,7 @@ namespace SeatKiller_UI
             textBox2.AppendText("Try getting token.....Status : success");
 
             SeatKiller.GetUsrInf();
-            label1.Text = "你好，" + SeatKiller.name + "  上次登录时间 : " + SeatKiller.last_login_time;
+            label1.Text = "你好 , " + SeatKiller.name + "   上次登录时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
             checkBox1.Checked = true;
 
             ArrayList building_list = new ArrayList();
@@ -36,9 +42,14 @@ namespace SeatKiller_UI
             building_list.Add(new DictionaryEntry("4", "总馆"));
             comboBox1.DataSource = building_list;
             comboBox1.DisplayMember = "Value";
+            comboBox1.ValueMember = "Key";
 
-            comboBox3.Items.Add(DateTime.Now.ToString("yyyy-MM-dd")+" (今天)");
-            comboBox3.Items.Add(DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")+" (明天)");
+            ArrayList date = new ArrayList();
+            date.Add(new DictionaryEntry(DateTime.Now.ToString("yyyy-MM-dd"), DateTime.Now.ToString("yyyy-MM-dd") + " (今天)"));
+            date.Add(new DictionaryEntry(DateTime.Now.AddDays(1).ToString("yyyy-MM-dd"), DateTime.Now.AddDays(1).ToString("yyyy-MM-dd") + " (明天)"));
+            comboBox3.DataSource = date;
+            comboBox3.DisplayMember = "Value";
+            comboBox3.ValueMember = "Key";
             comboBox3.SelectedIndex = 1;
 
             startTime.Add(new DictionaryEntry("480", "8:00"));
@@ -71,6 +82,7 @@ namespace SeatKiller_UI
             startTime.Add(new DictionaryEntry("1290", "21:30"));
             comboBox4.DataSource = startTime;
             comboBox4.DisplayMember = "Value";
+            comboBox4.ValueMember = "Key";
             comboBox4.SelectedIndex = 0;
         }
 
@@ -180,17 +192,81 @@ namespace SeatKiller_UI
             endTime.Add(new DictionaryEntry("1320", "22:00"));
             comboBox5.DataSource = endTime;
             comboBox5.DisplayMember = "Value";
+            comboBox5.ValueMember = "Key";
             comboBox5.SelectedIndex = 0;
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             ArrayList seats = new ArrayList();
-            SeatKiller.GetSeats(comboBox2.SelectedValue.ToString(), seats);
+            if (comboBox2.SelectedValue.GetType() == typeof(string))
+            {
+                if (int.Parse(comboBox2.SelectedValue.ToString()) >= 1)
+                {
+                    SeatKiller.GetSeats(comboBox2.SelectedValue.ToString(), seats);
+                }
+            }
             seats.Insert(0, new DictionaryEntry("0", "(自动选择)"));
             comboBox6.DataSource = seats;
             comboBox6.DisplayMember = "Value";
             comboBox6.ValueMember = "Key";
+        }
+
+        private void textBox2_MouseDown(object sender, MouseEventArgs e)
+        {
+            HideCaret((sender as TextBox).Handle);
+        }
+
+        private void textBox2_Enter(object sender, EventArgs e)
+        {
+            HideCaret((sender as TextBox).Handle);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if(button1.Text=="开始抢座")
+            {
+                main.buildingId = Config.config.comboBox1.SelectedValue.ToString();
+                switch (main.buildingId)
+                {
+                    case "1":
+                        main.rooms = SeatKiller.xt;
+                        break;
+                    case "2":
+                        main.rooms = SeatKiller.gt;
+                        break;
+                    case "3":
+                        main.rooms = SeatKiller.yt;
+                        break;
+                    case "4":
+                        main.rooms = SeatKiller.zt;
+                        break;
+                }
+                main.roomId = comboBox2.SelectedValue.ToString();
+                main.seatId = comboBox6.SelectedValue.ToString();
+                main.date = comboBox3.SelectedValue.ToString();
+                main.startTime = comboBox4.SelectedValue.ToString();
+                main.endTime = comboBox5.SelectedValue.ToString();
+                SeatKiller.to_addr = textBox1.Text;
+
+                comboBox1.Enabled = false;
+                comboBox2.Enabled = false;
+                comboBox3.Enabled = false;
+                comboBox4.Enabled = false;
+                comboBox5.Enabled = false;
+                comboBox6.Enabled = false;
+                checkBox1.Enabled = false;
+                checkBox2.Enabled = false;
+                textBox1.Enabled = false;
+                button1.Text = "停止运行";
+
+                main.Start();
+            }
+            else
+            {
+                main.Stop();
+                button1.Text = "开始抢座";
+            }
         }
     }
 }
