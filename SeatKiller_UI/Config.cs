@@ -226,7 +226,7 @@ namespace SeatKiller_UI
         {
             if(button1.Text=="开始抢座")
             {
-                main.buildingId = Config.config.comboBox1.SelectedValue.ToString();
+                main.buildingId = comboBox1.SelectedValue.ToString();
                 switch (main.buildingId)
                 {
                     case "1":
@@ -265,6 +265,15 @@ namespace SeatKiller_UI
             else
             {
                 main.Stop();
+                comboBox1.Enabled = true;
+                comboBox2.Enabled = true;
+                comboBox3.Enabled = true;
+                comboBox4.Enabled = true;
+                comboBox5.Enabled = true;
+                comboBox6.Enabled = true;
+                checkBox1.Enabled = true;
+                checkBox2.Enabled = true;
+                textBox1.Enabled = true;
                 button1.Text = "开始抢座";
             }
         }

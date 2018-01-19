@@ -66,6 +66,10 @@ namespace SeatKiller_UI
         public static bool Wait(string hour, string minute, string second, bool nextDay = false)
         {
             DateTime time = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " " + hour + ":" + minute + ":" + second);
+            if (nextDay)
+            {
+                time.AddDays(1);
+            }
             if (DateTime.Compare(DateTime.Now, time) > 0)
             {
                 time.AddDays(1);
@@ -84,6 +88,7 @@ namespace SeatKiller_UI
             request.Method = "GET";
             SetHeaderValues(request);
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+            request.Timeout = 5000;
 
             if (!test)
             {
@@ -104,7 +109,7 @@ namespace SeatKiller_UI
                 if (jObject["status"].ToString() == "success")
                 {
                     token = jObject["data"]["token"].ToString();
-                    return "success";
+                    return "Success";
                 }
                 else
                 {
@@ -131,6 +136,7 @@ namespace SeatKiller_UI
             request.Method = "GET";
             SetHeaderValues(request);
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+            request.Timeout = 5000;
 
             Config.config.textBox2.AppendText("\r\nTry getting user information.....Status : ");
             try
@@ -176,6 +182,7 @@ namespace SeatKiller_UI
             request.Method = "GET";
             SetHeaderValues(request);
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+            request.Timeout = 5000;
 
             Config.config.textBox2.AppendText("\r\nTry getting building information.....Status : ");
             try
@@ -210,6 +217,7 @@ namespace SeatKiller_UI
             request.Method = "GET";
             SetHeaderValues(request);
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+            request.Timeout = 5000;
 
             Config.config.textBox2.AppendText("\r\nTry getting room information.....Status : ");
             try
@@ -250,6 +258,7 @@ namespace SeatKiller_UI
             request.Method = "GET";
             SetHeaderValues(request);
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+            request.Timeout = 5000;
 
             Config.config.textBox2.AppendText("\r\nTry getting seat information in room " + roomId + ".....Status : ");
             try
@@ -295,6 +304,7 @@ namespace SeatKiller_UI
             request.Method = "POST";
             SetHeaderValues(request);
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+            request.Timeout = 5000;
 
             StringBuilder buffer = new StringBuilder();
             buffer.AppendFormat("{0}={1}", "t", "1");
@@ -345,6 +355,7 @@ namespace SeatKiller_UI
             request.Method = "POST";
             SetHeaderValues(request);
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+            request.Timeout = 5000;
 
             StringBuilder buffer = new StringBuilder();
             buffer.AppendFormat("{0}={1}", "t", "1");
@@ -381,6 +392,45 @@ namespace SeatKiller_UI
             {
                 Config.config.textBox2.AppendText("Connection lost\r\n");
                 return "Connection lost";
+            }
+        }
+
+        public static bool Loop(string buildingId, string[] rooms, string startTime, string endTime)
+        {
+            Config.config.textBox2.AppendText("\r\n\r\n------------------------------进入捡漏模式------------------------------\r\n");
+            string date = DateTime.Now.ToString("yyyy-MM-dd");
+            while (true)
+            {
+                freeSeats.Clear();
+                if (GetToken() == "Success")
+                {
+                    foreach (var roomId in rooms)
+                    {
+                        if (SearchFreeSeat(buildingId, roomId, date, startTime, endTime) == "Connection lost")
+                        {
+                            Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续检索空位\r\n");
+                            Thread.Sleep(30000);
+                        }
+                    }
+
+                    foreach (var freeSeatId in freeSeats)
+                    {
+                        switch(BookSeat(freeSeatId.ToString(), date, startTime, endTime))
+                        {
+                            case "Success":
+                                Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
+                                Config.config.textBox2.AppendText("\r\n\r\n------------------------------进入捡漏模式------------------------------\r\n");
+                                break;
+                            case "Failed":
+                                Thread.Sleep(2000);
+                                continue;
+                            case "Connection lost":
+                                Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续预约空位\r\n");
+                                Thread.Sleep(30000);
+                                continue;
+                        }
+                    }
+                }
             }
         }
     }

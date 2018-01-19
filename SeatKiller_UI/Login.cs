@@ -37,7 +37,7 @@ namespace SeatKiller_UI
             SeatKiller.username = textBox1.Text;
             SeatKiller.password = textBox2.Text;
             string response = SeatKiller.GetToken(true);
-            if (response == "success")
+            if (response == "Success")
             {
                 Config config = new Config();
                 config.Show();

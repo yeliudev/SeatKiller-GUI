@@ -39,14 +39,16 @@ namespace SeatKiller_UI
             if (Config.config.comboBox3.SelectedIndex == 1)
             {
                 Config.config.textBox2.AppendText("\r\n\r\n------------------------------进入抢座模式------------------------------\r\n");
-                SeatKiller.Wait("22", "14", "40");
+                //if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 22:14:40")) < 0)
+                //SeatKiller.Wait("22", "14", "40");
                 bool try_booking = true;
-                if (SeatKiller.GetToken() == "success")
+                if (SeatKiller.GetToken() == "Success")
                 {
                     SeatKiller.GetBuildings();
                     SeatKiller.GetRooms(buildingId);
 
-                    SeatKiller.Wait("22", "15", "00");
+                    if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 22:15:00")) < 0)
+                        SeatKiller.Wait("22", "15", "00");
                     while (try_booking)
                     {
                         if (seatId != "0")
@@ -123,6 +125,21 @@ namespace SeatKiller_UI
                             break;
                         }
                     }
+                }
+                else
+                {
+                    Config.config.textBox2.AppendText("\r\n\r\n获取token失败，请检查网络后重试\r\n");
+                    Config.config.textBox2.AppendText("\r\n\r\n------------------------------退出抢座模式------------------------------\r\n");
+                    Config.config.comboBox1.Enabled = true;
+                    Config.config.comboBox2.Enabled = true;
+                    Config.config.comboBox3.Enabled = true;
+                    Config.config.comboBox4.Enabled = true;
+                    Config.config.comboBox5.Enabled = true;
+                    Config.config.comboBox6.Enabled = true;
+                    Config.config.checkBox1.Enabled = true;
+                    Config.config.checkBox2.Enabled = true;
+                    Config.config.textBox1.Enabled = true;
+                    Config.config.button1.Text = "开始抢座";
                 }
             }
         }
