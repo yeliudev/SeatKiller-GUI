@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Reflection;
@@ -20,7 +21,10 @@ namespace SeatKiller_UI
         private static string stats_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/room/stats2/";  // 单一分馆区域信息API（拼接buildingId）
         private static string layout_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/room/layoutByDate/";  // 单一区域座位信息API（拼接roomId+date）
         private static string search_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/searchSeats/";  // 空位检索API（拼接date+startTime+endTime）
+        private static string check_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/history/1/10";  // 预约历史记录API
         private static string book_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/freeBook";  // 座位预约API
+        private static string cancel_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/cancel/";  // 取消预约API
+        private static string stop_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/stop";  // 座位释放API
 
         // 已预先爬取的roomId
         public static string[] xt = { "6", "7", "8", "9", "10", "11", "12", "4", "5" };
@@ -29,6 +33,7 @@ namespace SeatKiller_UI
         public static string[] zt = { "39", "40", "51", "52", "56", "59", "60", "61", "62", "65", "66" };
 
         public static ArrayList freeSeats = new ArrayList();
+        public static Reservation reservation = new Reservation();
         public static string token = "75PLJJO8PV12084027";  // 预先移动端抓包获取
         public static string to_addr, username = "", password = "", name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
 
@@ -119,6 +124,53 @@ namespace SeatKiller_UI
                     Config.config.textBox2.AppendText("Connection lost");
                 }
                 return "Connection lost";
+            }
+        }
+
+        public static bool CheckResInf()
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(check_url);
+            request.Method = "GET";
+            SetHeaderValues(request);
+            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+            request.Timeout = 5000;
+
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream stream = response.GetResponseStream();
+                Encoding encoding = Encoding.GetEncoding("UTF-8");
+                StreamReader streamReader = new StreamReader(stream, encoding);
+                string json = streamReader.ReadToEnd();
+                JObject jObject = JObject.Parse(json);
+                string[] status = { "RESERVE", "CHECK_IN", "AWAY" };
+                if (jObject["status"].ToString() == "success")
+                {
+                    foreach (JToken res in jObject["data"]["reservations"])
+                    {
+                        if (status.Contains(res["stat"].ToString()))
+                        {
+                            Reservation.reservation.label2.Text = "ID: " + res["id"] + "\r\n时间: " + res["date"] + " " + res["begin"] + " " + res["end"];
+                            if (res["stat"].ToString() == "RESERVE")
+                                Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n状态: 预约";
+                            else if (res["stat"].ToString() == "CHECK_IN")
+                                Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n状态: 已签到";
+                            else
+                                Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n状态: 暂离";
+                            Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n地址: " + (res["stat"].ToString() == "loc");
+                            reservation.Show();
+                        }
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -318,7 +370,7 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
-                if (jObject["data"]["seats"].ToString() != "")
+                if (jObject["data"]["seats"].ToString() != "{}")
                 {
                     Config.config.textBox2.AppendText("success");
                     JToken seats = jObject["data"]["seats"];
@@ -449,6 +501,7 @@ namespace SeatKiller_UI
                             Config.config.textBox2.AppendText("\r\n------------------------------退出捡漏模式------------------------------\r\n");
                             return false;
                         }
+
                         TimeSpan delta = time.Subtract(DateTime.Now);
                         Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + delta.TotalSeconds.ToString() + "秒\r\n");
                         Thread.Sleep(3000);
