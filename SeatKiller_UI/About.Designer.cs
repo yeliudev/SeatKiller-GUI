@@ -84,7 +84,7 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button1.Location = new System.Drawing.Point(634, 467);
+            this.button1.Location = new System.Drawing.Point(608, 467);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(142, 53);
             this.button1.TabIndex = 4;
@@ -96,7 +96,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(168F, 168F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(798, 541);
+            this.ClientSize = new System.Drawing.Size(774, 541);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.pictureBox2);
