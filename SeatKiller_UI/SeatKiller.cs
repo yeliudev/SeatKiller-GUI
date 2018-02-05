@@ -38,6 +38,8 @@ namespace SeatKiller_UI
         public static string[] zt = { "39", "40", "51", "52", "56", "59", "60", "61", "62", "65", "66" };
 
         public static ArrayList freeSeats = new ArrayList();
+        private static ArrayList startTimes = new ArrayList();
+        private static ArrayList endTimes = new ArrayList();
         public static Reservation reservation = new Reservation();
         public static string token = "75PLJJO8PV12084027";  // 预先移动端抓包获取
         public static string to_addr, res_id, username = "", password = "", name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
@@ -520,7 +522,8 @@ namespace SeatKiller_UI
                 {
                     exchange = true;
                     PrintBookInf(jObject);
-                    SendMail(json, to_addr);
+                    if (Config.config.checkBox2.Checked)
+                        SendMail(json, to_addr);
                     return "Success";
                 }
                 else
@@ -605,6 +608,98 @@ namespace SeatKiller_UI
             }
         }
 
+        public static bool CheckStartTime(string seatId, string date, string startTime)
+        {
+            string url = startTime_url + seatId + "/" + date;
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "GET";
+            SetHeaderValues(request);
+            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+            request.Timeout = 5000;
+
+            Config.config.textBox2.AppendText("\r\nTry getting startTimes of seat No." + seatId + ".....Status : ");
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream stream = response.GetResponseStream();
+                Encoding encoding = Encoding.GetEncoding("UTF-8");
+                StreamReader streamReader = new StreamReader(stream, encoding);
+                string json = streamReader.ReadToEnd();
+                JObject jObject = JObject.Parse(json);
+                Config.config.textBox2.AppendText(jObject["status"].ToString());
+                if (jObject["status"].ToString() == "success")
+                {
+                    startTimes.Clear();
+                    JToken getStartTimes = jObject["data"]["startTimes"];
+                    foreach (var time in getStartTimes)
+                    {
+                        startTimes.Add((time["id"].ToString()));
+                    }
+
+                    if (startTimes.Contains(startTime))
+                        return true;
+                    else
+                        return false;
+                }
+                else
+                {
+                    Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                    return false;
+                }
+            }
+            catch
+            {
+                Config.config.textBox2.AppendText("Connection lost");
+                return false;
+            }
+        }
+
+        public static bool CheckEndTime(string seatId, string date, string startTime, string endTime)
+        {
+            string url = endTime_url + seatId + "/" + date + "/" + startTime;
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "GET";
+            SetHeaderValues(request);
+            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+            request.Timeout = 5000;
+
+            Config.config.textBox2.AppendText("\r\nTry getting endTimes of seat No." + seatId + ".....Status : ");
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream stream = response.GetResponseStream();
+                Encoding encoding = Encoding.GetEncoding("UTF-8");
+                StreamReader streamReader = new StreamReader(stream, encoding);
+                string json = streamReader.ReadToEnd();
+                JObject jObject = JObject.Parse(json);
+                Config.config.textBox2.AppendText(jObject["status"].ToString());
+                if (jObject["status"].ToString() == "success")
+                {
+                    endTimes.Clear();
+                    JToken getEndTimes = jObject["data"]["endTimes"];
+                    foreach (var time in getEndTimes)
+                    {
+                        endTimes.Add((time["id"].ToString()));
+                    }
+
+                    if (endTimes.Contains(startTime))
+                        return true;
+                    else
+                        return false;
+                }
+                else
+                {
+                    Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                    return false;
+                }
+            }
+            catch
+            {
+                Config.config.textBox2.AppendText("Connection lost");
+                return false;
+            }
+        }
+
         public static bool Loop(string buildingId, string[] rooms, string startTime, string endTime, string roomId = "0", string seatId = "0")
         {
             Config.config.textBox2.AppendText("\r\n\r\n------------------------------进入捡漏模式------------------------------\r\n");
@@ -677,7 +772,7 @@ namespace SeatKiller_UI
             }
             else if (seatId == "0")
             {
-                Config.config.textBox2.AppendText("\r\n\r\n正在监控区域，ID: " + roomId + "\r\n\r\n");
+                Config.config.textBox2.AppendText("\r\n正在监控区域，ID: " + roomId + "\r\n");
                 string date = DateTime.Now.ToString("yyyy-MM-dd");
                 while (true)
                 {
@@ -714,7 +809,7 @@ namespace SeatKiller_UI
             }
             else
             {
-                Config.config.textBox2.AppendText("\r\n\r\n正在监控座位，ID: " + seatId + "\r\n\r\n");
+                Config.config.textBox2.AppendText("\r\n正在监控座位，ID: " + seatId + "\r\n");
                 string date = DateTime.Now.ToString("yyyy-MM-dd");
                 while (true)
                 {
@@ -787,7 +882,7 @@ namespace SeatKiller_UI
                         DateTime time = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00");
                         if (DateTime.Compare(DateTime.Now, time) > 0)
                         {
-                            Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
+                            Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
                             Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
                             return false;
                         }
@@ -816,7 +911,7 @@ namespace SeatKiller_UI
             }
             else if (seatId == "0")
             {
-                Config.config.textBox2.AppendText("\r\n\r\n正在监控区域，ID: " + roomId + "\r\n\r\n");
+                Config.config.textBox2.AppendText("\r\n正在监控区域，ID: " + roomId + "\r\n");
                 string date = DateTime.Now.ToString("yyyy-MM-dd");
                 while (true)
                 {
@@ -835,7 +930,7 @@ namespace SeatKiller_UI
                                 switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
                                 {
                                     case "Success":
-                                        Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
+                                        Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
                                         Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
                                         return true;
                                     case "Failed":
@@ -852,7 +947,7 @@ namespace SeatKiller_UI
 
                     if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00")) > 0)
                     {
-                        Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
+                        Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
                         Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
                         return false;
                     }
@@ -861,24 +956,70 @@ namespace SeatKiller_UI
             }
             else
             {
-                Config.config.textBox2.AppendText("\r\n\r\n正在监控座位，ID: " + seatId + "\r\n\r\n");
+                Config.config.textBox2.AppendText("\r\n正在监控座位，ID: " + seatId + "\r\n");
                 string date = DateTime.Now.ToString("yyyy-MM-dd");
                 while (true)
                 {
-                    if (BookSeat(seatId, date, startTime, endTime) == "Success")
+                    if (CheckStartTime(seatId, date, startTime) & CheckEndTime(seatId, date, startTime, endTime))
                     {
-                        Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
-                        Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
-                        return true;
+                        break;
                     }
 
                     if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00")) > 0)
                     {
-                        Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
+                        Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
                         Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
                         return false;
                     }
+
                     Thread.Sleep(2000);
+                }
+
+                if (check_in)
+                {
+                    if (StopUsing())
+                    {
+                        if (BookSeat(seatId, date, startTime, endTime) == "Success")
+                        {
+                            Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
+                            Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
+                            return true;
+                        }
+                        else
+                        {
+                            Config.config.textBox2.AppendText("\r\n\r\n改签失败，原座位已丢失\r\n");
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，请稍后重试\r\n");
+                        Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (CancelReservation(res_id))
+                    {
+                        if (BookSeat(seatId, date, startTime, endTime) == "Success")
+                        {
+                            Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
+                            Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
+                            return true;
+                        }
+                        else
+                        {
+                            Config.config.textBox2.AppendText("\r\n\r\n改签失败，原座位已丢失\r\n");
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，请稍后重试\r\n");
+                        Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
+                        return false;
+                    }
                 }
             }
         }

@@ -38,21 +38,6 @@ namespace SeatKiller_UI
         {
             if (Config.config.comboBox3.SelectedIndex == 1)
             {
-                if (SeatKiller.CheckResInf())
-                {
-                    Config.config.comboBox1.Enabled = true;
-                    Config.config.comboBox2.Enabled = true;
-                    Config.config.comboBox3.Enabled = true;
-                    Config.config.comboBox4.Enabled = true;
-                    Config.config.comboBox5.Enabled = true;
-                    Config.config.comboBox6.Enabled = true;
-                    Config.config.checkBox1.Enabled = true;
-                    Config.config.checkBox2.Enabled = true;
-                    Config.config.textBox1.Enabled = true;
-                    Config.config.button1.Text = "开始抢座";
-                    return;
-                }
-
                 Config.config.textBox2.AppendText("\r\n\r\n------------------------------进入抢座模式------------------------------\r\n");
 
                 if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 22:14:40")) < 0)
@@ -87,6 +72,11 @@ namespace SeatKiller_UI
                     {
                         if (seatId != "0")
                         {
+                            if (SeatKiller.exchange & SeatKiller.check_in)
+                                SeatKiller.StopUsing();
+                            else if (SeatKiller.exchange & !SeatKiller.check_in)
+                                SeatKiller.CancelReservation(SeatKiller.res_id);
+
                             if (SeatKiller.BookSeat(seatId, date, startTime, endTime) == "Success")
                             {
                                 Config.config.textBox2.AppendText("\r\n------------------------------退出抢座模式------------------------------\r\n");
@@ -156,40 +146,47 @@ namespace SeatKiller_UI
                                 }
                             }
 
-                            if (SeatKiller.freeSeats.Count == 0)
+                            if (SeatKiller.freeSeats.Count > 0)
+                            {
+                                if (SeatKiller.exchange & SeatKiller.check_in)
+                                    SeatKiller.StopUsing();
+                                else if (SeatKiller.exchange & !SeatKiller.check_in)
+                                    SeatKiller.CancelReservation(SeatKiller.res_id);
+
+                                foreach (var freeSeat in SeatKiller.freeSeats)
+                                {
+                                    string response = SeatKiller.BookSeat(freeSeat.ToString(), date, startTime, endTime);
+                                    switch (response)
+                                    {
+                                        case "Success":
+                                            Config.config.textBox2.AppendText("\r\n------------------------------退出抢座模式------------------------------\r\n");
+                                            Config.config.comboBox1.Enabled = true;
+                                            Config.config.comboBox2.Enabled = true;
+                                            Config.config.comboBox3.Enabled = true;
+                                            Config.config.comboBox4.Enabled = true;
+                                            Config.config.comboBox5.Enabled = true;
+                                            Config.config.comboBox6.Enabled = true;
+                                            Config.config.checkBox1.Enabled = true;
+                                            Config.config.checkBox2.Enabled = true;
+                                            Config.config.textBox1.Enabled = true;
+                                            Config.config.button1.Text = "开始抢座";
+                                            return;
+                                        case "Failed":
+                                            Thread.Sleep(2000);
+                                            break;
+                                        case "Connection lost":
+                                            DateTime time = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 23:45:00");
+                                            TimeSpan delta = time.Subtract(DateTime.Now);
+                                            Config.config.textBox2.AppendText("\r\n\r\n连接丢失，1分钟后重新尝试抢座，系统开放时间剩余" + delta.TotalSeconds.ToString() + "秒\r\n");
+                                            Thread.Sleep(60000);
+                                            break;
+                                    }
+                                }
+                            }
+                            else
                             {
                                 Config.config.textBox2.AppendText("\r\n\r\n当前全馆暂无空位，5秒后尝试继续检索空位\r\n");
                                 Thread.Sleep(5000);
-                            }
-
-                            foreach (var freeSeat in SeatKiller.freeSeats)
-                            {
-                                string response = SeatKiller.BookSeat(freeSeat.ToString(), date, startTime, endTime);
-                                switch (response)
-                                {
-                                    case "Success":
-                                        Config.config.textBox2.AppendText("\r\n------------------------------退出抢座模式------------------------------\r\n");
-                                        Config.config.comboBox1.Enabled = true;
-                                        Config.config.comboBox2.Enabled = true;
-                                        Config.config.comboBox3.Enabled = true;
-                                        Config.config.comboBox4.Enabled = true;
-                                        Config.config.comboBox5.Enabled = true;
-                                        Config.config.comboBox6.Enabled = true;
-                                        Config.config.checkBox1.Enabled = true;
-                                        Config.config.checkBox2.Enabled = true;
-                                        Config.config.textBox1.Enabled = true;
-                                        Config.config.button1.Text = "开始抢座";
-                                        return;
-                                    case "Failed":
-                                        Thread.Sleep(2000);
-                                        break;
-                                    case "Connection lost":
-                                        DateTime time = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 23:45:00");
-                                        TimeSpan delta = time.Subtract(DateTime.Now);
-                                        Config.config.textBox2.AppendText("\r\n\r\n连接丢失，1分钟后重新尝试抢座，系统开放时间剩余" + delta.TotalSeconds.ToString() + "秒\r\n");
-                                        Thread.Sleep(60000);
-                                        break;
-                                }
                             }
                         }
                         else
@@ -231,11 +228,11 @@ namespace SeatKiller_UI
             {
                 if (SeatKiller.exchange)
                 {
-                    SeatKiller.ExchangeLoop(buildingId, rooms, startTime, endTime, seatId);
+                    SeatKiller.ExchangeLoop(buildingId, rooms, startTime, endTime, roomId, seatId);
                 }
                 else
                 {
-                    SeatKiller.Loop(buildingId, rooms, startTime, endTime, seatId);
+                    SeatKiller.Loop(buildingId, rooms, startTime, endTime, roomId, seatId);
                 }
                 Config.config.comboBox1.Enabled = true;
                 Config.config.comboBox2.Enabled = true;

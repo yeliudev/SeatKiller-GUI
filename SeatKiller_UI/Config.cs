@@ -237,7 +237,7 @@ namespace SeatKiller_UI
                         break;
                 }
 
-                if (comboBox2.SelectedValue.ToString() == "1")
+                if (comboBox1.SelectedValue.ToString() == "1" & comboBox2.SelectedValue.ToString() == "1")
                 {
                     main.rooms = SeatKiller.xt_less;
                     main.roomId = "0";
