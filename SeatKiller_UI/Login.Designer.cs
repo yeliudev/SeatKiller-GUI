@@ -47,7 +47,7 @@
             this.textBox1.Font = new System.Drawing.Font("Calibri", 10.71429F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox1.Location = new System.Drawing.Point(207, 164);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(259, 38);
+            this.textBox1.Size = new System.Drawing.Size(267, 38);
             this.textBox1.TabIndex = 0;
             // 
             // textBox2
@@ -56,7 +56,7 @@
             this.textBox2.Location = new System.Drawing.Point(207, 222);
             this.textBox2.Name = "textBox2";
             this.textBox2.PasswordChar = '*';
-            this.textBox2.Size = new System.Drawing.Size(259, 38);
+            this.textBox2.Size = new System.Drawing.Size(267, 38);
             this.textBox2.TabIndex = 1;
             // 
             // label1
@@ -115,7 +115,7 @@
             this.checkBox1.AutoSize = true;
             this.checkBox1.Enabled = false;
             this.checkBox1.Font = new System.Drawing.Font("微软雅黑", 7.714286F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox1.Location = new System.Drawing.Point(207, 284);
+            this.checkBox1.Location = new System.Drawing.Point(212, 282);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(228, 29);
             this.checkBox1.TabIndex = 7;
