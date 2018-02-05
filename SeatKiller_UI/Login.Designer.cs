@@ -115,11 +115,11 @@
             this.checkBox1.AutoSize = true;
             this.checkBox1.Enabled = false;
             this.checkBox1.Font = new System.Drawing.Font("微软雅黑", 7.714286F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox1.Location = new System.Drawing.Point(230, 281);
+            this.checkBox1.Location = new System.Drawing.Point(207, 284);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(152, 29);
+            this.checkBox1.Size = new System.Drawing.Size(228, 29);
             this.checkBox1.TabIndex = 7;
-            this.checkBox1.Text = "保存登录信息";
+            this.checkBox1.Text = "保存登录信息（测试）";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // pictureBox1
@@ -127,9 +127,9 @@
             this.pictureBox1.ErrorImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.ErrorImage")));
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(216, -1);
+            this.pictureBox1.Location = new System.Drawing.Point(227, -2);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(187, 201);
+            this.pictureBox1.Size = new System.Drawing.Size(164, 210);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 8;
             this.pictureBox1.TabStop = false;

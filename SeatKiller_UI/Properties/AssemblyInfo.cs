@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("SeatKiller_UI")]
+[assembly: AssemblyTitle("SeatKiller")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SeatKiller_UI")]
-[assembly: AssemblyCopyright("Copyright © goolhanrry 2017")]
+[assembly: AssemblyProduct("SeatKiller")]
+[assembly: AssemblyCopyright("Copyright © goolhanrry 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

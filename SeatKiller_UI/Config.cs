@@ -172,7 +172,8 @@ namespace SeatKiller_UI
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            MessageBox.Show("about", "关于");
+            About about = new About();
+            about.ShowDialog();
         }
 
         private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
@@ -260,7 +261,8 @@ namespace SeatKiller_UI
                 comboBox6.Enabled = false;
                 checkBox1.Enabled = false;
                 checkBox2.Enabled = false;
-                textBox1.Enabled = false;
+                if (checkBox2.Checked)
+                    textBox1.Enabled = true;
                 button1.Text = "停止运行";
 
                 main.Start();
@@ -276,7 +278,8 @@ namespace SeatKiller_UI
                 comboBox6.Enabled = true;
                 checkBox1.Enabled = true;
                 checkBox2.Enabled = true;
-                textBox1.Enabled = true;
+                if (checkBox2.Checked)
+                    textBox1.Enabled = true;
                 button1.Text = "开始抢座";
             }
         }
