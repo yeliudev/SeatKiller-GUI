@@ -21,7 +21,39 @@ namespace SeatKiller_UI
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (SeatKiller.check_in)
+            {
+                if (SeatKiller.StopUsing())
+                {
+                    SeatKiller.exchange = false;
+                }
+                else
+                {
+                    MessageBox.Show("释放座位失败，请稍后重试", "失败");
+                }
+            }
+            else
+            {
+                if (SeatKiller.CancelReservation(SeatKiller.res_id))
+                {
+                    SeatKiller.exchange = false;
+                }
+                else
+                {
+                    MessageBox.Show("取消预约失败，请稍后重试", "失败");
+                }
+            }
+            Close();
+        }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void Reservation_Load(object sender, EventArgs e)
+        {
+            SeatKiller.exchange = true;
         }
     }
 }

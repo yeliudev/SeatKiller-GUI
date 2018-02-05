@@ -26,6 +26,8 @@ namespace SeatKiller_UI
             label1.Text = "你好 , " + SeatKiller.name + "   上次登录时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
             checkBox1.Checked = true;
 
+            SeatKiller.CheckResInf();
+
             ArrayList building_list = new ArrayList();
             building_list.Add(new DictionaryEntry("1", "信息科学分馆"));
             building_list.Add(new DictionaryEntry("2", "工学分馆"));
@@ -101,6 +103,7 @@ namespace SeatKiller_UI
                 case 0:
                     ArrayList xt_list = new ArrayList();
                     xt_list.Add(new DictionaryEntry("0", "(自动选择)"));
+                    xt_list.Add(new DictionaryEntry("1", "只包含2~4楼和1楼云桌面"));
                     xt_list.Add(new DictionaryEntry("5", "一楼创新学习讨论区"));
                     xt_list.Add(new DictionaryEntry("4", "一楼3C创客空间"));
                     xt_list.Add(new DictionaryEntry("14", "3C创客-双屏电脑（20台）"));
@@ -176,7 +179,7 @@ namespace SeatKiller_UI
         {
             ArrayList endTime = new ArrayList();
             int i;
-            for (i = comboBox4.SelectedIndex + 1; i <= 26; i++)
+            for (i = comboBox4.SelectedIndex + 1; i <= 27; i++)
             {
                 endTime.Add(startTime[i]);
             }
@@ -192,7 +195,7 @@ namespace SeatKiller_UI
             ArrayList seats = new ArrayList();
             if (comboBox2.SelectedValue.GetType() == typeof(string))
             {
-                if (int.Parse(comboBox2.SelectedValue.ToString()) >= 1)
+                if (int.Parse(comboBox2.SelectedValue.ToString()) > 1)
                 {
                     SeatKiller.GetSeats(comboBox2.SelectedValue.ToString(), seats);
                 }
@@ -233,7 +236,16 @@ namespace SeatKiller_UI
                         main.rooms = SeatKiller.zt;
                         break;
                 }
-                main.roomId = comboBox2.SelectedValue.ToString();
+
+                if (comboBox2.SelectedValue.ToString() == "1")
+                {
+                    main.rooms = SeatKiller.xt_less;
+                    main.roomId = "0";
+                }
+                else
+                {
+                    main.roomId = comboBox2.SelectedValue.ToString();
+                }
                 main.seatId = comboBox6.SelectedValue.ToString();
                 main.date = comboBox3.SelectedValue.ToString();
                 main.startTime = comboBox4.SelectedValue.ToString();

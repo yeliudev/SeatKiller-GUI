@@ -40,6 +40,7 @@ namespace SeatKiller_UI
             if (response == "Success")
             {
                 Config config = new Config();
+                Hide();
                 config.Show();
                 Close();
             }

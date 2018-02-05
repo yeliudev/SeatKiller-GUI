@@ -6,9 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Security;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace SeatKiller_UI
@@ -22,12 +24,15 @@ namespace SeatKiller_UI
         private static string layout_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/room/layoutByDate/";  // 单一区域座位信息API（拼接roomId+date）
         private static string search_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/searchSeats/";  // 空位检索API（拼接date+startTime+endTime）
         private static string check_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/history/1/10";  // 预约历史记录API
+        private static string startTime_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/startTimesForSeat/";  // 座位开始时间API（拼接roomId+date）
+        private static string endTime_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/endTimesForSeat/";  // 座位结束时间API（拼接roomId+date+startTime）
         private static string book_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/freeBook";  // 座位预约API
         private static string cancel_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/cancel/";  // 取消预约API
         private static string stop_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/stop";  // 座位释放API
 
         // 已预先爬取的roomId
-        public static string[] xt = { "6", "7", "8", "9", "10", "11", "12", "4", "5" };
+        public static string[] xt = { "6", "7", "8", "9", "10", "11", "12", "16", "4", "5", "14", "15" };
+        public static string[] xt_less = { "6", "7", "8", "9", "10", "11", "12", "16" };
         public static string[] gt = { "19", "29", "31", "32", "33", "34", "35", "37", "38" };
         public static string[] yt = { "20", "21", "23", "24", "26", "27" };
         public static string[] zt = { "39", "40", "51", "52", "56", "59", "60", "61", "62", "65", "66" };
@@ -35,7 +40,8 @@ namespace SeatKiller_UI
         public static ArrayList freeSeats = new ArrayList();
         public static Reservation reservation = new Reservation();
         public static string token = "75PLJJO8PV12084027";  // 预先移动端抓包获取
-        public static string to_addr, username = "", password = "", name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
+        public static string to_addr, res_id, username = "", password = "", name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
+        public static bool check_in, exchange = false;
 
         private static void SetHeaderValue(WebHeaderCollection header, string name, string value)
         {
@@ -64,7 +70,7 @@ namespace SeatKiller_UI
             return true;
         }
 
-        public static bool Wait(string hour, string minute, string second)
+        public static bool Wait(string hour, string minute, string second, bool enter = true)
         {
             DateTime time = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " " + hour + ":" + minute + ":" + second);
             if (DateTime.Compare(DateTime.Now, time) > 0)
@@ -72,7 +78,10 @@ namespace SeatKiller_UI
                 time.AddDays(1);
             }
             TimeSpan delta = time.Subtract(DateTime.Now);
-            Config.config.textBox2.AppendText("\r\n\r\n正在等待系统开放，剩余" + delta.TotalSeconds.ToString() + "秒\r\n");
+            if (enter)
+                Config.config.textBox2.AppendText("\r\n\r\n正在等待系统开放，剩余" + delta.TotalSeconds.ToString() + "秒\r\n");
+            else
+                Config.config.textBox2.AppendText("\r\n正在等待系统开放，剩余" + delta.TotalSeconds.ToString() + "秒\r\n");
             Thread.Sleep((int)delta.TotalMilliseconds);
             return true;
         }
@@ -150,18 +159,32 @@ namespace SeatKiller_UI
                     {
                         if (status.Contains(res["stat"].ToString()))
                         {
-                            Reservation.reservation.label2.Text = "ID: " + res["id"] + "\r\n时间: " + res["date"] + " " + res["begin"] + " " + res["end"];
+                            res_id = res["id"].ToString();
+                            Reservation.reservation.label2.Text = "ID: " + res["id"] + "\r\n时间: " + res["date"] + " " + res["begin"] + "~" + res["end"];
                             if (res["stat"].ToString() == "RESERVE")
+                            {
                                 Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n状态: 预约";
+                                Reservation.reservation.label3.Text = "是否取消此预约？（若不取消可自动改签座位）";
+                                check_in = false;
+                            }
                             else if (res["stat"].ToString() == "CHECK_IN")
+                            {
                                 Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n状态: 已签到";
+                                Reservation.reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
+                                check_in = true;
+                            }
                             else
+                            {
                                 Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n状态: 暂离";
-                            Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n地址: " + (res["stat"].ToString() == "loc");
-                            reservation.Show();
+                                Reservation.reservation.label3.Text = "是否释放此座位？";
+                                check_in = true;
+                            }
+                            Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n地址: " + res["loc"].ToString() + "\r\n-----------------------------------------------------------------";
+                            reservation.ShowDialog();
+                            return true;
                         }
                     }
-                    return true;
+                    return false;
                 }
                 else
                 {
@@ -341,6 +364,77 @@ namespace SeatKiller_UI
             }
         }
 
+        public static bool CancelReservation(string id)
+        {
+            string url = cancel_url + id;
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "GET";
+            SetHeaderValues(request);
+            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+            request.Timeout = 5000;
+
+            Config.config.textBox2.AppendText("\r\nTry cancelling reservation.....Status : ");
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream stream = response.GetResponseStream();
+                Encoding encoding = Encoding.GetEncoding("UTF-8");
+                StreamReader streamReader = new StreamReader(stream, encoding);
+                string json = streamReader.ReadToEnd();
+                JObject jObject = JObject.Parse(json);
+                Config.config.textBox2.AppendText(jObject["status"].ToString());
+                if (jObject["status"].ToString() == "success")
+                {
+                    return true;
+                }
+                else
+                {
+                    Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                    return false;
+                }
+            }
+            catch
+            {
+                Config.config.textBox2.AppendText("Connection lost");
+                return false;
+            }
+        }
+
+        public static bool StopUsing()
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(stop_url);
+            request.Method = "GET";
+            SetHeaderValues(request);
+            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+            request.Timeout = 5000;
+
+            Config.config.textBox2.AppendText("\r\nTry releasing seat.....Status : ");
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream stream = response.GetResponseStream();
+                Encoding encoding = Encoding.GetEncoding("UTF-8");
+                StreamReader streamReader = new StreamReader(stream, encoding);
+                string json = streamReader.ReadToEnd();
+                JObject jObject = JObject.Parse(json);
+                Config.config.textBox2.AppendText(jObject["status"].ToString());
+                if (jObject["status"].ToString() == "success")
+                {
+                    return true;
+                }
+                else
+                {
+                    Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                    return false;
+                }
+            }
+            catch
+            {
+                Config.config.textBox2.AppendText("Connection lost");
+                return false;
+            }
+        }
+
         public static string SearchFreeSeat(string buildingId, string roomId, string date, string startTime, string endTime)
         {
             string url = search_url + date + "/" + startTime + "/" + endTime;
@@ -424,7 +518,9 @@ namespace SeatKiller_UI
                 Config.config.textBox2.AppendText(jObject["status"].ToString() + "\r\n");
                 if (jObject["status"].ToString() == "success")
                 {
+                    exchange = true;
                     PrintBookInf(jObject);
+                    SendMail(json, to_addr);
                     return "Success";
                 }
                 else
@@ -435,7 +531,7 @@ namespace SeatKiller_UI
             }
             catch
             {
-                Config.config.textBox2.AppendText("Connection lost\r\n");
+                Config.config.textBox2.AppendText("Connection lost");
                 return "Connection lost";
             }
         }
@@ -444,9 +540,9 @@ namespace SeatKiller_UI
         {
             Config.config.textBox2.AppendText("\r\n------------------------------座位预约成功------------------------------");
             Config.config.textBox2.AppendText("\r\nID：" + jObject["data"]["id"]);
-            Config.config.textBox2.AppendText("\r\n凭证号码：" + jObject["data"]["idreceipt"]);
-            Config.config.textBox2.AppendText("\r\n时间：" + jObject["data"]["onDate"] + " " + jObject["data"]["begin"] + " " + jObject["data"]["end"]);
-            if (jObject["data"]["checkedIn"].ToString() == "false")
+            Config.config.textBox2.AppendText("\r\n凭证号码：" + jObject["data"]["receipt"]);
+            Config.config.textBox2.AppendText("\r\n时间：" + jObject["data"]["onDate"] + " " + jObject["data"]["begin"] + "~" + jObject["data"]["end"]);
+            if (jObject["data"]["checkedIn"].ToString() == "False")
                 Config.config.textBox2.AppendText("\r\n状态：预约");
             else
                 Config.config.textBox2.AppendText("\r\n状态：已签到");
@@ -454,13 +550,68 @@ namespace SeatKiller_UI
             Config.config.textBox2.AppendText("\r\n---------------------------------------------------------------------------");
         }
 
+        public static void SendMail(string json, string to_addr)
+        {
+            if (Regex.IsMatch(to_addr, @"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$"))
+            {
+                Config.config.textBox2.AppendText("\r\n\r\n尝试连接邮件服务器.....");
+                byte[] data = new byte[5];
+                Socket socketClient = new Socket(SocketType.Stream, ProtocolType.Tcp);
+                IPAddress ip = IPAddress.Parse("120.79.81.183");
+                IPEndPoint point = new IPEndPoint(ip, 5210);
+
+                socketClient.Connect(point);
+                socketClient.Receive(data);
+                string stringData = Encoding.UTF8.GetString(data);
+
+                if (stringData == "Hello")
+                {
+                    Config.config.textBox2.AppendText("\r\n连接成功");
+
+                    data = new byte[128];
+                    socketClient.Send(Encoding.UTF8.GetBytes("json" + json));
+                    socketClient.Receive(data);
+                    Config.config.textBox2.AppendText("\r\n" + Encoding.UTF8.GetString(data));
+
+                    data = new byte[128];
+                    socketClient.Send(Encoding.UTF8.GetBytes(to_addr));
+                    socketClient.Receive(data);
+                    Config.config.textBox2.AppendText("\r\n" + Encoding.UTF8.GetString(data));
+
+                    Config.config.textBox2.AppendText("\r\n正在发送邮件提醒至\"" + to_addr + "\".....");
+                    data = new byte[7];
+                    socketClient.Send(Encoding.UTF8.GetBytes("SendMail"));
+                    socketClient.Receive(data);
+                    stringData = Encoding.UTF8.GetString(data);
+                    if (stringData == "success")
+                    {
+                        Config.config.textBox2.AppendText("\r\n\r\n邮件提醒发送成功，若接收不到提醒，请将\"seatkiller@outlook.com\"添加至邮箱白名单");
+                    }
+                    else
+                    {
+                        Config.config.textBox2.AppendText("\r\n\r\n邮箱提醒发送失败");
+                    }
+                    socketClient.Send(Encoding.UTF8.GetBytes("exit"));
+                    socketClient.Close();
+                }
+            }
+            else if (to_addr == "")
+            {
+                Config.config.textBox2.AppendText("\r\n\r\n邮箱地址为空，无法发送邮件");
+            }
+            else
+            {
+                Config.config.textBox2.AppendText("\r\n\r\n邮箱地址输入错误，无法发送邮件");
+            }
+        }
+
         public static bool Loop(string buildingId, string[] rooms, string startTime, string endTime, string roomId = "0", string seatId = "0")
         {
-            Config.config.textBox2.AppendText("\r\n\r\n------------------------------进入捡漏模式------------------------------\r\n\r\n");
+            Config.config.textBox2.AppendText("\r\n\r\n------------------------------进入捡漏模式------------------------------\r\n");
             if (roomId == "0")
             {
                 if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 01:00:00")) < 0)
-                    Wait("01", "00", "00");
+                    Wait("01", "00", "00", false);
                 string date = DateTime.Now.ToString("yyyy-MM-dd");
                 while (true)
                 {
@@ -578,6 +729,153 @@ namespace SeatKiller_UI
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
                         Config.config.textBox2.AppendText("\r\n------------------------------退出捡漏模式------------------------------\r\n");
+                        return false;
+                    }
+                    Thread.Sleep(2000);
+                }
+            }
+        }
+
+        public static bool ExchangeLoop(string buildingId, string[] rooms, string startTime, string endTime, string roomId = "0", string seatId = "0")
+        {
+            Config.config.textBox2.AppendText("\r\n\r\n------------------------------进入改签模式------------------------------\r\n");
+            if (roomId == "0")
+            {
+                if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 01:00:00")) < 0)
+                    Wait("01", "00", "00", false);
+                string date = DateTime.Now.ToString("yyyy-MM-dd");
+                while (true)
+                {
+                    freeSeats.Clear();
+                    if (GetToken() == "Success")
+                    {
+                        foreach (var room in rooms)
+                        {
+                            if (SearchFreeSeat(buildingId, room, date, startTime, endTime) == "Connection lost")
+                            {
+                                Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续检索空位\r\n");
+                                Thread.Sleep(30000);
+                            }
+                        }
+
+                        if (freeSeats.Count > 0)
+                        {
+                            if (check_in)
+                                StopUsing();
+                            else
+                                CancelReservation(res_id);
+
+                            foreach (var freeSeatId in freeSeats)
+                            {
+                                switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
+                                {
+                                    case "Success":
+                                        Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
+                                        Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
+                                        return true;
+                                    case "Failed":
+                                        Thread.Sleep(2000);
+                                        continue;
+                                    case "Connection lost":
+                                        Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续预约空位\r\n");
+                                        Thread.Sleep(30000);
+                                        continue;
+                                }
+                            }
+                        }
+
+                        DateTime time = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00");
+                        if (DateTime.Compare(DateTime.Now, time) > 0)
+                        {
+                            Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
+                            Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
+                            return false;
+                        }
+
+                        TimeSpan delta = time.Subtract(DateTime.Now);
+                        Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + delta.TotalSeconds.ToString() + "秒\r\n");
+                        Thread.Sleep(3000);
+                    }
+                    else
+                    {
+                        Config.config.textBox2.AppendText("\r\n\r\n获取token失败，请检查网络后重试\r\n");
+                        Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
+                        Config.config.comboBox1.Enabled = true;
+                        Config.config.comboBox2.Enabled = true;
+                        Config.config.comboBox3.Enabled = true;
+                        Config.config.comboBox4.Enabled = true;
+                        Config.config.comboBox5.Enabled = true;
+                        Config.config.comboBox6.Enabled = true;
+                        Config.config.checkBox1.Enabled = true;
+                        Config.config.checkBox2.Enabled = true;
+                        Config.config.textBox1.Enabled = true;
+                        Config.config.button1.Text = "开始抢座";
+                        return false;
+                    }
+                }
+            }
+            else if (seatId == "0")
+            {
+                Config.config.textBox2.AppendText("\r\n\r\n正在监控区域，ID: " + roomId + "\r\n\r\n");
+                string date = DateTime.Now.ToString("yyyy-MM-dd");
+                while (true)
+                {
+                    freeSeats.Clear();
+                    if (SearchFreeSeat(buildingId, roomId, date, startTime, endTime) == "Success")
+                    {
+                        if (freeSeats.Count > 0)
+                        {
+                            if (check_in)
+                                StopUsing();
+                            else
+                                CancelReservation(res_id);
+
+                            foreach (var freeSeatId in freeSeats)
+                            {
+                                switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
+                                {
+                                    case "Success":
+                                        Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
+                                        Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
+                                        return true;
+                                    case "Failed":
+                                        Thread.Sleep(2000);
+                                        continue;
+                                    case "Connection lost":
+                                        Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续预约空位\r\n");
+                                        Thread.Sleep(30000);
+                                        continue;
+                                }
+                            }
+                        }
+                    }
+
+                    if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00")) > 0)
+                    {
+                        Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
+                        Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
+                        return false;
+                    }
+                    Thread.Sleep(2000);
+                }
+            }
+            else
+            {
+                Config.config.textBox2.AppendText("\r\n\r\n正在监控座位，ID: " + seatId + "\r\n\r\n");
+                string date = DateTime.Now.ToString("yyyy-MM-dd");
+                while (true)
+                {
+                    if (BookSeat(seatId, date, startTime, endTime) == "Success")
+                    {
+                        Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
+                        Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
+                        return true;
+                    }
+
+                    if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00")) > 0)
+                    {
+                        Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
+                        Config.config.textBox2.AppendText("\r\n------------------------------退出改签模式------------------------------\r\n");
                         return false;
                     }
                     Thread.Sleep(2000);
