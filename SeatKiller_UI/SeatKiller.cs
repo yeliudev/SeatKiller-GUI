@@ -166,23 +166,20 @@ namespace SeatKiller_UI
                             if (alert)
                             {
                                 Reservation.reservation.label2.Text = "ID: " + res["id"] + "\r\n时间: " + res["date"] + " " + res["begin"] + "~" + res["end"];
-                                if (res["stat"].ToString() == "RESERVE")
+                                switch(res["stat"].ToString())
                                 {
-                                    Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n状态: 预约";
-                                    Reservation.reservation.label3.Text = "是否取消此预约？（若不取消可自动改签座位）";
-                                    check_in = false;
-                                }
-                                else if (res["stat"].ToString() == "CHECK_IN")
-                                {
-                                    Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n状态: 已签到";
-                                    Reservation.reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
-                                    check_in = true;
-                                }
-                                else
-                                {
-                                    Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n状态: 暂离";
-                                    Reservation.reservation.label3.Text = "是否释放此座位？";
-                                    check_in = true;
+                                    case "RESERVE":
+                                        Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n状态: 预约";
+                                        Reservation.reservation.label3.Text = "是否取消此预约？（若不取消可自动改签座位）";
+                                        check_in = false;
+                                    case "CHECK_IN":
+                                        Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n状态: 已签到";
+                                        Reservation.reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
+                                        check_in = true;
+                                    default:
+                                        Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n状态: 暂离";
+                                        Reservation.reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
+                                        check_in = true;
                                 }
                                 Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n地址: " + res["loc"].ToString() + "\r\n-----------------------------------------------------------------";
                                 reservation.ShowDialog();
