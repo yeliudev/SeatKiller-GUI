@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/license-MIT-red.svg?colorB=D5283A#)](LICENSE)
 [![Language](https://img.shields.io/badge/language-C%23-blue.svg)](https://docs.microsoft.com/en-us/dotnet/csharp/)
 ![GitHub last commit](https://img.shields.io/github/last-commit/goolhanrry/SeatKiller_UI.svg)
-[![GitHub repo size in bytes](https://img.shields.io/github/repo-size/goolhanrry/SeatKiller_UI.svg?colorB=ff7e00#)](https://github.com/goolhanrry/SeatKiller)
+[![GitHub repo size in bytes](https://img.shields.io/github/repo-size/goolhanrry/SeatKiller_UI.svg?colorB=ff7e00#)](https://github.com/goolhanrry/SeatKiller_UI)
 
 用C#重写的 [SeatKiller](https://github.com/goolhanrry/SeatKiller) GUI 版本，新增了座位改签功能，欢迎添加我的微信：`aweawds`交流讨论
 
@@ -32,8 +32,8 @@
   <img with="598" height="421" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshot/SeatKiller_UI_Screenshot3.png" alt="screenshot3">
 </p>
 <p align="center">
-  <img with="376" height="250" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshot/SeatKiller_UI_Screenshot5.png" alt="screenshot4">
+  <img with="376" height="250" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshot/SeatKiller_UI_Screenshot4.png" alt="screenshot4">
 </p>
 <p align="center">
-  <img with="598" height="421" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshot/SeatKiller_UI_Screenshot6.png" alt="screenshot5">
+  <img with="598" height="421" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshot/SeatKiller_UI_Screenshot5.png" alt="screenshot5">
 </p>
