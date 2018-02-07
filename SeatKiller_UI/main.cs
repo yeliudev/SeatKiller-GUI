@@ -26,11 +26,11 @@ namespace SeatKiller_UI
             try
             {
                 thread.Abort();
-                Config.config.textBox2.AppendText("\r\n\r\n--------------------------------运行中断---------------------------------\r\n");
+                Config.config.textBox2.AppendText("\r\n\r\n----------------------------运行中断-----------------------------\r\n");
             }
             catch
             {
-                Config.config.textBox2.AppendText("\r\n\r\n--------------------------------运行中断---------------------------------\r\n");
+                Config.config.textBox2.AppendText("\r\n\r\n----------------------------运行中断-----------------------------\r\n");
             }
         }
 
@@ -39,7 +39,7 @@ namespace SeatKiller_UI
             bool cancelled = false;
             if (Config.config.comboBox3.SelectedIndex == 1)
             {
-                Config.config.textBox2.AppendText("\r\n\r\n------------------------------进入抢座模式------------------------------\r\n");
+                Config.config.textBox2.AppendText("\r\n\r\n--------------------------进入抢座模式--------------------------\r\n");
 
                 if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 22:14:40")) < 0)
                     SeatKiller.Wait("22", "14", "40", false);
