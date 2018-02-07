@@ -87,7 +87,7 @@ namespace SeatKiller_UI
                                 else
                                 {
                                     Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，请稍后重试\r\n");
-                                    Config.config.textBox2.AppendText("\r\n------------------------------退出抢座模式------------------------------\r\n");
+                                    Config.config.textBox2.AppendText("\r\n--------------------------退出抢座模式--------------------------\r\n");
                                     Config.config.comboBox1.Enabled = true;
                                     Config.config.comboBox2.Enabled = true;
                                     Config.config.comboBox3.Enabled = true;
@@ -111,7 +111,7 @@ namespace SeatKiller_UI
                                 else
                                 {
                                     Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，请稍后重试\r\n");
-                                    Config.config.textBox2.AppendText("\r\n------------------------------退出抢座模式------------------------------\r\n");
+                                    Config.config.textBox2.AppendText("\r\n--------------------------退出抢座模式--------------------------\r\n");
                                     Config.config.comboBox1.Enabled = true;
                                     Config.config.comboBox2.Enabled = true;
                                     Config.config.comboBox3.Enabled = true;
@@ -129,7 +129,7 @@ namespace SeatKiller_UI
 
                             if (SeatKiller.BookSeat(seatId, date, startTime, endTime) == "Success")
                             {
-                                Config.config.textBox2.AppendText("\r\n\r\n------------------------------退出抢座模式------------------------------\r\n");
+                                Config.config.textBox2.AppendText("\r\n\r\n--------------------------退出抢座模式--------------------------\r\n");
                                 Config.config.comboBox1.Enabled = true;
                                 Config.config.comboBox2.Enabled = true;
                                 Config.config.comboBox3.Enabled = true;
@@ -152,7 +152,7 @@ namespace SeatKiller_UI
                             else
                             {
                                 Config.config.textBox2.AppendText("\r\n\r\n抢座失败\r\n");
-                                Config.config.textBox2.AppendText("\r\n------------------------------退出抢座模式------------------------------\r\n");
+                                Config.config.textBox2.AppendText("\r\n--------------------------退出抢座模式--------------------------\r\n");
                                 Config.config.comboBox1.Enabled = true;
                                 Config.config.comboBox2.Enabled = true;
                                 Config.config.comboBox3.Enabled = true;
@@ -211,7 +211,7 @@ namespace SeatKiller_UI
                                         else
                                         {
                                             Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，请稍后重试\r\n");
-                                            Config.config.textBox2.AppendText("\r\n------------------------------退出抢座模式------------------------------\r\n");
+                                            Config.config.textBox2.AppendText("\r\n--------------------------退出抢座模式--------------------------\r\n");
                                             Config.config.comboBox1.Enabled = true;
                                             Config.config.comboBox2.Enabled = true;
                                             Config.config.comboBox3.Enabled = true;
@@ -235,7 +235,7 @@ namespace SeatKiller_UI
                                         else
                                         {
                                             Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，请稍后重试\r\n");
-                                            Config.config.textBox2.AppendText("\r\n------------------------------退出抢座模式------------------------------\r\n");
+                                            Config.config.textBox2.AppendText("\r\n--------------------------退出抢座模式--------------------------\r\n");
                                             Config.config.comboBox1.Enabled = true;
                                             Config.config.comboBox2.Enabled = true;
                                             Config.config.comboBox3.Enabled = true;
@@ -254,7 +254,7 @@ namespace SeatKiller_UI
                                     switch (SeatKiller.BookSeat(freeSeat.ToString(), date, startTime, endTime))
                                     {
                                         case "Success":
-                                            Config.config.textBox2.AppendText("\r\n\r\n------------------------------退出抢座模式------------------------------\r\n");
+                                            Config.config.textBox2.AppendText("\r\n\r\n--------------------------退出抢座模式--------------------------\r\n");
                                             Config.config.comboBox1.Enabled = true;
                                             Config.config.comboBox2.Enabled = true;
                                             Config.config.comboBox3.Enabled = true;
@@ -288,7 +288,7 @@ namespace SeatKiller_UI
                         else
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n抢座失败，座位预约系统已关闭\r\n");
-                            Config.config.textBox2.AppendText("\r\n------------------------------退出抢座模式------------------------------\r\n");
+                            Config.config.textBox2.AppendText("\r\n--------------------------退出抢座模式--------------------------\r\n");
                             Config.config.comboBox1.Enabled = true;
                             Config.config.comboBox2.Enabled = true;
                             Config.config.comboBox3.Enabled = true;
@@ -307,7 +307,7 @@ namespace SeatKiller_UI
                 else
                 {
                     Config.config.textBox2.AppendText("\r\n\r\n获取token失败，请检查网络后重试\r\n");
-                    Config.config.textBox2.AppendText("\r\n------------------------------退出抢座模式------------------------------\r\n");
+                    Config.config.textBox2.AppendText("\r\n--------------------------退出抢座模式--------------------------\r\n");
                     Config.config.comboBox1.Enabled = true;
                     Config.config.comboBox2.Enabled = true;
                     Config.config.comboBox3.Enabled = true;
