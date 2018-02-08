@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -96,7 +97,7 @@ namespace SeatKiller_UI
             request.Method = "GET";
             SetHeaderValues(request);
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-            request.Timeout = 5000;
+            request.Timeout = 3000;
 
             if (!test)
             {
@@ -145,7 +146,7 @@ namespace SeatKiller_UI
             request.Method = "GET";
             SetHeaderValues(request);
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-            request.Timeout = 5000;
+            request.Timeout = 2000;
 
             try
             {
@@ -166,7 +167,7 @@ namespace SeatKiller_UI
                             if (alert)
                             {
                                 Reservation.reservation.label2.Text = "ID: " + res["id"] + "\r\n时间: " + res["date"] + " " + res["begin"] + "~" + res["end"];
-                                switch(res["stat"].ToString())
+                                switch (res["stat"].ToString())
                                 {
                                     case "RESERVE":
                                         Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n状态: 预约";
@@ -174,18 +175,24 @@ namespace SeatKiller_UI
                                         check_in = false;
                                         break;
                                     case "CHECK_IN":
+                                        if (res["awayEnd"].ToString() != "")
+                                        {
+                                            Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n暂离时间: " + res["awayBegin"].ToString() + "~" + res["awayEnd"].ToString();
+                                            Reservation.reservation.label3.Location = new Point(110, 253);
+                                        }
                                         Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n状态: 已签到";
                                         Reservation.reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
                                         check_in = true;
                                         break;
                                     default:
+                                        Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n暂离时间: " + res["awayBegin"].ToString();
                                         Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n状态: 暂离";
                                         Reservation.reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
                                         check_in = true;
                                         break;
                                 }
-                                Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n地址: " + res["loc"].ToString() + "\r\n---------------------------------------------------------";
-                                reservation.ShowDialog();
+                                Reservation.reservation.label2.Text = Reservation.reservation.label2.Text + "\r\n地址: " + res["loc"].ToString() + "\r\n-----------------------------------------------------------------";
+                                reservation.Show();
                             }
                             return true;
                         }
@@ -687,7 +694,7 @@ namespace SeatKiller_UI
                         endTimes.Add((time["id"].ToString()));
                     }
 
-                    if (endTimes.Contains(startTime))
+                    if (endTimes.Contains(endTime))
                         return true;
                     else
                         return false;
@@ -713,6 +720,7 @@ namespace SeatKiller_UI
                 if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 01:00:00")) < 0)
                     Wait("01", "00", "00", false);
                 string date = DateTime.Now.ToString("yyyy-MM-dd");
+                GetRooms(buildingId);
                 while (true)
                 {
                     freeSeats.Clear();
@@ -733,7 +741,7 @@ namespace SeatKiller_UI
                             {
                                 case "Success":
                                     Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
-                                    Config.config.textBox2.AppendText("\r\n--------------------------退出捡漏模式--------------------------\r\n");
+                                    Config.config.textBox2.AppendText("\r\n--------------------------退出捡漏模式--------------------------");
                                     return true;
                                 case "Failed":
                                     Thread.Sleep(2000);
@@ -749,7 +757,7 @@ namespace SeatKiller_UI
                         if (DateTime.Compare(DateTime.Now, time) > 0)
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
-                            Config.config.textBox2.AppendText("\r\n--------------------------退出捡漏模式--------------------------\r\n");
+                            Config.config.textBox2.AppendText("\r\n--------------------------退出捡漏模式--------------------------");
                             return false;
                         }
 
@@ -760,7 +768,7 @@ namespace SeatKiller_UI
                     else
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n获取token失败，请检查网络后重试\r\n");
-                        Config.config.textBox2.AppendText("\r\n--------------------------退出捡漏模式--------------------------\r\n");
+                        Config.config.textBox2.AppendText("\r\n--------------------------退出捡漏模式--------------------------");
                         return false;
                     }
                 }
@@ -780,7 +788,7 @@ namespace SeatKiller_UI
                             {
                                 case "Success":
                                     Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
-                                    Config.config.textBox2.AppendText("\r\n--------------------------退出捡漏模式--------------------------\r\n");
+                                    Config.config.textBox2.AppendText("\r\n--------------------------退出捡漏模式--------------------------");
                                     return true;
                                 case "Failed":
                                     Thread.Sleep(2000);
@@ -796,7 +804,7 @@ namespace SeatKiller_UI
                     if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00")) > 0)
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
-                        Config.config.textBox2.AppendText("\r\n--------------------------退出捡漏模式--------------------------\r\n");
+                        Config.config.textBox2.AppendText("\r\n--------------------------退出捡漏模式--------------------------");
                         return false;
                     }
                     Thread.Sleep(2000);
@@ -811,14 +819,14 @@ namespace SeatKiller_UI
                     if (BookSeat(seatId, date, startTime, endTime) == "Success")
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
-                        Config.config.textBox2.AppendText("\r\n--------------------------退出捡漏模式--------------------------\r\n");
+                        Config.config.textBox2.AppendText("\r\n--------------------------退出捡漏模式--------------------------");
                         return true;
                     }
 
                     if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00")) > 0)
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
-                        Config.config.textBox2.AppendText("\r\n--------------------------退出捡漏模式--------------------------\r\n");
+                        Config.config.textBox2.AppendText("\r\n--------------------------退出捡漏模式--------------------------");
                         return false;
                     }
                     Thread.Sleep(2000);
@@ -830,6 +838,7 @@ namespace SeatKiller_UI
         {
             Config.config.textBox2.AppendText("\r\n\r\n--------------------------进入改签模式--------------------------\r\n");
             bool cancelled = false;
+            GetRooms(buildingId);
             if (roomId == "0")
             {
                 if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 01:00:00")) < 0)
@@ -851,9 +860,9 @@ namespace SeatKiller_UI
 
                         foreach (var freeSeatId in freeSeats)
                         {
-                            if (CheckStartTime(freeSeatId.ToString(), date, startTime) & CheckEndTime(freeSeatId.ToString(), date, startTime, endTime))
+                            if (!cancelled)
                             {
-                                if (!cancelled)
+                                if (CheckStartTime(freeSeatId.ToString(), date, startTime) & CheckEndTime(freeSeatId.ToString(), date, startTime, endTime))
                                 {
                                     if (check_in)
                                     {
@@ -864,7 +873,7 @@ namespace SeatKiller_UI
                                         else
                                         {
                                             Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，请稍后重试\r\n");
-                                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
+                                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
                                             return false;
                                         }
                                     }
@@ -877,26 +886,26 @@ namespace SeatKiller_UI
                                         else
                                         {
                                             Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，请稍后重试\r\n");
-                                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
+                                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
                                             return false;
                                         }
                                     }
                                 }
+                            }
 
-                                switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
-                                {
-                                    case "Success":
-                                        Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
-                                        Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
-                                        return true;
-                                    case "Failed":
-                                        Thread.Sleep(2000);
-                                        continue;
-                                    case "Connection lost":
-                                        Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续预约空位\r\n");
-                                        Thread.Sleep(30000);
-                                        continue;
-                                }
+                            switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
+                            {
+                                case "Success":
+                                    Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
+                                    Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
+                                    return true;
+                                case "Failed":
+                                    Thread.Sleep(2000);
+                                    continue;
+                                case "Connection lost":
+                                    Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续预约空位\r\n");
+                                    Thread.Sleep(30000);
+                                    continue;
                             }
                         }
 
@@ -904,7 +913,7 @@ namespace SeatKiller_UI
                         if (DateTime.Compare(DateTime.Now, time) > 0)
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
-                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
+                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
                             return false;
                         }
 
@@ -915,7 +924,7 @@ namespace SeatKiller_UI
                     else
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n获取token失败，请检查网络后重试\r\n");
-                        Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
+                        Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
                         return false;
                     }
                 }
@@ -944,7 +953,7 @@ namespace SeatKiller_UI
                                         else
                                         {
                                             Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，请稍后重试\r\n");
-                                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
+                                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
                                             return false;
                                         }
                                     }
@@ -957,7 +966,7 @@ namespace SeatKiller_UI
                                         else
                                         {
                                             Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，请稍后重试\r\n");
-                                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
+                                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
                                             return false;
                                         }
                                     }
@@ -967,7 +976,7 @@ namespace SeatKiller_UI
                                 {
                                     case "Success":
                                         Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
-                                        Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
+                                        Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
                                         return true;
                                     case "Failed":
                                         Thread.Sleep(2000);
@@ -985,7 +994,7 @@ namespace SeatKiller_UI
                     if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00")) > 0)
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
-                        Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
+                        Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
                         return false;
                     }
                     Thread.Sleep(2000);
@@ -1005,7 +1014,7 @@ namespace SeatKiller_UI
                     if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00")) > 0)
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
-                        Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
+                        Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
                         return false;
                     }
 
@@ -1019,20 +1028,20 @@ namespace SeatKiller_UI
                         if (BookSeat(seatId, date, startTime, endTime) == "Success")
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
-                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
+                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
                             return true;
                         }
                         else
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n改签失败，原座位已丢失\r\n");
-                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
+                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
                             return false;
                         }
                     }
                     else
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，请稍后重试\r\n");
-                        Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
+                        Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
                         return false;
                     }
                 }
@@ -1043,20 +1052,20 @@ namespace SeatKiller_UI
                         if (BookSeat(seatId, date, startTime, endTime) == "Success")
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
-                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
+                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
                             return true;
                         }
                         else
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n改签失败，原座位已丢失\r\n");
-                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
+                            Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
                             return false;
                         }
                     }
                     else
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，请稍后重试\r\n");
-                        Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------\r\n");
+                        Config.config.textBox2.AppendText("\r\n--------------------------退出改签模式--------------------------");
                         return false;
                     }
                 }

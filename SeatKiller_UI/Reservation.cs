@@ -28,12 +28,25 @@ namespace SeatKiller_UI
                     MessageBox.Show("取消预约失败，请稍后重试", "失败");
                 }
             }
+
+            Config config = new Config();
+            Hide();
+            config.Show();
             Close();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
+            Config config = new Config();
+            Hide();
+            config.Show();
             Close();
+        }
+
+        private void Reservation_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (ActiveForm.Name != "Config")
+                Application.Exit();
         }
     }
 }

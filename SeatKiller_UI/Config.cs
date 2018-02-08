@@ -26,8 +26,6 @@ namespace SeatKiller_UI
             label1.Text = "你好 , " + SeatKiller.name + "   上次登录时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
             checkBox1.Checked = true;
 
-            SeatKiller.CheckResInf();
-
             ArrayList building_list = new ArrayList();
             building_list.Add(new DictionaryEntry("1", "信息科学分馆"));
             building_list.Add(new DictionaryEntry("2", "工学分馆"));

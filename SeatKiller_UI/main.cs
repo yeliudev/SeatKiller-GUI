@@ -326,7 +326,7 @@ namespace SeatKiller_UI
             {
                 if (SeatKiller.CheckResInf(false))
                 {
-                    Config.config.textBox2.AppendText("\r\n已检测到有效预约，将自动改签预约信息\r\n");
+                    Config.config.textBox2.AppendText("\r\n\r\n已检测到有效预约，将自动改签预约信息");
                     SeatKiller.exchange = true;
                 }
 

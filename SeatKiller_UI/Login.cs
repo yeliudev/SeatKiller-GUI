@@ -39,9 +39,12 @@ namespace SeatKiller_UI
             string response = SeatKiller.GetToken(true);
             if (response == "Success")
             {
-                Config config = new Config();
                 Hide();
-                config.Show();
+                if (!SeatKiller.CheckResInf())
+                {
+                    Config config = new Config();
+                    config.Show();
+                }
                 Close();
             }
             else if (response == "Connection lost")
@@ -56,7 +59,7 @@ namespace SeatKiller_UI
 
         private void Login_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (ActiveForm.Name != "Config")
+            if (ActiveForm.Name != "Config" & ActiveForm.Name != "Reservation")
                 Application.Exit();
         }
     }
