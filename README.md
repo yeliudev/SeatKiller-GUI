@@ -5,7 +5,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/goolhanrry/SeatKiller_UI.svg)
 [![GitHub repo size in bytes](https://img.shields.io/github/repo-size/goolhanrry/SeatKiller_UI.svg?colorB=ff7e00#)](https://github.com/goolhanrry/SeatKiller_UI)
 
-用C#重写的 [SeatKiller](https://github.com/goolhanrry/SeatKiller) GUI 版本，新增了座位改签功能，欢迎添加我的微信：`aweawds`交流讨论
+用C#重写的 [SeatKiller](https://github.com/goolhanrry/SeatKiller) GUI 版本，新增了座位改签功能，欢迎添加我的微信：`aweawds` 交流讨论
 
 ## 已经实现的功能
 
