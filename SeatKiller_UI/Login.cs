@@ -6,13 +6,11 @@ namespace SeatKiller_UI
 {
     public partial class Login : Form
     {
-        public static Login login;
         BindingSource bs = new BindingSource();
         public Login()
         {
             InitializeComponent();
             CheckForIllegalCrossThreadCalls = false;
-            login = this;
         }
 
         private void Login_Load(object sender, EventArgs e)

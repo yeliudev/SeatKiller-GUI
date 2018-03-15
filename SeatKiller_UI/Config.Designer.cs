@@ -143,9 +143,9 @@
             this.checkBox2.AutoSize = true;
             this.checkBox2.Location = new System.Drawing.Point(101, 456);
             this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(202, 29);
+            this.checkBox2.Size = new System.Drawing.Size(152, 29);
             this.checkBox2.TabIndex = 12;
-            this.checkBox2.Text = "启用邮件提醒(测试)\r\n";
+            this.checkBox2.Text = "启用邮件提醒\r\n";
             this.checkBox2.UseVisualStyleBackColor = true;
             this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
@@ -308,7 +308,7 @@
             this.Name = "Config";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "SeatKiller by goolhanrry v1.2";
+            this.Text = "SeatKiller by goolhanrry v1.3";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Config_FormClosed);
             this.Load += new System.EventHandler(this.Config_Load);
             this.groupBox1.ResumeLayout(false);
