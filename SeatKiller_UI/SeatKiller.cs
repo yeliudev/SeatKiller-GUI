@@ -79,12 +79,25 @@ namespace SeatKiller_UI
             {
                 time.AddDays(1);
             }
-            TimeSpan delta = time.Subtract(DateTime.Now);
-            if (enter)
-                Config.config.textBox2.AppendText("\r\n\r\n正在等待系统开放，剩余" + delta.TotalSeconds.ToString() + "秒\r\n");
-            else
-                Config.config.textBox2.AppendText("\r\n正在等待系统开放，剩余" + delta.TotalSeconds.ToString() + "秒\r\n");
-            Thread.Sleep((int)delta.TotalMilliseconds);
+            string originalText = Config.config.textBox2.Text;
+            while (true)
+            {
+                TimeSpan delta = time.Subtract(DateTime.Now);
+                Config.config.textBox2.Text = originalText;
+                if (enter)
+                {
+                    Config.config.textBox2.AppendText("\r\n\r\n正在等待系统开放，剩余" + ((int)delta.TotalSeconds).ToString() + "秒\r\n");
+                }
+                else
+                {
+                    Config.config.textBox2.AppendText("\r\n正在等待系统开放，剩余" + ((int)delta.TotalSeconds).ToString() + "秒\r\n");
+                }
+                if(delta.TotalSeconds<0)
+                {
+                    break;
+                }
+                Thread.Sleep(200);
+            }
             return true;
         }
 
@@ -559,7 +572,12 @@ namespace SeatKiller_UI
                     exchange = true;
                     PrintBookInf(jObject);
                     if (Config.config.checkBox2.Checked)
-                        SendMail(json, to_addr);
+                    {
+                        jObject.Add("username", username);
+                        jObject.Add("name", name);
+                        jObject.Add("client", "C#");
+                        SendMail(jObject.ToString(), to_addr);
+                    }
                     return "Success";
                 }
                 else
