@@ -167,7 +167,7 @@
             this.Name = "Login";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "SeatKiller by goolhanrry v1.3";
+            this.Text = "SeatKiller by goolhanrry v1.4";
             this.Activated += new System.EventHandler(this.Login_Activated);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Login_FormClosed);
             this.Load += new System.EventHandler(this.Login_Load);

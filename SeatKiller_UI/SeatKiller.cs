@@ -77,7 +77,7 @@ namespace SeatKiller_UI
             DateTime time = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " " + hour + ":" + minute + ":" + second);
             if (DateTime.Compare(DateTime.Now, time) > 0)
             {
-                time.AddDays(1);
+                time = time.AddDays(1);
             }
             string originalText = Config.config.textBox2.Text;
             while (true)
@@ -92,7 +92,7 @@ namespace SeatKiller_UI
                 {
                     Config.config.textBox2.AppendText("\r\n正在等待系统开放，剩余" + ((int)delta.TotalSeconds).ToString() + "秒\r\n");
                 }
-                if(delta.TotalSeconds<0)
+                if (delta.TotalSeconds < 0)
                 {
                     break;
                 }
