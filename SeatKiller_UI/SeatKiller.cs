@@ -42,8 +42,9 @@ namespace SeatKiller_UI
         private static ArrayList startTimes = new ArrayList();
         private static ArrayList endTimes = new ArrayList();
         public static string token = "";
-        public static string to_addr, res_id, username = "", password = "", name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
+        public static string to_addr, res_id, username, password, name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
         public static bool check_in, exchange = false;
+        public static DateTime time;
 
         private static void SetHeaderValue(WebHeaderCollection header, string name, string value)
         {
@@ -72,39 +73,30 @@ namespace SeatKiller_UI
             return true;
         }
 
-        public static bool Wait(string hour, string minute, string second, bool enter = true)
+        public static void Wait(string hour, string minute, string second, bool enter = true)
         {
-            DateTime time = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " " + hour + ":" + minute + ":" + second);
+            time = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " " + hour + ":" + minute + ":" + second);
             if (DateTime.Compare(DateTime.Now, time) > 0)
             {
                 time = time.AddDays(1);
             }
-            string originalText = Config.config.textBox2.Text;
+            Config.config.backgroundWorker1.RunWorkerAsync(enter);
             while (true)
             {
                 TimeSpan delta = time.Subtract(DateTime.Now);
-                Config.config.textBox2.Text = originalText;
-                if (enter)
-                {
-                    Config.config.textBox2.AppendText("\r\n\r\n正在等待系统开放，剩余" + ((int)delta.TotalSeconds).ToString() + "秒\r\n");
-                }
-                else
-                {
-                    Config.config.textBox2.AppendText("\r\n正在等待系统开放，剩余" + ((int)delta.TotalSeconds).ToString() + "秒\r\n");
-                }
                 if (delta.TotalSeconds < 0)
                 {
+                    Config.config.backgroundWorker1.CancelAsync();
                     break;
                 }
-                Thread.Sleep(200);
+                Thread.Sleep(5);
             }
-            return true;
+            return;
         }
 
         public static string GetToken(bool test = false)
         {
             string url = login_url + "?username=" + username + "&password=" + password;
-
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
             SetHeaderValues(request);

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace SeatKiller_UI
 {
@@ -9,8 +10,6 @@ namespace SeatKiller_UI
     {
         public static Config config;
         public ArrayList startTime = new ArrayList();
-        [DllImport("user32", EntryPoint = "HideCaret")]
-        private static extern bool HideCaret(IntPtr hWnd);
         public Config()
         {
             InitializeComponent();
@@ -23,7 +22,7 @@ namespace SeatKiller_UI
             textBox2.AppendText("Try getting token.....Status : success");
 
             SeatKiller.GetUsrInf();
-            label1.Text = "你好 , " + SeatKiller.name + "   上次登录时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
+            label1.Text = "你好 , " + SeatKiller.name + "  上次登录时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
             checkBox1.Checked = true;
 
             ArrayList building_list = new ArrayList();
@@ -86,10 +85,12 @@ namespace SeatKiller_UI
         {
             if (checkBox2.Checked == true)
             {
+                label7.Enabled = true;
                 textBox1.Enabled = true;
             }
             else
             {
+                label7.Enabled = false;
                 textBox1.Enabled = false;
             }
         }
@@ -172,7 +173,7 @@ namespace SeatKiller_UI
         {
             //About about = new About();
             //about.ShowDialog();
-            MessageBox.Show("版本号：1.4\r\nGitHub仓库：https://github.com/goolhanrry/SeatKiller_UI\r\n还没搭好的个人主页：https://www.goolhanrry.club/\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Style写得一般，欢迎添加我的微信: aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶", "关于");
+            MessageBox.Show("版本号：1.5\r\nGitHub仓库：https://github.com/goolhanrry/SeatKiller_UI\r\n还没搭好的个人主页：https://www.goolhanrry.club/\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Style写得一般，欢迎添加我的微信: aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶", "关于");
         }
 
         private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
@@ -204,16 +205,6 @@ namespace SeatKiller_UI
             comboBox6.DataSource = seats;
             comboBox6.DisplayMember = "Value";
             comboBox6.ValueMember = "Key";
-        }
-
-        private void textBox2_MouseDown(object sender, MouseEventArgs e)
-        {
-            HideCaret((sender as TextBox).Handle);
-        }
-
-        private void textBox2_Enter(object sender, EventArgs e)
-        {
-            HideCaret((sender as TextBox).Handle);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -277,8 +268,62 @@ namespace SeatKiller_UI
                 checkBox1.Enabled = true;
                 checkBox2.Enabled = true;
                 if (checkBox2.Checked)
+                {
                     textBox1.Enabled = true;
+                }
                 button1.Text = "开始抢座";
+            }
+        }
+
+        private void textBox2_Enter(object sender, EventArgs e)
+        {
+            label1.Focus();
+        }
+
+        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            int index = textBox2.GetFirstCharIndexOfCurrentLine();
+            bool first = true;
+            while (true)
+            {
+                if (backgroundWorker1.CancellationPending)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                TimeSpan delta = SeatKiller.time.Subtract(DateTime.Now);
+                if ((bool)e.Argument)
+                {
+                    if (first)
+                    {
+                        textBox2.AppendText("\r\n\r\n正在等待系统开放，剩余" + ((int)delta.TotalSeconds).ToString() + "秒\r\n");
+                        first = false;
+                    }
+                    else
+                    {
+                        textBox2.Select(index, textBox2.TextLength - index - 1);
+                        textBox2.SelectedText = "\r\n\r\n正在等待系统开放，剩余" + ((int)delta.TotalSeconds).ToString() + "秒\r\n";
+                    }
+                }
+                else
+                {
+                    if (first)
+                    {
+                        textBox2.AppendText("\r\n正在等待系统开放，剩余" + ((int)delta.TotalSeconds).ToString() + "秒\r\n");
+                        first = false;
+                    }
+                    else
+                    {
+                        textBox2.Select(index, textBox2.TextLength - index - 1);
+                        textBox2.SelectedText = "\r\n正在等待系统开放，剩余" + ((int)delta.TotalSeconds).ToString() + "秒\r\n";
+                    }
+                }
+                if (backgroundWorker1.CancellationPending)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                Thread.Sleep(1000);
             }
         }
     }

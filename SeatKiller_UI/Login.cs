@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace SeatKiller_UI
@@ -30,20 +31,32 @@ namespace SeatKiller_UI
 
         private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            if (SeatKiller.GetToken(true) == "登录失败: 密码不正确")
+            SeatKiller.username = "";
+            SeatKiller.password = "";
+            while (true)
             {
-                label4.Text = "Enable";
-                label4.ForeColor = Color.ForestGreen;
-            }
-            else
-            {
-                label4.Text = "Unable";
-                label4.ForeColor = Color.Red;
+                if (backgroundWorker1.CancellationPending)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                if (SeatKiller.GetToken(true) == "登录失败: 密码不正确")
+                {
+                    label4.Text = "Enable";
+                    label4.ForeColor = Color.ForestGreen;
+                }
+                else
+                {
+                    label4.Text = "Unable";
+                    label4.ForeColor = Color.Red;
+                }
+                Thread.Sleep(50);
             }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            backgroundWorker1.CancelAsync();
             SeatKiller.username = comboBox1.Text;
             SeatKiller.password = textBox1.Text;
             string response = SeatKiller.GetToken(true);
@@ -65,10 +78,12 @@ namespace SeatKiller_UI
             else if (response == "Connection lost")
             {
                 MessageBox.Show("登录失败，连接丢失", "登录失败");
+                backgroundWorker1.RunWorkerAsync();
             }
             else
             {
                 MessageBox.Show(response, "登录失败");
+                backgroundWorker1.RunWorkerAsync();
             }
         }
 

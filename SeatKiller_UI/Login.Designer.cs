@@ -45,7 +45,7 @@
             // textBox1
             // 
             this.textBox1.Font = new System.Drawing.Font("Calibri", 10.71429F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(207, 222);
+            this.textBox1.Location = new System.Drawing.Point(207, 224);
             this.textBox1.Name = "textBox1";
             this.textBox1.PasswordChar = '*';
             this.textBox1.Size = new System.Drawing.Size(267, 38);
@@ -56,7 +56,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("微软雅黑", 10.71429F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.Location = new System.Drawing.Point(120, 165);
+            this.label1.Location = new System.Drawing.Point(120, 164);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(81, 35);
             this.label1.TabIndex = 2;
@@ -95,9 +95,9 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(241, 332);
+            this.button1.Location = new System.Drawing.Point(241, 334);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(132, 55);
+            this.button1.Size = new System.Drawing.Size(135, 53);
             this.button1.TabIndex = 6;
             this.button1.Text = "登录";
             this.button1.UseVisualStyleBackColor = true;
@@ -130,6 +130,7 @@
             // 
             // backgroundWorker1
             // 
+            this.backgroundWorker1.WorkerSupportsCancellation = true;
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             // 
             // comboBox1
@@ -167,7 +168,7 @@
             this.Name = "Login";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "SeatKiller by goolhanrry v1.4";
+            this.Text = "SeatKiller by goolhanrry v1.5";
             this.Activated += new System.EventHandler(this.Login_Activated);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Login_FormClosed);
             this.Load += new System.EventHandler(this.Login_Load);

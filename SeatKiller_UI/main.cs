@@ -18,14 +18,42 @@ namespace SeatKiller_UI
 
         public static void Stop()
         {
+            bool waiting = false;
             try
             {
+                if (Config.config.backgroundWorker1.IsBusy)
+                {
+                    waiting = true;
+                }
+                Config.config.backgroundWorker1.CancelAsync();
+                while (true)
+                {
+                    if (!Config.config.backgroundWorker1.IsBusy)
+                    {
+                        break;
+                    }
+                }
                 thread.Abort();
-                Config.config.textBox2.AppendText("\r\n\r\n----------------------------运行中断-----------------------------\r\n");
+                if (waiting)
+                {
+                    Config.config.textBox2.AppendText("\r\n----------------------------运行中断-----------------------------\r\n");
+                }
+                else
+                {
+                    Config.config.textBox2.AppendText("\r\n\r\n----------------------------运行中断-----------------------------\r\n");
+                }
+
             }
             catch
             {
-                Config.config.textBox2.AppendText("\r\n\r\n----------------------------运行中断-----------------------------\r\n");
+                if (waiting)
+                {
+                    Config.config.textBox2.AppendText("\r\n----------------------------运行中断-----------------------------\r\n");
+                }
+                else
+                {
+                    Config.config.textBox2.AppendText("\r\n\r\n----------------------------运行中断-----------------------------\r\n");
+                }
             }
         }
 
@@ -69,7 +97,9 @@ namespace SeatKiller_UI
                         Config.config.checkBox1.Enabled = true;
                         Config.config.checkBox2.Enabled = true;
                         if (Config.config.checkBox2.Checked)
+                        {
                             Config.config.textBox1.Enabled = true;
+                        }
                         Config.config.button1.Text = "开始抢座";
                         return;
                     }
@@ -97,7 +127,9 @@ namespace SeatKiller_UI
                                     Config.config.checkBox1.Enabled = true;
                                     Config.config.checkBox2.Enabled = true;
                                     if (Config.config.checkBox2.Checked)
+                                    {
                                         Config.config.textBox1.Enabled = true;
+                                    }
                                     Config.config.button1.Text = "开始抢座";
                                     return;
                                 }
@@ -121,7 +153,9 @@ namespace SeatKiller_UI
                                     Config.config.checkBox1.Enabled = true;
                                     Config.config.checkBox2.Enabled = true;
                                     if (Config.config.checkBox2.Checked)
+                                    {
                                         Config.config.textBox1.Enabled = true;
+                                    }
                                     Config.config.button1.Text = "开始抢座";
                                     return;
                                 }
@@ -139,7 +173,9 @@ namespace SeatKiller_UI
                                 Config.config.checkBox1.Enabled = true;
                                 Config.config.checkBox2.Enabled = true;
                                 if (Config.config.checkBox2.Checked)
+                                {
                                     Config.config.textBox1.Enabled = true;
+                                }
                                 Config.config.button1.Text = "开始抢座";
                                 return;
                             }
@@ -162,7 +198,9 @@ namespace SeatKiller_UI
                                 Config.config.checkBox1.Enabled = true;
                                 Config.config.checkBox2.Enabled = true;
                                 if (Config.config.checkBox2.Checked)
+                                {
                                     Config.config.textBox1.Enabled = true;
+                                }
                                 Config.config.button1.Text = "开始抢座";
                                 return;
                             }
@@ -221,7 +259,9 @@ namespace SeatKiller_UI
                                             Config.config.checkBox1.Enabled = true;
                                             Config.config.checkBox2.Enabled = true;
                                             if (Config.config.checkBox2.Checked)
+                                            {
                                                 Config.config.textBox1.Enabled = true;
+                                            }
                                             Config.config.button1.Text = "开始抢座";
                                             return;
                                         }
@@ -245,7 +285,9 @@ namespace SeatKiller_UI
                                             Config.config.checkBox1.Enabled = true;
                                             Config.config.checkBox2.Enabled = true;
                                             if (Config.config.checkBox2.Checked)
+                                            {
                                                 Config.config.textBox1.Enabled = true;
+                                            }
                                             Config.config.button1.Text = "开始抢座";
                                             return;
                                         }
@@ -264,7 +306,9 @@ namespace SeatKiller_UI
                                             Config.config.checkBox1.Enabled = true;
                                             Config.config.checkBox2.Enabled = true;
                                             if (Config.config.checkBox2.Checked)
+                                            {
                                                 Config.config.textBox1.Enabled = true;
+                                            }
                                             Config.config.button1.Text = "开始抢座";
                                             return;
                                         case "Failed":
@@ -298,7 +342,9 @@ namespace SeatKiller_UI
                             Config.config.checkBox1.Enabled = true;
                             Config.config.checkBox2.Enabled = true;
                             if (Config.config.checkBox2.Checked)
+                            {
                                 Config.config.textBox1.Enabled = true;
+                            }
                             Config.config.button1.Text = "开始抢座";
                             return;
                         }
@@ -317,7 +363,9 @@ namespace SeatKiller_UI
                     Config.config.checkBox1.Enabled = true;
                     Config.config.checkBox2.Enabled = true;
                     if (Config.config.checkBox2.Checked)
+                    {
                         Config.config.textBox1.Enabled = true;
+                    }
                     Config.config.button1.Text = "开始抢座";
                     return;
                 }
@@ -348,7 +396,9 @@ namespace SeatKiller_UI
                 Config.config.checkBox1.Enabled = true;
                 Config.config.checkBox2.Enabled = true;
                 if (Config.config.checkBox2.Checked)
+                {
                     Config.config.textBox1.Enabled = true;
+                }
                 Config.config.button1.Text = "开始抢座";
                 return;
             }

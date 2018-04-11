@@ -46,7 +46,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(750, 168);
             this.label1.TabIndex = 0;
-            this.label1.Text = "版本号：1.4\r\nGitHub仓库：\r\n不定时更新，最新版本将在下方QQ群和GitHub仓库中发布\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode S" +
+            this.label1.Text = "版本号：1.5\r\nGitHub仓库：\r\n不定时更新，最新版本将在下方QQ群和GitHub仓库中发布\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode S" +
     "tyle写得一般，欢迎添加作者微信或QQ群交流探讨及提交bug ۹(๑•̀ω•́ ๑)۶";
             // 
             // pictureBox1
