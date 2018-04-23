@@ -363,7 +363,14 @@ namespace SeatKiller_UI
                     {
                         if (num.First["type"].ToString() == "seat")
                         {
-                            seats.Add(new DictionaryEntry(num.First["id"].ToString(), num.First["name"].ToString()));
+                            string seatInfo = num.First["name"].ToString();
+                            if (num.First["power"].ToString() == "True")
+                                seatInfo += " (电源)";
+                            if (num.First["window"].ToString() == "True")
+                                seatInfo += " (靠窗)";
+                            if (num.First["computer"].ToString() == "True")
+                                seatInfo += " (电脑)";
+                            seats.Add(new DictionaryEntry(num.First["id"].ToString(), seatInfo));
                         }
                     }
                     NewComparer newComparer = new NewComparer();

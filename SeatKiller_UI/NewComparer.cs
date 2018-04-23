@@ -13,9 +13,9 @@ namespace SeatKiller_UI
         {
             DictionaryEntry X = (DictionaryEntry)x;
             DictionaryEntry Y = (DictionaryEntry)y;
-            if (int.Parse(X.Value.ToString()) < int.Parse(Y.Value.ToString()))
+            if (int.Parse(X.Value.ToString().Substring(0, 3)) < int.Parse(Y.Value.ToString().Substring(0, 3)))
                 return -1;
-            else if (int.Parse(X.Value.ToString()) > int.Parse(Y.Value.ToString()))
+            else if (int.Parse(X.Value.ToString().Substring(0, 3)) > int.Parse(Y.Value.ToString().Substring(0, 3)))
                 return 1;
             else
                 return 0;
