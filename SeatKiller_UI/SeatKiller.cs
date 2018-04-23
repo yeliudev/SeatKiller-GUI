@@ -608,7 +608,7 @@ namespace SeatKiller_UI
 
         public static void PrintBookInf(JObject jObject)
         {
-            Config.config.textBox2.AppendText("\r\n--------------------------座位预约成功--------------------------");
+            Config.config.textBox2.AppendText("\r\n---------------------------座位预约成功---------------------------");
             Config.config.textBox2.AppendText("\r\nID：" + jObject["data"]["id"]);
             Config.config.textBox2.AppendText("\r\n凭证号码：" + jObject["data"]["receipt"]);
             Config.config.textBox2.AppendText("\r\n时间：" + jObject["data"]["onDate"] + " " + jObject["data"]["begin"] + "~" + jObject["data"]["end"]);
@@ -617,7 +617,7 @@ namespace SeatKiller_UI
             else
                 Config.config.textBox2.AppendText("\r\n状态：已签到");
             Config.config.textBox2.AppendText("\r\n地址：" + jObject["data"]["location"]);
-            Config.config.textBox2.AppendText("\r\n------------------------------------------------------------------");
+            Config.config.textBox2.AppendText("\r\n--------------------------------------------------------------------");
         }
 
         public static void SendMail(string json, string to_addr)

@@ -56,7 +56,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("微软雅黑", 10.71429F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.Location = new System.Drawing.Point(122, 164);
+            this.label1.Location = new System.Drawing.Point(123, 164);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(81, 35);
             this.label1.TabIndex = 2;
@@ -66,7 +66,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("微软雅黑", 10.71429F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(122, 223);
+            this.label2.Location = new System.Drawing.Point(123, 223);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(81, 35);
             this.label2.TabIndex = 3;
@@ -76,7 +76,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("微软雅黑", 7.714286F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(3, 414);
+            this.label3.Location = new System.Drawing.Point(3, 413);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(213, 25);
             this.label3.TabIndex = 4;
@@ -86,7 +86,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Calibri", 7.714286F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(209, 416);
+            this.label4.Location = new System.Drawing.Point(209, 415);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(85, 23);
             this.label4.TabIndex = 5;
@@ -148,7 +148,7 @@
             this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(168F, 168F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(611, 446);
+            this.ClientSize = new System.Drawing.Size(611, 445);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.checkBox1);
