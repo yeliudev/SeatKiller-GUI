@@ -173,7 +173,7 @@ namespace SeatKiller_UI
         {
             //About about = new About();
             //about.ShowDialog();
-            MessageBox.Show("版本号：1.5\r\nGitHub仓库：https://github.com/goolhanrry/SeatKiller_UI\r\n还没搭好的个人主页：https://www.goolhanrry.club/\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Style写得一般，欢迎添加我的微信: aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶", "关于");
+            MessageBox.Show("版本号：1.6\r\nGitHub仓库：https://github.com/goolhanrry/SeatKiller_UI\r\n还没搭好的个人主页：https://www.goolhanrry.club/\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Style写得一般，欢迎添加我的微信: aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶", "关于");
         }
 
         private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
@@ -237,12 +237,24 @@ namespace SeatKiller_UI
                 {
                     main.roomId = comboBox2.SelectedValue.ToString();
                 }
+
                 main.seatId = comboBox6.SelectedValue.ToString();
                 main.date = comboBox3.SelectedValue.ToString();
                 main.startTime = comboBox4.SelectedValue.ToString();
                 main.endTime = comboBox5.SelectedValue.ToString();
-                SeatKiller.to_addr = textBox1.Text;
 
+                SeatKiller.to_addr = textBox1.Text;
+                SeatKiller.onlyPower = checkBox3.Checked;
+                SeatKiller.onlyWindow = checkBox4.Checked;
+                SeatKiller.onlyComputer = checkBox5.Checked;
+
+                label2.Enabled = false;
+                label3.Enabled = false;
+                label4.Enabled = false;
+                label5.Enabled = false;
+                label6.Enabled = false;
+                label8.Enabled = false;
+                label9.Enabled = false;
                 comboBox1.Enabled = false;
                 comboBox2.Enabled = false;
                 comboBox3.Enabled = false;
@@ -251,6 +263,9 @@ namespace SeatKiller_UI
                 comboBox6.Enabled = false;
                 checkBox1.Enabled = false;
                 checkBox2.Enabled = false;
+                checkBox3.Enabled = false;
+                checkBox4.Enabled = false;
+                checkBox5.Enabled = false;
                 textBox1.Enabled = false;
                 button1.Text = "停止运行";
 
@@ -259,6 +274,13 @@ namespace SeatKiller_UI
             else
             {
                 main.Stop();
+                label2.Enabled = true;
+                label3.Enabled = true;
+                label4.Enabled = true;
+                label5.Enabled = true;
+                label6.Enabled = true;
+                label8.Enabled = true;
+                label9.Enabled = true;
                 comboBox1.Enabled = true;
                 comboBox2.Enabled = true;
                 comboBox3.Enabled = true;
@@ -267,6 +289,9 @@ namespace SeatKiller_UI
                 comboBox6.Enabled = true;
                 checkBox1.Enabled = true;
                 checkBox2.Enabled = true;
+                checkBox3.Enabled = true;
+                checkBox4.Enabled = true;
+                checkBox5.Enabled = true;
                 if (checkBox2.Checked)
                 {
                     textBox1.Enabled = true;

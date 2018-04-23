@@ -36,11 +36,11 @@ namespace SeatKiller_UI
                 thread.Abort();
                 if (waiting)
                 {
-                    Config.config.textBox2.AppendText("\r\n----------------------------运行中断-----------------------------\r\n");
+                    Config.config.textBox2.AppendText("\r\n-----------------------------运行中断------------------------------\r\n");
                 }
                 else
                 {
-                    Config.config.textBox2.AppendText("\r\n\r\n----------------------------运行中断-----------------------------\r\n");
+                    Config.config.textBox2.AppendText("\r\n\r\n-----------------------------运行中断------------------------------\r\n");
                 }
 
             }
@@ -48,11 +48,11 @@ namespace SeatKiller_UI
             {
                 if (waiting)
                 {
-                    Config.config.textBox2.AppendText("\r\n----------------------------运行中断-----------------------------\r\n");
+                    Config.config.textBox2.AppendText("\r\n-----------------------------运行中断------------------------------\r\n");
                 }
                 else
                 {
-                    Config.config.textBox2.AppendText("\r\n\r\n----------------------------运行中断-----------------------------\r\n");
+                    Config.config.textBox2.AppendText("\r\n\r\n-----------------------------运行中断------------------------------\r\n");
                 }
             }
         }
@@ -62,7 +62,7 @@ namespace SeatKiller_UI
             bool cancelled = false;
             if (Config.config.comboBox3.SelectedIndex == 1)
             {
-                Config.config.textBox2.AppendText("\r\n\r\n--------------------------进入抢座模式--------------------------\r\n");
+                Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入抢座模式---------------------------\r\n");
 
                 if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 22:14:40")) < 0)
                     SeatKiller.Wait("22", "14", "40", false);
@@ -84,23 +84,13 @@ namespace SeatKiller_UI
                     {
                         Config.config.textBox2.AppendText("\r\n预约系统开放时间已过，准备进入捡漏模式");
                         SeatKiller.Wait("01", "00", "00");
+
                         if (SeatKiller.exchange)
                             SeatKiller.ExchangeLoop(buildingId, rooms, startTime, endTime, roomId, seatId);
                         else
                             SeatKiller.Loop(buildingId, rooms, startTime, endTime, roomId, seatId);
-                        Config.config.comboBox1.Enabled = true;
-                        Config.config.comboBox2.Enabled = true;
-                        Config.config.comboBox3.Enabled = true;
-                        Config.config.comboBox4.Enabled = true;
-                        Config.config.comboBox5.Enabled = true;
-                        Config.config.comboBox6.Enabled = true;
-                        Config.config.checkBox1.Enabled = true;
-                        Config.config.checkBox2.Enabled = true;
-                        if (Config.config.checkBox2.Checked)
-                        {
-                            Config.config.textBox1.Enabled = true;
-                        }
-                        Config.config.button1.Text = "开始抢座";
+
+                        EnableControls();
                         return;
                     }
 
@@ -117,20 +107,8 @@ namespace SeatKiller_UI
                                 else
                                 {
                                     Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，请稍后重试\r\n");
-                                    Config.config.textBox2.AppendText("\r\n--------------------------退出抢座模式--------------------------\r\n");
-                                    Config.config.comboBox1.Enabled = true;
-                                    Config.config.comboBox2.Enabled = true;
-                                    Config.config.comboBox3.Enabled = true;
-                                    Config.config.comboBox4.Enabled = true;
-                                    Config.config.comboBox5.Enabled = true;
-                                    Config.config.comboBox6.Enabled = true;
-                                    Config.config.checkBox1.Enabled = true;
-                                    Config.config.checkBox2.Enabled = true;
-                                    if (Config.config.checkBox2.Checked)
-                                    {
-                                        Config.config.textBox1.Enabled = true;
-                                    }
-                                    Config.config.button1.Text = "开始抢座";
+                                    Config.config.textBox2.AppendText("\r\n---------------------------退出抢座模式---------------------------\r\n");
+                                    EnableControls();
                                     return;
                                 }
                             }
@@ -143,40 +121,16 @@ namespace SeatKiller_UI
                                 else
                                 {
                                     Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，请稍后重试\r\n");
-                                    Config.config.textBox2.AppendText("\r\n--------------------------退出抢座模式--------------------------\r\n");
-                                    Config.config.comboBox1.Enabled = true;
-                                    Config.config.comboBox2.Enabled = true;
-                                    Config.config.comboBox3.Enabled = true;
-                                    Config.config.comboBox4.Enabled = true;
-                                    Config.config.comboBox5.Enabled = true;
-                                    Config.config.comboBox6.Enabled = true;
-                                    Config.config.checkBox1.Enabled = true;
-                                    Config.config.checkBox2.Enabled = true;
-                                    if (Config.config.checkBox2.Checked)
-                                    {
-                                        Config.config.textBox1.Enabled = true;
-                                    }
-                                    Config.config.button1.Text = "开始抢座";
+                                    Config.config.textBox2.AppendText("\r\n---------------------------退出抢座模式---------------------------\r\n");
+                                    EnableControls();
                                     return;
                                 }
                             }
 
                             if (SeatKiller.BookSeat(seatId, date, startTime, endTime) == "Success")
                             {
-                                Config.config.textBox2.AppendText("\r\n\r\n--------------------------退出抢座模式--------------------------\r\n");
-                                Config.config.comboBox1.Enabled = true;
-                                Config.config.comboBox2.Enabled = true;
-                                Config.config.comboBox3.Enabled = true;
-                                Config.config.comboBox4.Enabled = true;
-                                Config.config.comboBox5.Enabled = true;
-                                Config.config.comboBox6.Enabled = true;
-                                Config.config.checkBox1.Enabled = true;
-                                Config.config.checkBox2.Enabled = true;
-                                if (Config.config.checkBox2.Checked)
-                                {
-                                    Config.config.textBox1.Enabled = true;
-                                }
-                                Config.config.button1.Text = "开始抢座";
+                                Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出抢座模式---------------------------\r\n");
+                                EnableControls();
                                 return;
                             }
                             else if (Config.config.checkBox1.Checked)
@@ -188,20 +142,8 @@ namespace SeatKiller_UI
                             else
                             {
                                 Config.config.textBox2.AppendText("\r\n\r\n抢座失败\r\n");
-                                Config.config.textBox2.AppendText("\r\n--------------------------退出抢座模式--------------------------\r\n");
-                                Config.config.comboBox1.Enabled = true;
-                                Config.config.comboBox2.Enabled = true;
-                                Config.config.comboBox3.Enabled = true;
-                                Config.config.comboBox4.Enabled = true;
-                                Config.config.comboBox5.Enabled = true;
-                                Config.config.comboBox6.Enabled = true;
-                                Config.config.checkBox1.Enabled = true;
-                                Config.config.checkBox2.Enabled = true;
-                                if (Config.config.checkBox2.Checked)
-                                {
-                                    Config.config.textBox1.Enabled = true;
-                                }
-                                Config.config.button1.Text = "开始抢座";
+                                Config.config.textBox2.AppendText("\r\n---------------------------退出抢座模式---------------------------\r\n");
+                                EnableControls();
                                 return;
                             }
                         }
@@ -249,20 +191,8 @@ namespace SeatKiller_UI
                                         else
                                         {
                                             Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，请稍后重试\r\n");
-                                            Config.config.textBox2.AppendText("\r\n--------------------------退出抢座模式--------------------------\r\n");
-                                            Config.config.comboBox1.Enabled = true;
-                                            Config.config.comboBox2.Enabled = true;
-                                            Config.config.comboBox3.Enabled = true;
-                                            Config.config.comboBox4.Enabled = true;
-                                            Config.config.comboBox5.Enabled = true;
-                                            Config.config.comboBox6.Enabled = true;
-                                            Config.config.checkBox1.Enabled = true;
-                                            Config.config.checkBox2.Enabled = true;
-                                            if (Config.config.checkBox2.Checked)
-                                            {
-                                                Config.config.textBox1.Enabled = true;
-                                            }
-                                            Config.config.button1.Text = "开始抢座";
+                                            Config.config.textBox2.AppendText("\r\n---------------------------退出抢座模式---------------------------\r\n");
+                                            EnableControls();
                                             return;
                                         }
                                     }
@@ -275,20 +205,8 @@ namespace SeatKiller_UI
                                         else
                                         {
                                             Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，请稍后重试\r\n");
-                                            Config.config.textBox2.AppendText("\r\n--------------------------退出抢座模式--------------------------\r\n");
-                                            Config.config.comboBox1.Enabled = true;
-                                            Config.config.comboBox2.Enabled = true;
-                                            Config.config.comboBox3.Enabled = true;
-                                            Config.config.comboBox4.Enabled = true;
-                                            Config.config.comboBox5.Enabled = true;
-                                            Config.config.comboBox6.Enabled = true;
-                                            Config.config.checkBox1.Enabled = true;
-                                            Config.config.checkBox2.Enabled = true;
-                                            if (Config.config.checkBox2.Checked)
-                                            {
-                                                Config.config.textBox1.Enabled = true;
-                                            }
-                                            Config.config.button1.Text = "开始抢座";
+                                            Config.config.textBox2.AppendText("\r\n---------------------------退出抢座模式---------------------------\r\n");
+                                            EnableControls();
                                             return;
                                         }
                                     }
@@ -296,20 +214,8 @@ namespace SeatKiller_UI
                                     switch (SeatKiller.BookSeat(freeSeat.ToString(), date, startTime, endTime))
                                     {
                                         case "Success":
-                                            Config.config.textBox2.AppendText("\r\n\r\n--------------------------退出抢座模式--------------------------\r\n");
-                                            Config.config.comboBox1.Enabled = true;
-                                            Config.config.comboBox2.Enabled = true;
-                                            Config.config.comboBox3.Enabled = true;
-                                            Config.config.comboBox4.Enabled = true;
-                                            Config.config.comboBox5.Enabled = true;
-                                            Config.config.comboBox6.Enabled = true;
-                                            Config.config.checkBox1.Enabled = true;
-                                            Config.config.checkBox2.Enabled = true;
-                                            if (Config.config.checkBox2.Checked)
-                                            {
-                                                Config.config.textBox1.Enabled = true;
-                                            }
-                                            Config.config.button1.Text = "开始抢座";
+                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出抢座模式---------------------------\r\n");
+                                            EnableControls();
                                             return;
                                         case "Failed":
                                             Thread.Sleep(2000);
@@ -317,7 +223,7 @@ namespace SeatKiller_UI
                                         case "Connection lost":
                                             DateTime time = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 23:45:00");
                                             TimeSpan delta = time.Subtract(DateTime.Now);
-                                            Config.config.textBox2.AppendText("\r\n\r\n连接丢失，1分钟后重新尝试抢座，系统开放时间剩余" + delta.TotalSeconds.ToString() + "秒\r\n");
+                                            Config.config.textBox2.AppendText("\r\n\r\n连接丢失，1分钟后重新尝试抢座，系统开放时间剩余" + ((int)delta.TotalSeconds).ToString() + "秒\r\n");
                                             Thread.Sleep(60000);
                                             break;
                                     }
@@ -332,20 +238,8 @@ namespace SeatKiller_UI
                         else
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n抢座失败，座位预约系统已关闭\r\n");
-                            Config.config.textBox2.AppendText("\r\n--------------------------退出抢座模式--------------------------\r\n");
-                            Config.config.comboBox1.Enabled = true;
-                            Config.config.comboBox2.Enabled = true;
-                            Config.config.comboBox3.Enabled = true;
-                            Config.config.comboBox4.Enabled = true;
-                            Config.config.comboBox5.Enabled = true;
-                            Config.config.comboBox6.Enabled = true;
-                            Config.config.checkBox1.Enabled = true;
-                            Config.config.checkBox2.Enabled = true;
-                            if (Config.config.checkBox2.Checked)
-                            {
-                                Config.config.textBox1.Enabled = true;
-                            }
-                            Config.config.button1.Text = "开始抢座";
+                            Config.config.textBox2.AppendText("\r\n---------------------------退出抢座模式---------------------------\r\n");
+                            EnableControls();
                             return;
                         }
                     }
@@ -353,20 +247,8 @@ namespace SeatKiller_UI
                 else
                 {
                     Config.config.textBox2.AppendText("\r\n\r\n获取token失败，请检查网络后重试\r\n");
-                    Config.config.textBox2.AppendText("\r\n--------------------------退出抢座模式--------------------------\r\n");
-                    Config.config.comboBox1.Enabled = true;
-                    Config.config.comboBox2.Enabled = true;
-                    Config.config.comboBox3.Enabled = true;
-                    Config.config.comboBox4.Enabled = true;
-                    Config.config.comboBox5.Enabled = true;
-                    Config.config.comboBox6.Enabled = true;
-                    Config.config.checkBox1.Enabled = true;
-                    Config.config.checkBox2.Enabled = true;
-                    if (Config.config.checkBox2.Checked)
-                    {
-                        Config.config.textBox1.Enabled = true;
-                    }
-                    Config.config.button1.Text = "开始抢座";
+                    Config.config.textBox2.AppendText("\r\n---------------------------退出抢座模式---------------------------\r\n");
+                    EnableControls();
                     return;
                 }
             }
@@ -387,21 +269,36 @@ namespace SeatKiller_UI
                     SeatKiller.Loop(buildingId, rooms, startTime, endTime, roomId, seatId);
                 }
 
-                Config.config.comboBox1.Enabled = true;
-                Config.config.comboBox2.Enabled = true;
-                Config.config.comboBox3.Enabled = true;
-                Config.config.comboBox4.Enabled = true;
-                Config.config.comboBox5.Enabled = true;
-                Config.config.comboBox6.Enabled = true;
-                Config.config.checkBox1.Enabled = true;
-                Config.config.checkBox2.Enabled = true;
-                if (Config.config.checkBox2.Checked)
-                {
-                    Config.config.textBox1.Enabled = true;
-                }
-                Config.config.button1.Text = "开始抢座";
+                EnableControls();
                 return;
             }
+        }
+
+        public static void EnableControls()
+        {
+            Config.config.label2.Enabled = true;
+            Config.config.label3.Enabled = true;
+            Config.config.label4.Enabled = true;
+            Config.config.label5.Enabled = true;
+            Config.config.label6.Enabled = true;
+            Config.config.label8.Enabled = true;
+            Config.config.label9.Enabled = true;
+            Config.config.comboBox1.Enabled = true;
+            Config.config.comboBox2.Enabled = true;
+            Config.config.comboBox3.Enabled = true;
+            Config.config.comboBox4.Enabled = true;
+            Config.config.comboBox5.Enabled = true;
+            Config.config.comboBox6.Enabled = true;
+            Config.config.checkBox1.Enabled = true;
+            Config.config.checkBox2.Enabled = true;
+            Config.config.checkBox3.Enabled = true;
+            Config.config.checkBox4.Enabled = true;
+            Config.config.checkBox5.Enabled = true;
+            if (Config.config.checkBox2.Checked)
+            {
+                Config.config.textBox1.Enabled = true;
+            }
+            Config.config.button1.Text = "开始抢座";
         }
     }
 }
