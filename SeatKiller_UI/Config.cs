@@ -253,6 +253,7 @@ namespace SeatKiller_UI
                 label4.Enabled = false;
                 label5.Enabled = false;
                 label6.Enabled = false;
+                label7.Enabled = false;
                 label8.Enabled = false;
                 label9.Enabled = false;
                 comboBox1.Enabled = false;
@@ -294,6 +295,7 @@ namespace SeatKiller_UI
                 checkBox5.Enabled = true;
                 if (checkBox2.Checked)
                 {
+                    label7.Enabled = true;
                     textBox1.Enabled = true;
                 }
                 button1.Text = "开始抢座";

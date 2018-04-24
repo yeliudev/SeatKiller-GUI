@@ -296,6 +296,7 @@ namespace SeatKiller_UI
             Config.config.checkBox5.Enabled = true;
             if (Config.config.checkBox2.Checked)
             {
+                Config.config.label7.Enabled = true;
                 Config.config.textBox1.Enabled = true;
             }
             Config.config.button1.Text = "开始抢座";
