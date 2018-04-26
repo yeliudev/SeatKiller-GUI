@@ -188,7 +188,7 @@ namespace SeatKiller_UI
                                         if (res["awayEnd"].ToString() != "")
                                         {
                                             reservation.label2.Text = reservation.label2.Text + "\r\n暂离时间: " + res["awayBegin"].ToString() + "~" + res["awayEnd"].ToString();
-                                            reservation.label3.Location = new Point(110, 253);
+                                            reservation.label3.Location = new Point(120, 253);
                                         }
                                         reservation.label2.Text = reservation.label2.Text + "\r\n状态: 已签到";
                                         reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
@@ -198,6 +198,7 @@ namespace SeatKiller_UI
                                         reservation.label2.Text = reservation.label2.Text + "\r\n暂离时间: " + res["awayBegin"].ToString();
                                         reservation.label2.Text = reservation.label2.Text + "\r\n状态: 暂离";
                                         reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
+                                        reservation.label3.Location = new Point(120, 253);
                                         check_in = true;
                                         break;
                                 }

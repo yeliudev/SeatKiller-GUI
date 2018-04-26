@@ -22,7 +22,7 @@ namespace SeatKiller_UI
             textBox2.AppendText("Try getting token.....Status : success");
 
             SeatKiller.GetUsrInf();
-            label1.Text = "你好 , " + SeatKiller.name + "  上次入馆时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
+            label1.Text = "你好 , " + SeatKiller.name + "  上次登录时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
             checkBox1.Checked = true;
 
             ArrayList building_list = new ArrayList();
@@ -173,7 +173,7 @@ namespace SeatKiller_UI
         {
             //About about = new About();
             //about.ShowDialog();
-            MessageBox.Show("版本号：1.6.1\r\nGitHub仓库：https://github.com/goolhanrry/SeatKiller_UI\r\n还没搭好的个人主页：https://www.goolhanrry.club/\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Style写得一般，欢迎添加我的微信: aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶", "关于");
+            MessageBox.Show("版本号：1.6.2\r\nGitHub仓库：https://github.com/goolhanrry/SeatKiller_UI\r\n还没搭好的个人主页：https://www.goolhanrry.club/\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Style写得一般，欢迎添加我的微信: aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶", "关于");
         }
 
         private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
@@ -344,11 +344,6 @@ namespace SeatKiller_UI
                         textBox2.Select(index, textBox2.TextLength - index - 1);
                         textBox2.SelectedText = "\r\n正在等待系统开放，剩余" + ((int)delta.TotalSeconds).ToString() + "秒\r\n";
                     }
-                }
-                if (backgroundWorker1.CancellationPending)
-                {
-                    e.Cancel = true;
-                    return;
                 }
                 Thread.Sleep(1000);
             }
