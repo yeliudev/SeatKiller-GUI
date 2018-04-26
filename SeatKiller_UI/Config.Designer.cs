@@ -372,7 +372,7 @@
             this.Name = "Config";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "SeatKiller by goolhanrry v1.6";
+            this.Text = "SeatKiller by goolhanrry v1.6.1";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Config_FormClosed);
             this.Load += new System.EventHandler(this.Config_Load);
             this.groupBox1.ResumeLayout(false);

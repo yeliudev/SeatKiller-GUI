@@ -87,6 +87,11 @@ namespace SeatKiller_UI
                 if (delta.TotalSeconds < 0)
                 {
                     Config.config.backgroundWorker1.CancelAsync();
+                    while (true)
+                    {
+                        if (!Config.config.backgroundWorker1.IsBusy)
+                            break;
+                    }
                     break;
                 }
                 Thread.Sleep(5);
@@ -237,7 +242,7 @@ namespace SeatKiller_UI
                 {
                     name = jObject["data"]["name"].ToString();
                     last_login_time = jObject["data"]["lastLogin"].ToString();
-                    if (jObject["data"]["checkedIn"].ToString() == "true")
+                    if (jObject["data"]["checkedIn"].ToString() == "True")
                     {
                         state = "已进入" + jObject["data"]["lastInBuildingName"].ToString();
                     }
