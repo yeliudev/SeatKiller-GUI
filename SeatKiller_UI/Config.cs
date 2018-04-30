@@ -70,6 +70,7 @@ namespace SeatKiller_UI
             startTime.Add(new DictionaryEntry("1230", "20:30"));
             startTime.Add(new DictionaryEntry("1260", "21:00"));
             startTime.Add(new DictionaryEntry("1290", "21:30"));
+            startTime.Add(new DictionaryEntry("1320", "22:00"));
             comboBox4.DataSource = startTime;
             comboBox4.DisplayMember = "Value";
             comboBox4.ValueMember = "Key";
@@ -173,18 +174,18 @@ namespace SeatKiller_UI
         {
             //About about = new About();
             //about.ShowDialog();
-            MessageBox.Show("版本号：1.6.3\r\nGitHub仓库：https://github.com/goolhanrry/SeatKiller_UI\r\n还没搭好的个人主页：https://www.goolhanrry.club/\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Style写得一般，欢迎添加我的微信: aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶", "关于");
+            MessageBox.Show("版本号：1.7\r\nGitHub仓库：https://github.com/goolhanrry/SeatKiller_UI\r\n还没搭好的个人主页：https://www.goolhanrry.club/\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Style写得一般，欢迎添加我的微信: aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶", "关于");
         }
 
         private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
         {
             ArrayList endTime = new ArrayList();
             int i;
-            for (i = comboBox4.SelectedIndex + 1; i <= 27; i++)
+            for (i = comboBox4.SelectedIndex + 1; i <= 28; i++)
             {
                 endTime.Add(startTime[i]);
             }
-            endTime.Add(new DictionaryEntry("1320", "22:00"));
+            endTime.Add(new DictionaryEntry("1350", "22:30"));
             comboBox5.DataSource = endTime;
             comboBox5.DisplayMember = "Value";
             comboBox5.ValueMember = "Key";

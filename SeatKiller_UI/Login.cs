@@ -7,16 +7,19 @@ namespace SeatKiller_UI
 {
     public partial class Login : Form
     {
+        public static Login login;
         BindingSource bs = new BindingSource();
         public Login()
         {
             InitializeComponent();
             CheckForIllegalCrossThreadCalls = false;
+            login = this;
         }
 
         private void Login_Load(object sender, EventArgs e)
         {
             backgroundWorker1.RunWorkerAsync();
+            backgroundWorker2.RunWorkerAsync();
             User.CreateSubKey();
             User.GetKey();
 
@@ -42,15 +45,25 @@ namespace SeatKiller_UI
                 }
                 if (SeatKiller.GetToken(true) == "登录失败: 密码不正确")
                 {
+                    if (backgroundWorker1.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
                     label4.Text = "Enable";
                     label4.ForeColor = Color.ForestGreen;
                 }
                 else
                 {
+                    if (backgroundWorker1.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
                     label4.Text = "Unable";
                     label4.ForeColor = Color.Red;
                 }
-                Thread.Sleep(50);
+                Thread.Sleep(200);
             }
         }
 
@@ -89,8 +102,14 @@ namespace SeatKiller_UI
 
         private void Login_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (ActiveForm.Name != "Config" & ActiveForm.Name != "Reservation")
+            if (e.CloseReason == CloseReason.ApplicationExitCall)
+            {
+                return;
+            }
+            else if (ActiveForm.Name != "Config" & ActiveForm.Name != "Reservation")
+            {
                 Application.Exit();
+            }
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -109,6 +128,17 @@ namespace SeatKiller_UI
         private void Login_Activated(object sender, EventArgs e)
         {
             comboBox1.Focus();
+        }
+
+        private void backgroundWorker2_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            if (SeatKiller.CheckUpdate())
+            {
+                backgroundWorker1.CancelAsync();
+                Enabled = false;
+                Update update = new Update();
+                update.ShowDialog();
+            }
         }
     }
 }

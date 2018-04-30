@@ -13,6 +13,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace SeatKiller_UI
 {
@@ -41,8 +42,7 @@ namespace SeatKiller_UI
         public static ArrayList freeSeats = new ArrayList();
         private static ArrayList startTimes = new ArrayList();
         private static ArrayList endTimes = new ArrayList();
-        public static string token = "";
-        public static string to_addr, res_id, username, password, name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
+        public static string to_addr, res_id, username, password, newVersion, newVersionSize, updateInfo, downloadURL, token = "", name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
         public static bool check_in, exchange = false, onlyPower = false, onlyWindow = false, onlyComputer = false;
         public static DateTime time;
 
@@ -71,6 +71,43 @@ namespace SeatKiller_UI
         private static bool RemoteCertificateValidate(object sender, X509Certificate cert, X509Chain chain, SslPolicyErrors error)
         {
             return true;
+        }
+
+        public static bool CheckUpdate()
+        {
+            string currentVersion = "v" + Application.ProductVersion.ToString();
+            string url = "https://api.github.com/repos/goolhanrry/Seatkiller_UI/releases/latest";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "GET";
+            SetHeaderValue(request.Headers, "User-Agent", "doSingle/11 CFNetwork/893.14.2 Darwin/17.3.0");
+            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+            request.Timeout = 3000;
+
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream stream = response.GetResponseStream();
+                Encoding encoding = Encoding.GetEncoding("UTF-8");
+                StreamReader streamReader = new StreamReader(stream, encoding);
+                string json = streamReader.ReadToEnd();
+                JObject jObject = JObject.Parse(json);
+                if (jObject["tag_name"].ToString() != currentVersion)
+                {
+                    newVersion = jObject["tag_name"].ToString().Substring(1);
+                    newVersionSize = (Convert.ToDouble(jObject["assets"].First["size"].ToString()) / (1024 * 1024)).ToString().Substring(0, 4) + " MB";
+                    updateInfo = jObject["body"].ToString();
+                    downloadURL = jObject["assets"].First["browser_download_url"].ToString();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public static void Wait(string hour, string minute, string second, bool enter = true)
@@ -190,7 +227,7 @@ namespace SeatKiller_UI
                                             reservation.label2.Text = reservation.label2.Text + "\r\n暂离时间: " + res["awayBegin"].ToString() + "~" + res["awayEnd"].ToString();
                                             reservation.label3.Location = new Point(120, 253);
                                         }
-                                        reservation.label2.Text = reservation.label2.Text + "\r\n状态: 已签到";
+                                        reservation.label2.Text = reservation.label2.Text + "\r\n状态: 履约中";
                                         reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
                                         check_in = true;
                                         break;

@@ -64,8 +64,8 @@ namespace SeatKiller_UI
             {
                 Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入抢座模式---------------------------\r\n");
 
-                if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 22:14:40")) < 0)
-                    SeatKiller.Wait("22", "14", "40", false);
+                if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 22:44:40")) < 0)
+                    SeatKiller.Wait("22", "44", "40", false);
                 bool try_booking = true;
 
                 if (SeatKiller.GetToken() == "Success")
@@ -78,9 +78,9 @@ namespace SeatKiller_UI
                         SeatKiller.exchange = true;
                     }
 
-                    if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 22:14:59")) < 0)
+                    if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 22:45:00")) < 0)
                     {
-                        SeatKiller.Wait("22", "15", "00");
+                        SeatKiller.Wait("22", "45", "00");
                     }
                     else if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 23:45:00")) > 0)
                     {
