@@ -213,33 +213,33 @@ namespace SeatKiller_UI
                             if (alert)
                             {
                                 Reservation reservation = new Reservation();
-                                reservation.label2.Text = "ID: " + res["id"] + "\r\n时间: " + res["date"] + " " + res["begin"] + "~" + res["end"];
+                                reservation.label2.Text = " ID: " + res["id"] + "\r\n 时间: " + res["date"] + " " + res["begin"] + "~" + res["end"];
                                 switch (res["stat"].ToString())
                                 {
                                     case "RESERVE":
-                                        reservation.label2.Text = reservation.label2.Text + "\r\n状态: 预约";
+                                        reservation.label2.Text = reservation.label2.Text + "\r\n 状态: 预约";
                                         reservation.label3.Text = "是否取消此预约？（若不取消可自动改签座位）";
                                         check_in = false;
                                         break;
                                     case "CHECK_IN":
                                         if (res["awayEnd"].ToString() != "")
                                         {
-                                            reservation.label2.Text = reservation.label2.Text + "\r\n暂离时间: " + res["awayBegin"].ToString() + "~" + res["awayEnd"].ToString();
+                                            reservation.label2.Text = reservation.label2.Text + "\r\n 暂离时间: " + res["awayBegin"].ToString() + "~" + res["awayEnd"].ToString();
                                             reservation.label3.Location = new Point(120, 253);
                                         }
-                                        reservation.label2.Text = reservation.label2.Text + "\r\n状态: 履约中";
+                                        reservation.label2.Text = reservation.label2.Text + "\r\n 状态: 履约中";
                                         reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
                                         check_in = true;
                                         break;
                                     default:
-                                        reservation.label2.Text = reservation.label2.Text + "\r\n暂离时间: " + res["awayBegin"].ToString();
-                                        reservation.label2.Text = reservation.label2.Text + "\r\n状态: 暂离";
+                                        reservation.label2.Text = reservation.label2.Text + "\r\n 暂离时间: " + res["awayBegin"].ToString();
+                                        reservation.label2.Text = reservation.label2.Text + "\r\n 状态: 暂离";
                                         reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
                                         reservation.label3.Location = new Point(120, 253);
                                         check_in = true;
                                         break;
                                 }
-                                reservation.label2.Text = reservation.label2.Text + "\r\n地址: " + res["loc"].ToString() + "\r\n-----------------------------------------------------------------";
+                                reservation.label2.Text = reservation.label2.Text + "\r\n 地址: " + res["loc"].ToString() + "\r\n------------------------------------------------------------------";
                                 reservation.Show();
                             }
                             return true;
