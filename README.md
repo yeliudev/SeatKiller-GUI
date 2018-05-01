@@ -28,14 +28,17 @@
   <img with="340" height="280" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot1.png" alt="screenshot1">
 </p>
 <p align="center">
-  <img with="598" height="421" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot2.png" alt="screenshot2">
+  <img with="376" height="250" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot2.png" alt="screenshot4">
 </p>
 <p align="center">
-  <img with="598" height="421" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot3.png" alt="screenshot3">
+  <img with="598" height="421" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot3.png" alt="screenshot2">
 </p>
 <p align="center">
-  <img with="376" height="250" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot4.png" alt="screenshot4">
+  <img with="598" height="421" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot4.png" alt="screenshot3">
 </p>
 <p align="center">
-  <img with="598" height="421" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot5.png" alt="screenshot5">
+  <img with="376" height="250" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot5.png" alt="screenshot4">
+</p>
+<p align="center">
+  <img with="598" height="421" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot6.png" alt="screenshot5">
 </p>
