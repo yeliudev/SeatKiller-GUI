@@ -7,7 +7,7 @@
 
 用C#重写的 [SeatKiller](https://github.com/goolhanrry/SeatKiller) GUI 版本，新增了座位改签和指定座位类型的功能，欢迎添加我的微信：`aweawds` 交流讨论
 
-代码引用请严格遵守 `Mozilla Public License 2.0` 协议，严禁修改代码后闭源，如有违约后果自负
+代码引用请遵守 `Mozilla Public License 2.0` 协议，严禁修改代码后闭源，如有违约后果自负
 
 ## 已经实现的功能
 
