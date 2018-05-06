@@ -7,6 +7,8 @@
 
 用C#重写的 [SeatKiller](https://github.com/goolhanrry/SeatKiller) GUI 版本，新增了座位改签和指定座位类型的功能，欢迎添加我的微信：`aweawds` 交流讨论
 
+代码引用请严格遵守 `Mozilla Public License 2.0` 协议，严禁修改代码后闭源，如有违约后果自负
+
 ## 已经实现的功能
 
 * 获取用户的信息，包括姓名、上次入馆时间、当前状态（未入馆、已进入某分馆）和累计违约次数
