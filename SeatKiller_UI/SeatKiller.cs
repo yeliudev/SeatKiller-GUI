@@ -19,29 +19,27 @@ namespace SeatKiller_UI
 {
     public static class SeatKiller
     {
-        private static string login_url = "https://seat.lib.whu.edu.cn:8443/rest/auth";  // 图书馆移动端登陆API
-        private static string usr_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/user";  // 用户信息API
-        private static string filters_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/free/filters";  // 分馆和区域信息API
-        private static string stats_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/room/stats2/";  // 单一分馆区域信息API（拼接buildingId）
-        private static string layout_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/room/layoutByDate/";  // 单一区域座位信息API（拼接roomId+date）
-        private static string search_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/searchSeats/";  // 空位检索API（拼接date+startTime+endTime）
-        private static string history_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/history/1/";  // 预约历史记录API（拼接历史记录个数）
-        private static string startTime_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/startTimesForSeat/";  // 座位开始时间API（拼接roomId+date）
-        private static string endTime_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/endTimesForSeat/";  // 座位结束时间API（拼接roomId+date+startTime）
-        private static string book_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/freeBook";  // 座位预约API
-        private static string cancel_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/cancel/";  // 取消预约API（拼接预约ID）
-        private static string stop_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/stop";  // 座位释放API
+        private static readonly string login_url = "https://seat.lib.whu.edu.cn:8443/rest/auth";  // 图书馆移动端登陆API
+        private static readonly string usr_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/user";  // 用户信息API
+        private static readonly string filters_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/free/filters";  // 分馆和区域信息API
+        private static readonly string stats_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/room/stats2/";  // 单一分馆区域信息API（拼接buildingId）
+        private static readonly string layout_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/room/layoutByDate/";  // 单一区域座位信息API（拼接roomId+date）
+        private static readonly string search_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/searchSeats/";  // 空位检索API（拼接date+startTime+endTime）
+        private static readonly string history_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/history/1/";  // 预约历史记录API（拼接历史记录个数）
+        private static readonly string startTime_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/startTimesForSeat/";  // 座位开始时间API（拼接roomId+date）
+        private static readonly string endTime_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/endTimesForSeat/";  // 座位结束时间API（拼接roomId+date+startTime）
+        private static readonly string book_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/freeBook";  // 座位预约API
+        private static readonly string cancel_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/cancel/";  // 取消预约API（拼接预约ID）
+        private static readonly string stop_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/stop";  // 座位释放API
 
-        // 已预先爬取的roomId
-        public static string[] xt = { "6", "7", "8", "9", "10", "11", "12", "16", "4", "5", "14", "15" };
-        public static string[] xt_less = { "6", "7", "8", "9", "10", "11", "12", "16" };
-        public static string[] gt = { "19", "29", "31", "32", "33", "34", "35", "37", "38" };
-        public static string[] yt = { "20", "21", "23", "24", "26", "27" };
-        public static string[] zt = { "39", "40", "51", "52", "56", "59", "60", "61", "62", "65", "66" };
+        public static readonly string[] xt = { "6", "7", "8", "9", "10", "11", "12", "16", "4", "5", "14", "15" };
+        public static readonly string[] xt_less = { "6", "7", "8", "9", "10", "11", "12", "16" };
+        public static readonly string[] gt = { "19", "29", "31", "32", "33", "34", "35", "37", "38" };
+        public static readonly string[] yt = { "20", "21", "23", "24", "26", "27" };
+        public static readonly string[] zt = { "39", "40", "51", "52", "56", "59", "60", "61", "62", "65", "66" };
 
         public static ArrayList freeSeats = new ArrayList();
-        private static ArrayList startTimes = new ArrayList();
-        private static ArrayList endTimes = new ArrayList();
+        private static ArrayList startTimes = new ArrayList(), endTimes = new ArrayList();
         public static string to_addr, res_id, username, password, newVersion, newVersionSize, updateInfo, downloadURL, token = "", name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
         public static bool check_in, exchange = false, onlyPower = false, onlyWindow = false, onlyComputer = false;
         public static DateTime time;
@@ -258,7 +256,7 @@ namespace SeatKiller_UI
             }
         }
 
-        public static bool GetUsrInf()
+        public static bool GetUsrInf(bool doNotAlert = false)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(usr_url);
             request.Method = "GET";
@@ -266,7 +264,11 @@ namespace SeatKiller_UI
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
             request.Timeout = 5000;
 
-            Config.config.textBox2.AppendText("\r\nTry getting user information.....Status : ");
+            if (!doNotAlert)
+            {
+                Config.config.textBox2.AppendText("\r\nTry getting user information.....Status : ");
+            }
+
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -275,17 +277,24 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
-                Config.config.textBox2.AppendText(jObject["status"].ToString());
+
+                if (!doNotAlert)
+                {
+                    Config.config.textBox2.AppendText(jObject["status"].ToString());
+                }
+
                 if (jObject["status"].ToString() == "success")
                 {
                     name = jObject["data"]["name"].ToString();
                     last_login_time = jObject["data"]["lastLogin"].ToString();
                     if (jObject["data"]["checkedIn"].ToString() == "True")
                     {
+                        check_in = true;
                         state = "已进入" + jObject["data"]["lastInBuildingName"].ToString();
                     }
                     else
                     {
+                        check_in = false;
                         state = "未入馆";
                     }
                     violationCount = jObject["data"]["violationCount"].ToString();
@@ -293,13 +302,19 @@ namespace SeatKiller_UI
                 }
                 else
                 {
-                    Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                    if (!doNotAlert)
+                    {
+                        Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                    }
                     return false;
                 }
             }
             catch
             {
-                Config.config.textBox2.AppendText("Connection lost");
+                if (!doNotAlert)
+                {
+                    Config.config.textBox2.AppendText("Connection lost");
+                }
                 return false;
             }
         }
@@ -433,7 +448,7 @@ namespace SeatKiller_UI
             }
         }
 
-        public static bool CancelReservation(string id, bool mute = false)
+        public static bool CancelReservation(string id, bool doNotAlert = false)
         {
             string url = cancel_url + id;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -442,7 +457,7 @@ namespace SeatKiller_UI
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
             request.Timeout = 5000;
 
-            if (!mute)
+            if (!doNotAlert)
             {
                 Config.config.textBox2.AppendText("\r\nTry cancelling reservation.....Status : ");
             }
@@ -454,7 +469,7 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
-                if (!mute)
+                if (!doNotAlert)
                 {
                     Config.config.textBox2.AppendText(jObject["status"].ToString());
                 }
@@ -464,16 +479,16 @@ namespace SeatKiller_UI
                 }
                 else
                 {
-                    if (!mute)
+                    if (!doNotAlert)
                     {
-                        Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                        Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，原因：" + jObject["message"].ToString());
                     }
                     return false;
                 }
             }
             catch
             {
-                if (!mute)
+                if (!doNotAlert)
                 {
                     Config.config.textBox2.AppendText("Connection lost");
                 }
@@ -481,7 +496,7 @@ namespace SeatKiller_UI
             }
         }
 
-        public static bool StopUsing(bool mute = false)
+        public static bool StopUsing(bool doNotAlert = false)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(stop_url);
             request.Method = "GET";
@@ -489,7 +504,7 @@ namespace SeatKiller_UI
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
             request.Timeout = 5000;
 
-            if (!mute)
+            if (!doNotAlert)
             {
                 Config.config.textBox2.AppendText("\r\nTry releasing seat.....Status : ");
             }
@@ -501,7 +516,7 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
-                if (!mute)
+                if (!doNotAlert)
                 {
                     Config.config.textBox2.AppendText(jObject["status"].ToString());
                 }
@@ -511,16 +526,16 @@ namespace SeatKiller_UI
                 }
                 else
                 {
-                    if (!mute)
+                    if (!doNotAlert)
                     {
-                        Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                        Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，原因：" + jObject["message"].ToString());
                     }
                     return false;
                 }
             }
             catch
             {
-                if (!mute)
+                if (!doNotAlert)
                 {
                     Config.config.textBox2.AppendText("Connection lost");
                 }
@@ -972,6 +987,7 @@ namespace SeatKiller_UI
                             {
                                 if (CheckStartTime(freeSeatId.ToString(), date, startTime) & CheckEndTime(freeSeatId.ToString(), date, startTime, endTime))
                                 {
+                                    GetUsrInf(true);
                                     if (check_in)
                                     {
                                         if (StopUsing())
@@ -980,8 +996,7 @@ namespace SeatKiller_UI
                                         }
                                         else
                                         {
-                                            Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，请稍后重试\r\n");
-                                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------");
                                             return false;
                                         }
                                     }
@@ -993,8 +1008,7 @@ namespace SeatKiller_UI
                                         }
                                         else
                                         {
-                                            Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，请稍后重试\r\n");
-                                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------");
                                             return false;
                                         }
                                     }
@@ -1052,6 +1066,7 @@ namespace SeatKiller_UI
                             {
                                 if (!cancelled)
                                 {
+                                    GetUsrInf(true);
                                     if (check_in)
                                     {
                                         if (StopUsing())
@@ -1060,8 +1075,7 @@ namespace SeatKiller_UI
                                         }
                                         else
                                         {
-                                            Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，请稍后重试\r\n");
-                                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------");
                                             return false;
                                         }
                                     }
@@ -1073,8 +1087,7 @@ namespace SeatKiller_UI
                                         }
                                         else
                                         {
-                                            Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，请稍后重试\r\n");
-                                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------");
                                             return false;
                                         }
                                     }
@@ -1129,6 +1142,7 @@ namespace SeatKiller_UI
                     Thread.Sleep(2000);
                 }
 
+                GetUsrInf(true);
                 if (check_in)
                 {
                     if (StopUsing())
@@ -1148,8 +1162,7 @@ namespace SeatKiller_UI
                     }
                     else
                     {
-                        Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，请稍后重试\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                        Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------");
                         return false;
                     }
                 }
@@ -1172,8 +1185,7 @@ namespace SeatKiller_UI
                     }
                     else
                     {
-                        Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，请稍后重试\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                        Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------");
                         return false;
                     }
                 }

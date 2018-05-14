@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace SeatKiller_UI
 {
-    public static class main
+    public static class Main
     {
         public static string buildingId, roomId, seatId, date, startTime, endTime;
         public static string[] rooms;
@@ -11,8 +11,10 @@ namespace SeatKiller_UI
 
         public static void Start()
         {
-            thread = new Thread(run);
-            thread.IsBackground = true;
+            thread = new Thread(run)
+            {
+                IsBackground = true
+            };
             thread.Start();
         }
 
@@ -296,6 +298,7 @@ namespace SeatKiller_UI
             Config.config.checkBox3.Enabled = true;
             Config.config.checkBox4.Enabled = true;
             Config.config.checkBox5.Enabled = true;
+            Config.config.checkBox6.Enabled = true;
             if (Config.config.checkBox2.Checked)
             {
                 Config.config.label7.Enabled = true;
