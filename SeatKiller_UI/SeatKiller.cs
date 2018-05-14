@@ -256,7 +256,7 @@ namespace SeatKiller_UI
             }
         }
 
-        public static bool GetUsrInf(bool doNotAlert = false)
+        public static bool GetUsrInf(bool alert = true)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(usr_url);
             request.Method = "GET";
@@ -264,7 +264,7 @@ namespace SeatKiller_UI
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
             request.Timeout = 5000;
 
-            if (!doNotAlert)
+            if (alert)
             {
                 Config.config.textBox2.AppendText("\r\nTry getting user information.....Status : ");
             }
@@ -278,7 +278,7 @@ namespace SeatKiller_UI
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
 
-                if (!doNotAlert)
+                if (alert)
                 {
                     Config.config.textBox2.AppendText(jObject["status"].ToString());
                 }
@@ -302,7 +302,7 @@ namespace SeatKiller_UI
                 }
                 else
                 {
-                    if (!doNotAlert)
+                    if (alert)
                     {
                         Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
                     }
@@ -311,7 +311,7 @@ namespace SeatKiller_UI
             }
             catch
             {
-                if (!doNotAlert)
+                if (alert)
                 {
                     Config.config.textBox2.AppendText("Connection lost");
                 }
@@ -448,7 +448,7 @@ namespace SeatKiller_UI
             }
         }
 
-        public static bool CancelReservation(string id, bool doNotAlert = false)
+        public static bool CancelReservation(string id, bool alert = true)
         {
             string url = cancel_url + id;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -457,7 +457,7 @@ namespace SeatKiller_UI
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
             request.Timeout = 5000;
 
-            if (!doNotAlert)
+            if (alert)
             {
                 Config.config.textBox2.AppendText("\r\nTry cancelling reservation.....Status : ");
             }
@@ -469,7 +469,7 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
-                if (!doNotAlert)
+                if (alert)
                 {
                     Config.config.textBox2.AppendText(jObject["status"].ToString());
                 }
@@ -479,7 +479,7 @@ namespace SeatKiller_UI
                 }
                 else
                 {
-                    if (!doNotAlert)
+                    if (alert)
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，原因：" + jObject["message"].ToString());
                     }
@@ -488,7 +488,7 @@ namespace SeatKiller_UI
             }
             catch
             {
-                if (!doNotAlert)
+                if (alert)
                 {
                     Config.config.textBox2.AppendText("Connection lost");
                 }
@@ -833,6 +833,12 @@ namespace SeatKiller_UI
                 Config.config.textBox2.AppendText("Connection lost");
                 return false;
             }
+        }
+
+        public static void LockSeat(string seatId, string date, string startTime, string endTime)
+        {
+            Config.config.textBox2.AppendText("\r\n\r\n正在锁定座位，ID: " + seatId);
+            Config.config.textBox2.AppendText("\r\n当前有效");
         }
 
         public static bool Loop(string buildingId, string[] rooms, string startTime, string endTime, string roomId = "0", string seatId = "0")

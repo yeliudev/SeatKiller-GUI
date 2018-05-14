@@ -8,47 +8,47 @@ namespace SeatKiller_UI
     public partial class Config : Form
     {
         public static Config config;
-
-        ArrayList startTime = new ArrayList
-        {
-            new DictionaryEntry("-1", "现在"),
-            new DictionaryEntry("480", "8:00"),
-            new DictionaryEntry("510", "8:30"),
-            new DictionaryEntry("540", "9:00"),
-            new DictionaryEntry("570", "9:30"),
-            new DictionaryEntry("600", "10:00"),
-            new DictionaryEntry("630", "10:30"),
-            new DictionaryEntry("660", "11:00"),
-            new DictionaryEntry("690", "11:30"),
-            new DictionaryEntry("720", "12:00"),
-            new DictionaryEntry("750", "12:30"),
-            new DictionaryEntry("780", "13:00"),
-            new DictionaryEntry("810", "13:30"),
-            new DictionaryEntry("840", "14:00"),
-            new DictionaryEntry("870", "14:30"),
-            new DictionaryEntry("900", "15:00"),
-            new DictionaryEntry("930", "15:30"),
-            new DictionaryEntry("960", "16:00"),
-            new DictionaryEntry("990", "16:30"),
-            new DictionaryEntry("1020", "17:00"),
-            new DictionaryEntry("1050", "17:30"),
-            new DictionaryEntry("1080", "18:00"),
-            new DictionaryEntry("1110", "18:30"),
-            new DictionaryEntry("1140", "19:00"),
-            new DictionaryEntry("1170", "19:30"),
-            new DictionaryEntry("1200", "20:00"),
-            new DictionaryEntry("1230", "20:30"),
-            new DictionaryEntry("1260", "21:00"),
-            new DictionaryEntry("1290", "21:30"),
-            new DictionaryEntry("1320", "22:00")
-        };
-
         ArrayList building_list = new ArrayList
         {
             new DictionaryEntry("1", "信息科学分馆"),
             new DictionaryEntry("2", "工学分馆"),
             new DictionaryEntry("3", "医学分馆"),
             new DictionaryEntry("4", "总馆")
+        };
+        BindingSource bs = new BindingSource
+        {
+            DataSource = new ArrayList
+            {
+                new DictionaryEntry("480", "8:00"),
+                new DictionaryEntry("510", "8:30"),
+                new DictionaryEntry("540", "9:00"),
+                new DictionaryEntry("570", "9:30"),
+                new DictionaryEntry("600", "10:00"),
+                new DictionaryEntry("630", "10:30"),
+                new DictionaryEntry("660", "11:00"),
+                new DictionaryEntry("690", "11:30"),
+                new DictionaryEntry("720", "12:00"),
+                new DictionaryEntry("750", "12:30"),
+                new DictionaryEntry("780", "13:00"),
+                new DictionaryEntry("810", "13:30"),
+                new DictionaryEntry("840", "14:00"),
+                new DictionaryEntry("870", "14:30"),
+                new DictionaryEntry("900", "15:00"),
+                new DictionaryEntry("930", "15:30"),
+                new DictionaryEntry("960", "16:00"),
+                new DictionaryEntry("990", "16:30"),
+                new DictionaryEntry("1020", "17:00"),
+                new DictionaryEntry("1050", "17:30"),
+                new DictionaryEntry("1080", "18:00"),
+                new DictionaryEntry("1110", "18:30"),
+                new DictionaryEntry("1140", "19:00"),
+                new DictionaryEntry("1170", "19:30"),
+                new DictionaryEntry("1200", "20:00"),
+                new DictionaryEntry("1230", "20:30"),
+                new DictionaryEntry("1260", "21:00"),
+                new DictionaryEntry("1290", "21:30"),
+                new DictionaryEntry("1320", "22:00")
+            }
         };
         public Config()
         {
@@ -61,8 +61,6 @@ namespace SeatKiller_UI
         {
             textBox2.AppendText("Try getting token.....Status : success");
 
-            backgroundWorker2.RunWorkerAsync();
-
             comboBox1.DataSource = building_list;
             comboBox1.DisplayMember = "Value";
             comboBox1.ValueMember = "Key";
@@ -70,21 +68,43 @@ namespace SeatKiller_UI
             comboBox2.DisplayMember = "Value";
             comboBox2.ValueMember = "Key";
 
-            comboBox4.DataSource = startTime;
+            comboBox3.DisplayMember = "Value";
+            comboBox3.ValueMember = "Key";
+
             comboBox4.DisplayMember = "Value";
             comboBox4.ValueMember = "Key";
-            comboBox4.SelectedIndex = 1;
 
             comboBox5.DisplayMember = "Value";
             comboBox5.ValueMember = "Key";
 
             comboBox6.DisplayMember = "Value";
             comboBox6.ValueMember = "Key";
+
+            comboBox4.DataSource = bs;
+
+            backgroundWorker2.RunWorkerAsync();
+            backgroundWorker3.RunWorkerAsync();
+        }
+
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            base.OnVisibleChanged(e);
+            if (!IsHandleCreated)
+            {
+                Close();
+            }
         }
 
         private void Config_FormClosed(object sender, FormClosedEventArgs e)
         {
             Application.Exit();
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            //About about = new About();
+            //about.ShowDialog();
+            MessageBox.Show("版本号：1.8\r\nGitHub仓库：https://github.com/goolhanrry/SeatKiller_UI\r\n还没搭好的个人主页：https://www.goolhanrry.club/\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Style写得一般，欢迎添加我的微信: aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶", "关于");
         }
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
@@ -171,34 +191,6 @@ namespace SeatKiller_UI
             }
         }
 
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            //About about = new About();
-            //about.ShowDialog();
-            MessageBox.Show("版本号：1.7.1\r\nGitHub仓库：https://github.com/goolhanrry/SeatKiller_UI\r\n还没搭好的个人主页：https://www.goolhanrry.club/\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Style写得一般，欢迎添加我的微信: aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶", "关于");
-        }
-
-        private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ArrayList endTime = new ArrayList();
-            if (comboBox4.SelectedIndex == 0)
-            {
-                for (int i = 2; i <= 29; i++)
-                {
-                    endTime.Add(startTime[i]);
-                }
-            }
-            else
-            {
-                for (int i = comboBox4.SelectedIndex + 1; i <= 29; i++)
-                {
-                    endTime.Add(startTime[i]);
-                }
-            }
-            endTime.Add(new DictionaryEntry("1350", "22:30"));
-            comboBox5.DataSource = endTime;
-        }
-
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             ArrayList seats = new ArrayList();
@@ -211,6 +203,41 @@ namespace SeatKiller_UI
             }
             seats.Insert(0, new DictionaryEntry("0", "(自动选择)"));
             comboBox6.DataSource = seats;
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox3.SelectedIndex == 0 && comboBox4.Items.Count < 30)
+            {
+                bs.Insert(0, new DictionaryEntry("-1", "现在"));
+                bs.ResetBindings(false);
+            }
+            else if (comboBox3.SelectedIndex == 1 && comboBox4.Items.Count == 30)
+            {
+                bs.RemoveAt(0);
+                bs.ResetBindings(false);
+            }
+        }
+
+        private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ArrayList endTime = new ArrayList();
+            if (comboBox4.SelectedIndex == 0 && comboBox3.SelectedIndex == 0)
+            {
+                for (int i = comboBox4.SelectedIndex + 2; i <= bs.Count - 1; i++)
+                {
+                    endTime.Add(bs[i]);
+                }
+            }
+            else
+            {
+                for (int i = comboBox4.SelectedIndex + 1; i <= bs.Count - 1; i++)
+                {
+                    endTime.Add(bs[i]);
+                }
+            }
+            endTime.Add(new DictionaryEntry("1350", "22:30"));
+            comboBox5.DataSource = endTime;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -364,21 +391,32 @@ namespace SeatKiller_UI
             {
                 if (SeatKiller.GetToken(true) == "Success")
                 {
-                    SeatKiller.GetUsrInf(true);
+                    SeatKiller.GetUsrInf(false);
                     label1.Text = "你好 , " + SeatKiller.name + "  上次入馆时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
                 }
+                Thread.Sleep(1000);
+            }
+        }
 
-                ArrayList date = new ArrayList
+        private void backgroundWorker3_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            while (true)
+            {
+                comboBox3.DataSource = new ArrayList
                 {
                     new DictionaryEntry(DateTime.Now.ToString("yyyy-MM-dd"), DateTime.Now.ToString("yyyy-MM-dd") + " (今天)"),
                     new DictionaryEntry(DateTime.Now.AddDays(1).ToString("yyyy-MM-dd"), DateTime.Now.AddDays(1).ToString("yyyy-MM-dd") + " (明天)")
                 };
-                comboBox3.DataSource = date;
-                comboBox3.DisplayMember = "Value";
-                comboBox3.ValueMember = "Key";
                 comboBox3.SelectedIndex = 1;
 
-                Thread.Sleep(1000);
+                while (true)
+                {
+                    if (DateTime.Now.ToString("yyyy-MM-dd") != ((DictionaryEntry)comboBox3.Items[0]).Key.ToString())
+                    {
+                        break;
+                    }
+                    Thread.Sleep(100);
+                }
             }
         }
     }

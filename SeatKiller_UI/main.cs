@@ -11,7 +11,7 @@ namespace SeatKiller_UI
 
         public static void Start()
         {
-            thread = new Thread(run)
+            thread = new Thread(Run)
             {
                 IsBackground = true
             };
@@ -20,46 +20,20 @@ namespace SeatKiller_UI
 
         public static void Stop()
         {
-            bool waiting = false;
-            try
+            bool waiting = Config.config.backgroundWorker1.IsBusy ? true : false;
+            Config.config.backgroundWorker1.CancelAsync();
+            while (true)
             {
-                if (Config.config.backgroundWorker1.IsBusy)
+                if (!Config.config.backgroundWorker1.IsBusy)
                 {
-                    waiting = true;
-                }
-                Config.config.backgroundWorker1.CancelAsync();
-                while (true)
-                {
-                    if (!Config.config.backgroundWorker1.IsBusy)
-                    {
-                        break;
-                    }
-                }
-                thread.Abort();
-                if (waiting)
-                {
-                    Config.config.textBox2.AppendText("\r\n-----------------------------运行中断------------------------------\r\n");
-                }
-                else
-                {
-                    Config.config.textBox2.AppendText("\r\n\r\n-----------------------------运行中断------------------------------\r\n");
-                }
-
-            }
-            catch
-            {
-                if (waiting)
-                {
-                    Config.config.textBox2.AppendText("\r\n-----------------------------运行中断------------------------------\r\n");
-                }
-                else
-                {
-                    Config.config.textBox2.AppendText("\r\n\r\n-----------------------------运行中断------------------------------\r\n");
+                    break;
                 }
             }
+            thread.Abort();
+            Config.config.textBox2.AppendText(waiting ? "" : "\r\n" + "\r\n-----------------------------运行中断------------------------------\r\n");
         }
 
-        public static void run()
+        public static void Run()
         {
             bool cancelled = false;
             if (Config.config.comboBox3.SelectedIndex == 1)
@@ -90,9 +64,13 @@ namespace SeatKiller_UI
                         SeatKiller.Wait("01", "00", "00");
 
                         if (SeatKiller.exchange)
+                        {
                             SeatKiller.ExchangeLoop(buildingId, rooms, startTime, endTime, roomId, seatId);
+                        }
                         else
+                        {
                             SeatKiller.Loop(buildingId, rooms, startTime, endTime, roomId, seatId);
+                        }
 
                         EnableControls();
                         return;

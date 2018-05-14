@@ -21,7 +21,7 @@ namespace SeatKiller_UI
             }
             else
             {
-                if (!SeatKiller.CancelReservation(SeatKiller.res_id, true))
+                if (!SeatKiller.CancelReservation(SeatKiller.res_id, false))
                 {
                     MessageBox.Show("取消预约失败，请稍后重试", "失败");
                 }
