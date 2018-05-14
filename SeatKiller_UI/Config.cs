@@ -60,6 +60,7 @@ namespace SeatKiller_UI
         private void Config_Load(object sender, EventArgs e)
         {
             textBox2.AppendText("Try getting token.....Status : success");
+            textBox2.AppendText("\r\nTry getting user information.....Status : success");
 
             comboBox1.DataSource = building_list;
             comboBox1.DisplayMember = "Value";
