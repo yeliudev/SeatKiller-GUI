@@ -40,8 +40,8 @@ namespace SeatKiller_UI
 
         public static ArrayList freeSeats = new ArrayList();
         private static ArrayList startTimes = new ArrayList(), endTimes = new ArrayList();
-        public static string to_addr, res_id, username, password, newVersion, newVersionSize, updateInfo, downloadURL, token = "", name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
-        public static bool check_in, exchange = false, onlyPower = false, onlyWindow = false, onlyComputer = false;
+        public static string to_addr, res_id, username, password, newVersion, newVersionSize, updateInfo, downloadURL, status, historyDate, historyStartTime, historyEndTime, historyAwayStartTime, token = "", name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
+        public static bool check_in = false, exchange = false, onlyPower = false, onlyWindow = false, onlyComputer = false;
         public static DateTime time;
 
         private static void SetHeaderValue(WebHeaderCollection header, string name, string value)
@@ -134,7 +134,7 @@ namespace SeatKiller_UI
             return;
         }
 
-        public static string GetToken(bool test = false)
+        public static string GetToken(bool alert = true)
         {
             string url = login_url + "?username=" + username + "&password=" + password;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -143,7 +143,7 @@ namespace SeatKiller_UI
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
             request.Timeout = 3000;
 
-            if (!test)
+            if (alert)
             {
                 Config.config.textBox2.AppendText("\r\nTry getting token.....Status : ");
             }
@@ -155,7 +155,7 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
-                if (!test)
+                if (alert)
                 {
                     Config.config.textBox2.AppendText(jObject["status"].ToString());
                 }
@@ -166,7 +166,7 @@ namespace SeatKiller_UI
                 }
                 else
                 {
-                    if (!test)
+                    if (alert)
                     {
                         Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
                     }
@@ -175,7 +175,7 @@ namespace SeatKiller_UI
             }
             catch
             {
-                if (!test)
+                if (alert)
                 {
                     Config.config.textBox2.AppendText("Connection lost");
                 }
@@ -200,12 +200,12 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
-                string[] status = { "RESERVE", "CHECK_IN", "AWAY" };
+                string[] probableStatus = { "RESERVE", "CHECK_IN", "AWAY" };
                 if (jObject["status"].ToString() == "success")
                 {
                     foreach (JToken res in jObject["data"]["reservations"])
                     {
-                        if (status.Contains(res["stat"].ToString()))
+                        if (probableStatus.Contains(res["stat"].ToString()))
                         {
                             res_id = res["id"].ToString();
                             if (alert)
@@ -239,6 +239,17 @@ namespace SeatKiller_UI
                                 }
                                 reservation.label2.Text = reservation.label2.Text + "\r\n 地址: " + res["loc"].ToString() + "\r\n------------------------------------------------------------------";
                                 reservation.Show();
+                            }
+                            else
+                            {
+                                status = res["stat"].ToString();
+                                historyDate = res["date"].ToString();
+                                historyStartTime = res["begin"].ToString();
+                                historyEndTime = res["end"].ToString();
+                                if (res["stat"].ToString() == "AWAY")
+                                {
+                                    historyAwayStartTime = res["awayEnd"].ToString();
+                                }
                             }
                             return true;
                         }
@@ -496,7 +507,7 @@ namespace SeatKiller_UI
             }
         }
 
-        public static bool StopUsing(bool doNotAlert = false)
+        public static bool StopUsing(bool alert = true)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(stop_url);
             request.Method = "GET";
@@ -504,7 +515,7 @@ namespace SeatKiller_UI
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
             request.Timeout = 5000;
 
-            if (!doNotAlert)
+            if (alert)
             {
                 Config.config.textBox2.AppendText("\r\nTry releasing seat.....Status : ");
             }
@@ -516,7 +527,7 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
-                if (!doNotAlert)
+                if (alert)
                 {
                     Config.config.textBox2.AppendText(jObject["status"].ToString());
                 }
@@ -526,7 +537,7 @@ namespace SeatKiller_UI
                 }
                 else
                 {
-                    if (!doNotAlert)
+                    if (alert)
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，原因：" + jObject["message"].ToString());
                     }
@@ -535,7 +546,7 @@ namespace SeatKiller_UI
             }
             catch
             {
-                if (!doNotAlert)
+                if (alert)
                 {
                     Config.config.textBox2.AppendText("Connection lost");
                 }
@@ -609,7 +620,7 @@ namespace SeatKiller_UI
             }
         }
 
-        public static string BookSeat(string seatId, string date, string startTime, string endTime)
+        public static string BookSeat(string seatId, string date, string startTime, string endTime, bool alert = true)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(book_url);
             request.Method = "POST";
@@ -628,7 +639,11 @@ namespace SeatKiller_UI
             request.ContentLength = data.Length;
             request.GetRequestStream().Write(data, 0, data.Length);
 
-            Config.config.textBox2.AppendText("\r\n\r\nTry booking seat.....Status : ");
+            if (alert)
+            {
+                Config.config.textBox2.AppendText("\r\n\r\nTry booking seat.....Status : ");
+            }
+
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -637,29 +652,41 @@ namespace SeatKiller_UI
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
                 JObject jObject = JObject.Parse(json);
-                Config.config.textBox2.AppendText(jObject["status"].ToString() + "\r\n");
+                if (alert)
+                {
+                    Config.config.textBox2.AppendText(jObject["status"].ToString() + "\r\n");
+                }
                 if (jObject["status"].ToString() == "success")
                 {
                     exchange = true;
-                    PrintBookInf(jObject);
-                    if (Config.config.checkBox2.Checked)
+                    if (alert)
                     {
-                        jObject.Add("username", username);
-                        jObject.Add("name", name);
-                        jObject.Add("client", "C#");
-                        SendMail(jObject.ToString(), to_addr);
+                        PrintBookInf(jObject);
+                        if (Config.config.checkBox2.Checked)
+                        {
+                            jObject.Add("username", username);
+                            jObject.Add("name", name);
+                            jObject.Add("client", "C#");
+                            SendMail(jObject.ToString(), to_addr);
+                        }
                     }
                     return "Success";
                 }
                 else
                 {
-                    Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                    if (alert)
+                    {
+                        Config.config.textBox2.AppendText("\r\n预约座位失败，原因：" + jObject["message"].ToString());
+                    }
                     return "Failed";
                 }
             }
             catch
             {
-                Config.config.textBox2.AppendText("Connection lost");
+                if (alert)
+                {
+                    Config.config.textBox2.AppendText("Connection lost");
+                }
                 return "Connection lost";
             }
         }
@@ -835,10 +862,69 @@ namespace SeatKiller_UI
             }
         }
 
-        public static void LockSeat(string seatId, string date, string startTime, string endTime)
+        public static void LockSeat(string seatId, bool enter = false)
         {
-            Config.config.textBox2.AppendText("\r\n\r\n正在锁定座位，ID: " + seatId);
-            Config.config.textBox2.AppendText("\r\n当前有效");
+            Config.config.textBox2.AppendText(enter ? "\r\n" : "" + "\r\n正在锁定座位，ID: " + seatId);
+            CheckResInf(false);
+            Config.config.textBox2.AppendText("\r\n当前有效" + (check_in ? "使用" : "预约") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime + "\r\n");
+            while (true)
+            {
+                Thread.Sleep(30000);
+                GetToken(false);
+                GetUsrInf(false);
+                if (CheckResInf(false))
+                {
+                    if (historyDate != DateTime.Now.ToString("yyyy-MM-dd") || status == "CHECK_IN")
+                    {
+                        continue;
+                    }
+                    else if (status == "RESERVE")
+                    {
+                        int historyStartTimeInt = int.Parse(historyStartTime.Substring(0, 2)) * 60 + int.Parse(historyStartTime.Substring(2, 2));
+                        if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyStartTimeInt > 25)
+                        {
+                            if (CancelReservation(res_id, false))
+                            {
+                                if (BookSeat(seatId, historyDate, "-1", historyEndTime, false) != "Success")
+                                {
+                                    Config.config.textBox2.AppendText("\r\n重新预约座位失败，退出座位锁定模式");
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                Config.config.textBox2.AppendText("\r\n取消预约失败，退出座位锁定模式");
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        int historyAwayStartTimeInt = int.Parse(historyAwayStartTime.Substring(0, 2)) * 60 + int.Parse(historyAwayStartTime.Substring(2, 2));
+                        if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyAwayStartTimeInt > 25)
+                        {
+                            if (StopUsing(false))
+                            {
+                                if (BookSeat(seatId, historyDate, "-1", historyEndTime, false) != "Success")
+                                {
+                                    Config.config.textBox2.AppendText("\r\n重新预约座位失败，退出座位锁定模式");
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                Config.config.textBox2.AppendText("\r\n释放座位失败，退出座位锁定模式");
+                                break;
+                            }
+                        }
+                    }
+
+                    CheckResInf(false);
+                    int index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
+                    Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index - 1);
+                    Config.config.textBox2.SelectedText = "\r\n当前有效" + (check_in ? "使用" : "预约") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime + "\r\n";
+                }
+            }
         }
 
         public static bool Loop(string buildingId, string[] rooms, string startTime, string endTime, string roomId = "0", string seatId = "0")

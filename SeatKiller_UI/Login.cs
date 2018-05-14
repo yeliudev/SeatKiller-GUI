@@ -43,7 +43,7 @@ namespace SeatKiller_UI
                     e.Cancel = true;
                     return;
                 }
-                if (SeatKiller.GetToken(true) == "登录失败: 密码不正确")
+                if (SeatKiller.GetToken(false) == "登录失败: 密码不正确")
                 {
                     if (backgroundWorker1.CancellationPending)
                     {
@@ -72,7 +72,7 @@ namespace SeatKiller_UI
             backgroundWorker1.CancelAsync();
             SeatKiller.username = comboBox1.Text;
             SeatKiller.password = textBox1.Text;
-            string response = SeatKiller.GetToken(true);
+            string response = SeatKiller.GetToken(false);
             if (response == "Success")
             {
                 if (checkBox1.Checked)

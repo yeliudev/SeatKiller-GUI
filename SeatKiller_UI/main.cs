@@ -112,6 +112,10 @@ namespace SeatKiller_UI
                             if (SeatKiller.BookSeat(seatId, date, startTime, endTime) == "Success")
                             {
                                 Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出抢座模式---------------------------\r\n");
+                                if (Config.config.checkBox6.Checked)
+                                {
+                                    SeatKiller.LockSeat(seatId);
+                                }
                                 EnableControls();
                                 return;
                             }
@@ -197,6 +201,10 @@ namespace SeatKiller_UI
                                     {
                                         case "Success":
                                             Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出抢座模式---------------------------\r\n");
+                                            if (Config.config.checkBox6.Checked)
+                                            {
+                                                SeatKiller.LockSeat(seatId);
+                                            }
                                             EnableControls();
                                             return;
                                         case "Failed":
@@ -240,15 +248,19 @@ namespace SeatKiller_UI
                 {
                     Config.config.textBox2.AppendText("\r\n\r\n已检测到有效预约，将自动改签预约信息");
                     SeatKiller.exchange = true;
-                }
-
-                if (SeatKiller.exchange)
-                {
                     SeatKiller.ExchangeLoop(buildingId, rooms, startTime, endTime, roomId, seatId);
+                    if (Config.config.checkBox6.Checked)
+                    {
+                        SeatKiller.LockSeat(seatId, true);
+                    }
                 }
                 else
                 {
                     SeatKiller.Loop(buildingId, rooms, startTime, endTime, roomId, seatId);
+                    if (Config.config.checkBox6.Checked)
+                    {
+                        SeatKiller.LockSeat(seatId, true);
+                    }
                 }
 
                 EnableControls();

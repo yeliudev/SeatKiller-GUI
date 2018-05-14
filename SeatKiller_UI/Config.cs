@@ -389,12 +389,15 @@ namespace SeatKiller_UI
         {
             while (true)
             {
-                if (SeatKiller.GetToken(true) == "Success")
+                if (SeatKiller.GetUsrInf(false))
                 {
-                    SeatKiller.GetUsrInf(false);
                     label1.Text = "你好 , " + SeatKiller.name + "  上次入馆时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
                 }
-                Thread.Sleep(1000);
+                else
+                {
+                    SeatKiller.GetToken(false);
+                }
+                Thread.Sleep(2000);
             }
         }
 

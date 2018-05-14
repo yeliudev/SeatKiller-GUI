@@ -14,7 +14,7 @@ namespace SeatKiller_UI
         {
             if (SeatKiller.check_in)
             {
-                if (!SeatKiller.StopUsing(true))
+                if (!SeatKiller.StopUsing(false))
                 {
                     MessageBox.Show("释放座位失败，请稍后重试", "失败");
                 }
