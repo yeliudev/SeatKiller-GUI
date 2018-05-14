@@ -40,7 +40,7 @@ namespace SeatKiller_UI
 
         public static ArrayList freeSeats = new ArrayList();
         private static ArrayList startTimes = new ArrayList(), endTimes = new ArrayList();
-        public static string to_addr, res_id, username, password, newVersion, newVersionSize, updateInfo, downloadURL, status, historyDate, historyStartTime, historyEndTime, historyAwayStartTime, token = "", name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
+        public static string to_addr, res_id, username, password, newVersion, newVersionSize, updateInfo, downloadURL, status, bookedSeatId, historyDate, historyStartTime, historyEndTime, historyAwayStartTime, token = "", name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
         public static bool check_in = false, exchange = false, onlyPower = false, onlyWindow = false, onlyComputer = false;
         public static DateTime time;
 
@@ -864,9 +864,9 @@ namespace SeatKiller_UI
 
         public static void LockSeat(string seatId, bool enter = false)
         {
-            Config.config.textBox2.AppendText(enter ? "\r\n" : "" + "\r\n正在锁定座位，ID: " + seatId);
+            Config.config.textBox2.AppendText((enter ? "\r\n" : "") + "\r\n正在锁定座位，ID: " + seatId);
             CheckResInf(false);
-            Config.config.textBox2.AppendText("\r\n当前有效" + ((status == "RESERVE") ? "使用" : "预约") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime + "\r\n");
+            Config.config.textBox2.AppendText("\r\n当前有效" + ((status == "RESERVE") ? "预约" : "使用") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime);
             while (true)
             {
                 Thread.Sleep(30000);
@@ -887,13 +887,13 @@ namespace SeatKiller_UI
                                 {
                                     if (BookSeat(seatId, historyDate, "-1", historyEndTime, false) != "Success")
                                     {
-                                        Config.config.textBox2.AppendText("\r\n重新预约座位失败，退出座位锁定模式");
+                                        Config.config.textBox2.AppendText("\r\n\r\n重新预约座位失败，退出座位锁定模式");
                                         break;
                                     }
                                 }
                                 else
                                 {
-                                    Config.config.textBox2.AppendText("\r\n取消预约失败，退出座位锁定模式");
+                                    Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，退出座位锁定模式");
                                     break;
                                 }
                             }
@@ -907,13 +907,13 @@ namespace SeatKiller_UI
                                 {
                                     if (BookSeat(seatId, historyDate, "-1", historyEndTime, false) != "Success")
                                     {
-                                        Config.config.textBox2.AppendText("\r\n重新预约座位失败，退出座位锁定模式");
+                                        Config.config.textBox2.AppendText("\r\n\r\n重新预约座位失败，退出座位锁定模式");
                                         break;
                                     }
                                 }
                                 else
                                 {
-                                    Config.config.textBox2.AppendText("\r\n释放座位失败，退出座位锁定模式");
+                                    Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，退出座位锁定模式");
                                     break;
                                 }
                             }
@@ -961,6 +961,7 @@ namespace SeatKiller_UI
                             switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
                             {
                                 case "Success":
+                                    bookedSeatId = freeSeatId.ToString();
                                     Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
                                     Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------");
                                     return true;
@@ -1008,6 +1009,7 @@ namespace SeatKiller_UI
                             switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
                             {
                                 case "Success":
+                                    bookedSeatId = freeSeatId.ToString();
                                     Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
                                     Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------");
                                     return true;
@@ -1116,6 +1118,7 @@ namespace SeatKiller_UI
                             switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
                             {
                                 case "Success":
+                                    bookedSeatId = freeSeatId.ToString();
                                     Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
                                     Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
                                     return true;
@@ -1194,6 +1197,7 @@ namespace SeatKiller_UI
                                 switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
                                 {
                                     case "Success":
+                                        bookedSeatId = freeSeatId.ToString();
                                         Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
                                         Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
                                         return true;

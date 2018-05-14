@@ -200,6 +200,7 @@ namespace SeatKiller_UI
                                     switch (SeatKiller.BookSeat(freeSeat.ToString(), date, startTime, endTime))
                                     {
                                         case "Success":
+                                            SeatKiller.bookedSeatId = freeSeat.ToString();
                                             Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出抢座模式---------------------------\r\n");
                                             if (Config.config.checkBox6.Checked)
                                             {
@@ -248,21 +249,18 @@ namespace SeatKiller_UI
                 {
                     Config.config.textBox2.AppendText("\r\n\r\n已检测到有效预约，将自动改签预约信息");
                     SeatKiller.exchange = true;
-                    SeatKiller.ExchangeLoop(buildingId, rooms, startTime, endTime, roomId, seatId);
-                    if (Config.config.checkBox6.Checked)
+                    if (SeatKiller.ExchangeLoop(buildingId, rooms, startTime, endTime, roomId, seatId) & Config.config.checkBox6.Checked)
                     {
-                        SeatKiller.LockSeat(seatId, true);
+                        SeatKiller.LockSeat(SeatKiller.bookedSeatId, true);
                     }
                 }
                 else
                 {
-                    SeatKiller.Loop(buildingId, rooms, startTime, endTime, roomId, seatId);
-                    if (Config.config.checkBox6.Checked)
+                    if (SeatKiller.Loop(buildingId, rooms, startTime, endTime, roomId, seatId) & Config.config.checkBox6.Checked)
                     {
-                        SeatKiller.LockSeat(seatId, true);
+                        SeatKiller.LockSeat(SeatKiller.bookedSeatId, true);
                     }
                 }
-
                 EnableControls();
                 return;
             }
