@@ -866,63 +866,69 @@ namespace SeatKiller_UI
         {
             Config.config.textBox2.AppendText(enter ? "\r\n" : "" + "\r\n正在锁定座位，ID: " + seatId);
             CheckResInf(false);
-            Config.config.textBox2.AppendText("\r\n当前有效" + (check_in ? "使用" : "预约") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime + "\r\n");
+            Config.config.textBox2.AppendText("\r\n当前有效" + ((status == "RESERVE") ? "使用" : "预约") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime + "\r\n");
             while (true)
             {
                 Thread.Sleep(30000);
-                GetToken(false);
-                GetUsrInf(false);
-                if (CheckResInf(false))
+                if (GetToken(false) == "Success")
                 {
-                    if (historyDate != DateTime.Now.ToString("yyyy-MM-dd") || status == "CHECK_IN")
+                    if (CheckResInf(false))
                     {
-                        continue;
-                    }
-                    else if (status == "RESERVE")
-                    {
-                        int historyStartTimeInt = int.Parse(historyStartTime.Substring(0, 2)) * 60 + int.Parse(historyStartTime.Substring(2, 2));
-                        if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyStartTimeInt > 25)
+                        if (historyDate != DateTime.Now.ToString("yyyy-MM-dd") || status == "CHECK_IN")
                         {
-                            if (CancelReservation(res_id, false))
+                            continue;
+                        }
+                        else if (status == "RESERVE")
+                        {
+                            int historyStartTimeInt = int.Parse(historyStartTime.Substring(0, 2)) * 60 + int.Parse(historyStartTime.Substring(2, 2));
+                            if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyStartTimeInt > 25)
                             {
-                                if (BookSeat(seatId, historyDate, "-1", historyEndTime, false) != "Success")
+                                if (CancelReservation(res_id, false))
                                 {
-                                    Config.config.textBox2.AppendText("\r\n重新预约座位失败，退出座位锁定模式");
+                                    if (BookSeat(seatId, historyDate, "-1", historyEndTime, false) != "Success")
+                                    {
+                                        Config.config.textBox2.AppendText("\r\n重新预约座位失败，退出座位锁定模式");
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    Config.config.textBox2.AppendText("\r\n取消预约失败，退出座位锁定模式");
                                     break;
                                 }
                             }
-                            else
-                            {
-                                Config.config.textBox2.AppendText("\r\n取消预约失败，退出座位锁定模式");
-                                break;
-                            }
                         }
-                    }
-                    else
-                    {
-                        int historyAwayStartTimeInt = int.Parse(historyAwayStartTime.Substring(0, 2)) * 60 + int.Parse(historyAwayStartTime.Substring(2, 2));
-                        if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyAwayStartTimeInt > 25)
+                        else
                         {
-                            if (StopUsing(false))
+                            int historyAwayStartTimeInt = int.Parse(historyAwayStartTime.Substring(0, 2)) * 60 + int.Parse(historyAwayStartTime.Substring(2, 2));
+                            if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyAwayStartTimeInt > 25)
                             {
-                                if (BookSeat(seatId, historyDate, "-1", historyEndTime, false) != "Success")
+                                if (StopUsing(false))
                                 {
-                                    Config.config.textBox2.AppendText("\r\n重新预约座位失败，退出座位锁定模式");
+                                    if (BookSeat(seatId, historyDate, "-1", historyEndTime, false) != "Success")
+                                    {
+                                        Config.config.textBox2.AppendText("\r\n重新预约座位失败，退出座位锁定模式");
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    Config.config.textBox2.AppendText("\r\n释放座位失败，退出座位锁定模式");
                                     break;
                                 }
                             }
-                            else
-                            {
-                                Config.config.textBox2.AppendText("\r\n释放座位失败，退出座位锁定模式");
-                                break;
-                            }
                         }
-                    }
 
-                    CheckResInf(false);
-                    int index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
-                    Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index - 1);
-                    Config.config.textBox2.SelectedText = "\r\n当前有效" + (check_in ? "使用" : "预约") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime + "\r\n";
+                        CheckResInf(false);
+                        int index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
+                        Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index - 1);
+                        Config.config.textBox2.SelectedText = "\r\n当前有效" + ((status == "RESERVE") ? "使用" : "预约") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime + "\r\n";
+                    }
+                }
+                else
+                {
+                    Config.config.textBox2.AppendText("\r\n获取token失败，退出座位锁定模式");
+                    break;
                 }
             }
         }

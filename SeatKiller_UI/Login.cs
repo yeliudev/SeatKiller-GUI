@@ -91,12 +91,18 @@ namespace SeatKiller_UI
             else if (response == "Connection lost")
             {
                 MessageBox.Show("登录失败，连接丢失", "登录失败");
-                backgroundWorker1.RunWorkerAsync();
+                if (!backgroundWorker1.IsBusy)
+                {
+                    backgroundWorker1.RunWorkerAsync();
+                }
             }
             else
             {
                 MessageBox.Show(response, "登录失败");
-                backgroundWorker1.RunWorkerAsync();
+                if (!backgroundWorker1.IsBusy)
+                {
+                    backgroundWorker1.RunWorkerAsync();
+                }
             }
         }
 
