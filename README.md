@@ -5,7 +5,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/goolhanrry/SeatKiller_UI.svg)
 [![GitHub repo size in bytes](https://img.shields.io/github/repo-size/goolhanrry/SeatKiller_UI.svg?colorB=ff7e00#)](https://github.com/goolhanrry/SeatKiller_UI)
 
-用C#重写的 [SeatKiller](https://github.com/goolhanrry/SeatKiller) GUI 版本，新增了座位改签和指定座位类型的功能，欢迎添加我的微信：`aweawds` 交流讨论
+用C#重写的 [SeatKiller](https://github.com/goolhanrry/SeatKiller) GUI 版本，新增了座位改签和座位锁定的功能，欢迎添加我的微信：`aweawds` 交流讨论
 
 代码引用请遵守 `Mozilla Public License 2.0` 协议，严禁修改代码后闭源，如有违约后果自负
 
@@ -19,7 +19,7 @@
 * 预约成功后发送邮件提醒
 * 捡漏模式可用于抢当天座位
 * 改签模式可用于在已有有效预约的情况下，更换座位或改签预约时间（如果空闲），确保新座位可用的情况下再释放原座位，防止座位丢失
-* 座位锁定功能可用于预约座位或暂离后，在预约信息即将失效前自动释放座位并重新预约，防止出现违约
+* 座位锁定功能可用于预约座位或暂离后，在预约信息即将失效前自动释放座位并重新预约，防止座位丢失
 * 采用256位AES算法加密学号和密码并写入注册表，提高登录效率（此处涉及到注册表操作，系统或杀毒软件可能会报毒，可以放心允许操作）
 
 ## 即将实现的功能
