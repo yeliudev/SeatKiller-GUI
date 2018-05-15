@@ -556,6 +556,18 @@ namespace SeatKiller_UI
 
         public static string SearchFreeSeat(string buildingId, string roomId, string date, string startTime, string endTime)
         {
+            if (startTime == "-1")
+            {
+                if (int.Parse(DateTime.Now.ToString("mm")) < 30)
+                {
+                    startTime = (int.Parse(DateTime.Now.ToString("HH")) * 60).ToString();
+                }
+                else
+                {
+                    startTime = (int.Parse(DateTime.Now.ToString("HH")) * 60 + 30).ToString();
+                }
+            }
+
             string url = search_url + date + "/" + startTime + "/" + endTime;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "POST";
@@ -762,6 +774,18 @@ namespace SeatKiller_UI
 
         public static bool CheckStartTime(string seatId, string date, string startTime)
         {
+            if (startTime == "-1")
+            {
+                if (int.Parse(DateTime.Now.ToString("mm")) < 30)
+                {
+                    startTime = (int.Parse(DateTime.Now.ToString("HH")) * 60).ToString();
+                }
+                else
+                {
+                    startTime = (int.Parse(DateTime.Now.ToString("HH")) * 60 + 30).ToString();
+                }
+            }
+
             string url = startTime_url + seatId + "/" + date;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
@@ -813,6 +837,18 @@ namespace SeatKiller_UI
 
         public static bool CheckEndTime(string seatId, string date, string startTime, string endTime)
         {
+            if (startTime == "-1")
+            {
+                if (int.Parse(DateTime.Now.ToString("mm")) < 30)
+                {
+                    startTime = (int.Parse(DateTime.Now.ToString("HH")) * 60).ToString();
+                }
+                else
+                {
+                    startTime = (int.Parse(DateTime.Now.ToString("HH")) * 60 + 30).ToString();
+                }
+            }
+
             string url = endTime_url + seatId + "/" + date + "/" + startTime;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
@@ -880,12 +916,18 @@ namespace SeatKiller_UI
                         }
                         else if (status == "RESERVE")
                         {
-                            int historyStartTimeInt = int.Parse(historyStartTime.Substring(0, 2)) * 60 + int.Parse(historyStartTime.Substring(2, 2));
-                            if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyStartTimeInt > 25)
+                            int historyStartTimeInt = int.Parse(historyStartTime.Substring(0, 2)) * 60 + int.Parse(historyStartTime.Substring(3, 2));
+                            int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
+                            if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyStartTimeInt >= 25)
                             {
                                 if (CancelReservation(res_id, false))
                                 {
-                                    if (BookSeat(seatId, historyDate, "-1", historyEndTime, false) != "Success")
+                                    if (historyEndTimeInt - (int)DateTime.Now.TimeOfDay.TotalMinutes < 5)
+                                    {
+                                        Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动释放座位");
+                                        break;
+                                    }
+                                    if (BookSeat(seatId, DateTime.Now.ToString("yyyy-MM-dd"), "-1", historyEndTimeInt.ToString(), false) != "Success")
                                     {
                                         Config.config.textBox2.AppendText("\r\n\r\n重新预约座位失败，退出座位锁定模式");
                                         break;
@@ -901,10 +943,16 @@ namespace SeatKiller_UI
                         else
                         {
                             int historyAwayStartTimeInt = int.Parse(historyAwayStartTime.Substring(0, 2)) * 60 + int.Parse(historyAwayStartTime.Substring(2, 2));
+                            int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
                             if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyAwayStartTimeInt > 25)
                             {
                                 if (StopUsing(false))
                                 {
+                                    if (historyEndTimeInt - (int)DateTime.Now.TimeOfDay.TotalMinutes < 5)
+                                    {
+                                        Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动释放座位");
+                                        break;
+                                    }
                                     if (BookSeat(seatId, historyDate, "-1", historyEndTime, false) != "Success")
                                     {
                                         Config.config.textBox2.AppendText("\r\n\r\n重新预约座位失败，退出座位锁定模式");
@@ -921,8 +969,8 @@ namespace SeatKiller_UI
 
                         CheckResInf(false);
                         int index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
-                        Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index - 1);
-                        Config.config.textBox2.SelectedText = "\r\n当前有效" + ((status == "RESERVE") ? "使用" : "预约") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime + "\r\n";
+                        Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
+                        Config.config.textBox2.SelectedText = "当前有效" + ((status == "RESERVE") ? "使用" : "预约") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime;
                     }
                 }
                 else
@@ -1112,23 +1160,23 @@ namespace SeatKiller_UI
                                             return false;
                                         }
                                     }
-                                }
-                            }
 
-                            switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
-                            {
-                                case "Success":
-                                    bookedSeatId = freeSeatId.ToString();
-                                    Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
-                                    Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
-                                    return true;
-                                case "Failed":
-                                    Thread.Sleep(2000);
-                                    continue;
-                                case "Connection lost":
-                                    Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续预约空位\r\n");
-                                    Thread.Sleep(30000);
-                                    continue;
+                                    switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
+                                    {
+                                        case "Success":
+                                            bookedSeatId = freeSeatId.ToString();
+                                            Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
+                                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                                            return true;
+                                        case "Failed":
+                                            Thread.Sleep(2000);
+                                            continue;
+                                        case "Connection lost":
+                                            Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续预约空位\r\n");
+                                            Thread.Sleep(30000);
+                                            continue;
+                                    }
+                                }
                             }
                         }
 

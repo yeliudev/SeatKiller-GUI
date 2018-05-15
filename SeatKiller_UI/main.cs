@@ -30,7 +30,7 @@ namespace SeatKiller_UI
                 }
             }
             thread.Abort();
-            Config.config.textBox2.AppendText(waiting ? "" : "\r\n" + "\r\n-----------------------------运行中断------------------------------\r\n");
+            Config.config.textBox2.AppendText((waiting ? "" : "\r\n") + "\r\n-----------------------------运行中断------------------------------\r\n");
         }
 
         public static void Run()
