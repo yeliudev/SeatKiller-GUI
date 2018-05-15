@@ -121,9 +121,9 @@
             this.checkBox6.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox6.Location = new System.Drawing.Point(128, 519);
             this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(152, 29);
+            this.checkBox6.Size = new System.Drawing.Size(114, 29);
             this.checkBox6.TabIndex = 101;
-            this.checkBox6.Text = "自动锁定座位";
+            this.checkBox6.Text = "锁定座位";
             this.checkBox6.UseVisualStyleBackColor = true;
             // 
             // label10
