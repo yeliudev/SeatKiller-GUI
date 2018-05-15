@@ -874,7 +874,7 @@ namespace SeatKiller_UI
                 {
                     if (CheckResInf(false))
                     {
-                        if (historyDate != DateTime.Now.ToString("yyyy-MM-dd") || status == "CHECK_IN")
+                        if (historyDate != DateTime.Now.ToString("yyyy-M-d") || status == "CHECK_IN")
                         {
                             continue;
                         }
