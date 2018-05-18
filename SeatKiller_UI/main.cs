@@ -114,7 +114,7 @@ namespace SeatKiller_UI
                                 Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出抢座模式---------------------------\r\n");
                                 if (Config.config.checkBox6.Checked)
                                 {
-                                    SeatKiller.LockSeat(seatId);
+                                    SeatKiller.LockSeat(SeatKiller.bookedSeatId);
                                 }
                                 EnableControls();
                                 return;
@@ -204,7 +204,7 @@ namespace SeatKiller_UI
                                             Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出抢座模式---------------------------\r\n");
                                             if (Config.config.checkBox6.Checked)
                                             {
-                                                SeatKiller.LockSeat(seatId);
+                                                SeatKiller.LockSeat(SeatKiller.bookedSeatId);
                                             }
                                             EnableControls();
                                             return;

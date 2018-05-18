@@ -669,6 +669,7 @@ namespace SeatKiller_UI
                 }
                 if (jObject["status"].ToString() == "success")
                 {
+                    bookedSeatId = seatId;
                     exchange = true;
                     if (alert)
                     {
@@ -913,19 +914,19 @@ namespace SeatKiller_UI
                 {
                     if (CheckResInf(false))
                     {
-                        if (historyDate == DateTime.Now.ToString("yyyy-M-d") || status == "RESERVE")
+                        if (historyDate == DateTime.Now.ToString("yyyy-M-d") & status == "RESERVE")
                         {
                             int historyStartTimeInt = int.Parse(historyStartTime.Substring(0, 2)) * 60 + int.Parse(historyStartTime.Substring(3, 2));
                             int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
                             if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyStartTimeInt >= 25)
                             {
+                                if (historyEndTimeInt - (int)DateTime.Now.TimeOfDay.TotalMinutes < 5)
+                                {
+                                    Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动取消预约");
+                                    break;
+                                }
                                 if (CancelReservation(res_id, false))
                                 {
-                                    if (historyEndTimeInt - (int)DateTime.Now.TimeOfDay.TotalMinutes < 5)
-                                    {
-                                        Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动取消预约");
-                                        break;
-                                    }
                                     if (BookSeat(seatId, DateTime.Now.ToString("yyyy-MM-dd"), "-1", historyEndTimeInt.ToString(), false) != "Success")
                                     {
                                         if (doClear)
@@ -963,19 +964,19 @@ namespace SeatKiller_UI
                                 }
                             }
                         }
-                        else if (historyDate == DateTime.Now.ToString("yyyy-M-d") || status == "AWAY")
+                        else if (historyDate == DateTime.Now.ToString("yyyy-M-d") & status == "AWAY")
                         {
                             int historyAwayStartTimeInt = int.Parse(historyAwayStartTime.Substring(0, 2)) * 60 + int.Parse(historyAwayStartTime.Substring(2, 2));
                             int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
                             if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyAwayStartTimeInt >= 25)
                             {
+                                if (historyEndTimeInt - (int)DateTime.Now.TimeOfDay.TotalMinutes < 5)
+                                {
+                                    Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动释放座位");
+                                    break;
+                                }
                                 if (StopUsing(false))
                                 {
-                                    if (historyEndTimeInt - (int)DateTime.Now.TimeOfDay.TotalMinutes < 5)
-                                    {
-                                        Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动释放座位");
-                                        break;
-                                    }
                                     if (BookSeat(seatId, DateTime.Now.ToString("yyyy-MM-dd"), "-1", historyEndTimeInt.ToString(), false) != "Success")
                                     {
                                         if (doClear)
@@ -1087,7 +1088,6 @@ namespace SeatKiller_UI
                             switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
                             {
                                 case "Success":
-                                    bookedSeatId = freeSeatId.ToString();
                                     Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
                                     Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------");
                                     return true;
@@ -1135,7 +1135,6 @@ namespace SeatKiller_UI
                             switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
                             {
                                 case "Success":
-                                    bookedSeatId = freeSeatId.ToString();
                                     Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
                                     Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------");
                                     return true;
@@ -1242,7 +1241,6 @@ namespace SeatKiller_UI
                                     switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
                                     {
                                         case "Success":
-                                            bookedSeatId = freeSeatId.ToString();
                                             Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
                                             Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
                                             return true;
@@ -1323,7 +1321,6 @@ namespace SeatKiller_UI
                                 switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
                                 {
                                     case "Success":
-                                        bookedSeatId = freeSeatId.ToString();
                                         Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
                                         Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
                                         return true;
