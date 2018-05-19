@@ -33,14 +33,5 @@ namespace SeatKiller_UI
         {
             Close();
         }
-
-        protected override void OnVisibleChanged(EventArgs e)
-        {
-            base.OnVisibleChanged(e);
-            if (!IsHandleCreated)
-            {
-                Close();
-            }
-        }
     }
 }

@@ -900,7 +900,7 @@ namespace SeatKiller_UI
 
         public static void LockSeat(string seatId, bool enter = false)
         {
-            int index, count = 0;
+            int index, linesCount, count = 0;
             bool doClear = false;
             Config.config.textBox2.AppendText((enter ? "\r\n" : "") + "\r\n正在锁定座位，ID: " + seatId + "\r\n");
             while (true)
@@ -1016,7 +1016,8 @@ namespace SeatKiller_UI
                         }
                         count = 0;
                         CheckResInf(false);
-                        index = Config.config.textBox2.GetFirstCharIndexFromLine(Config.config.textBox2.Lines.Count() - (doClear ? 1 : 0));
+                        linesCount = Config.config.textBox2.Lines.Count();
+                        index = Config.config.textBox2.GetFirstCharIndexFromLine(linesCount - (doClear ? 2 : 1));
                         Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
                         Config.config.textBox2.SelectedText = "当前有效" + ((status == "RESERVE") ? "预约" : "使用") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime;
                         doClear = false;
