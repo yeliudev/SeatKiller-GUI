@@ -105,6 +105,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "提示";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Reservation_FormClosed);
+            this.Load += new System.EventHandler(this.Reservation_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -45,21 +45,11 @@ namespace SeatKiller_UI
                 }
                 if (SeatKiller.GetToken(false) == "登录失败: 密码不正确")
                 {
-                    if (backgroundWorker1.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
                     label4.Text = "Enable";
                     label4.ForeColor = Color.ForestGreen;
                 }
                 else
                 {
-                    if (backgroundWorker1.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
                     label4.Text = "Unable";
                     label4.ForeColor = Color.Red;
                 }
@@ -83,6 +73,7 @@ namespace SeatKiller_UI
                 Hide();
                 if (!SeatKiller.CheckResInf())
                 {
+                    SeatKiller.exitFlag = false;
                     Config config = new Config();
                     config.Show();
                 }
@@ -112,7 +103,7 @@ namespace SeatKiller_UI
             {
                 return;
             }
-            else if (ActiveForm.Name != "Config" & ActiveForm.Name != "Reservation")
+            else if (SeatKiller.exitFlag)
             {
                 Application.Exit();
             }
@@ -145,6 +136,15 @@ namespace SeatKiller_UI
                 Update update = new Update();
                 update.ShowDialog();
             }
+        }
+
+        private void Login_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                Dispose();
+            }
+            catch { }
         }
     }
 }

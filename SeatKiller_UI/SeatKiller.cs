@@ -41,7 +41,7 @@ namespace SeatKiller_UI
         public static ArrayList freeSeats = new ArrayList();
         private static ArrayList startTimes = new ArrayList(), endTimes = new ArrayList();
         public static string to_addr, res_id, username, password, newVersion, newVersionSize, updateInfo, downloadURL, status, bookedSeatId, historyDate, historyStartTime, historyEndTime, historyAwayStartTime, token = "", name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
-        public static bool check_in = false, exchange = false, onlyPower = false, onlyWindow = false, onlyComputer = false;
+        public static bool exitFlag = true, check_in = false, exchange = false, onlyPower = false, onlyWindow = false, onlyComputer = false;
         public static DateTime time;
 
         private static void SetHeaderValue(WebHeaderCollection header, string name, string value)
@@ -914,7 +914,7 @@ namespace SeatKiller_UI
                 {
                     if (CheckResInf(false))
                     {
-                        if (historyDate == DateTime.Now.ToString("yyyy-M-d") & (int)DateTime.Now.TimeOfDay.TotalMinutes > 90 & status == "RESERVE")
+                        if (historyDate == DateTime.Now.ToString("yyyy-M-d") & (int)DateTime.Now.TimeOfDay.TotalMinutes > 400 & status == "RESERVE")
                         {
                             int historyStartTimeInt = int.Parse(historyStartTime.Substring(0, 2)) * 60 + int.Parse(historyStartTime.Substring(3, 2));
                             int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
@@ -964,7 +964,7 @@ namespace SeatKiller_UI
                                 }
                             }
                         }
-                        else if (historyDate == DateTime.Now.ToString("yyyy-M-d") & (int)DateTime.Now.TimeOfDay.TotalMinutes > 90 & status == "AWAY")
+                        else if (historyDate == DateTime.Now.ToString("yyyy-M-d") & (int)DateTime.Now.TimeOfDay.TotalMinutes > 400 & status == "AWAY")
                         {
                             int historyAwayStartTimeInt = int.Parse(historyAwayStartTime.Substring(0, 2)) * 60 + int.Parse(historyAwayStartTime.Substring(2, 2));
                             int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));

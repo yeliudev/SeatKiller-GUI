@@ -10,6 +10,11 @@ namespace SeatKiller_UI
             InitializeComponent();
         }
 
+        private void Reservation_Load(object sender, EventArgs e)
+        {
+            SeatKiller.exitFlag = false;
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             if (SeatKiller.check_in)
@@ -27,6 +32,7 @@ namespace SeatKiller_UI
                 }
             }
 
+            SeatKiller.exitFlag = true;
             Config config = new Config();
             Hide();
             config.Show();
@@ -35,6 +41,7 @@ namespace SeatKiller_UI
 
         private void button2_Click(object sender, EventArgs e)
         {
+            SeatKiller.exitFlag = true;
             Config config = new Config();
             Hide();
             config.Show();
@@ -43,8 +50,10 @@ namespace SeatKiller_UI
 
         private void Reservation_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (ActiveForm.Name != "Config")
+            if (!SeatKiller.exitFlag)
+            {
                 Application.Exit();
+            }
         }
     }
 }
