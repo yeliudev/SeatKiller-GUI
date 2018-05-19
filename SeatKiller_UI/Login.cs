@@ -146,14 +146,5 @@ namespace SeatKiller_UI
                 update.ShowDialog();
             }
         }
-
-        protected override void OnVisibleChanged(EventArgs e)
-        {
-            base.OnVisibleChanged(e);
-            if (!IsHandleCreated)
-            {
-                Close();
-            }
-        }
     }
 }
