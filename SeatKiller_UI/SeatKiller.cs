@@ -247,7 +247,7 @@ namespace SeatKiller_UI
                                 historyEndTime = res["end"].ToString();
                                 if (res["stat"].ToString() == "AWAY")
                                 {
-                                    historyAwayStartTime = res["awayEnd"].ToString();
+                                    historyAwayStartTime = res["awayBegin"].ToString();
                                 }
                             }
                             return true;
@@ -966,7 +966,7 @@ namespace SeatKiller_UI
                         }
                         else if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & status == "AWAY")
                         {
-                            int historyAwayStartTimeInt = int.Parse(historyAwayStartTime.Substring(0, 2)) * 60 + int.Parse(historyAwayStartTime.Substring(2, 2));
+                            int historyAwayStartTimeInt = int.Parse(historyAwayStartTime.Substring(0, 2)) * 60 + int.Parse(historyAwayStartTime.Substring(3, 2));
                             int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
                             if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyAwayStartTimeInt >= 25)
                             {
