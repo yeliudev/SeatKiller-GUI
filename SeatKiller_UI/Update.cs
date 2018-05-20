@@ -12,12 +12,6 @@ namespace SeatKiller_UI
             textBox1.Text = SeatKiller.updateInfo;
         }
 
-        private void Update_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            Login.login.Enabled = true;
-            Login.login.backgroundWorker1.RunWorkerAsync();
-        }
-
         private void textBox1_Enter(object sender, EventArgs e)
         {
             label1.Focus();
@@ -32,6 +26,12 @@ namespace SeatKiller_UI
         private void button2_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void Update_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Login.login.Enabled = true;
+            Login.login.backgroundWorker1.RunWorkerAsync();
         }
     }
 }

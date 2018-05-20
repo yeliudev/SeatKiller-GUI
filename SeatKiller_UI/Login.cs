@@ -32,28 +32,21 @@ namespace SeatKiller_UI
             }
         }
 
-        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        private void Login_Activated(object sender, EventArgs e)
         {
-            SeatKiller.username = "";
-            SeatKiller.password = "";
-            while (true)
+            comboBox1.Focus();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox1.Text == "(清空登录信息)")
             {
-                if (backgroundWorker1.CancellationPending)
-                {
-                    e.Cancel = true;
-                    return;
-                }
-                if (SeatKiller.GetToken(false) == "登录失败: 密码不正确")
-                {
-                    label4.Text = "Enable";
-                    label4.ForeColor = Color.ForestGreen;
-                }
-                else
-                {
-                    label4.Text = "Unable";
-                    label4.ForeColor = Color.Red;
-                }
-                Thread.Sleep(200);
+                User.DeleteValue();
+                bs.ResetBindings(false);
+            }
+            else
+            {
+                textBox1.Text = User.GetValue(comboBox1.Text);
             }
         }
 
@@ -97,6 +90,15 @@ namespace SeatKiller_UI
             }
         }
 
+        private void Login_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                Dispose();
+            }
+            catch { }
+        }
+
         private void Login_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (e.CloseReason == CloseReason.ApplicationExitCall)
@@ -109,22 +111,29 @@ namespace SeatKiller_UI
             }
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            if (comboBox1.Text == "(清空登录信息)")
+            SeatKiller.username = "";
+            SeatKiller.password = "";
+            while (true)
             {
-                User.DeleteValue();
-                bs.ResetBindings(false);
+                if (backgroundWorker1.CancellationPending)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                if (SeatKiller.GetToken(false) == "登录失败: 密码不正确")
+                {
+                    label4.Text = "Enable";
+                    label4.ForeColor = Color.ForestGreen;
+                }
+                else
+                {
+                    label4.Text = "Unable";
+                    label4.ForeColor = Color.Red;
+                }
+                Thread.Sleep(200);
             }
-            else
-            {
-                textBox1.Text = User.GetValue(comboBox1.Text);
-            }
-        }
-
-        private void Login_Activated(object sender, EventArgs e)
-        {
-            comboBox1.Focus();
         }
 
         private void backgroundWorker2_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
@@ -136,15 +145,6 @@ namespace SeatKiller_UI
                 Update update = new Update();
                 update.ShowDialog();
             }
-        }
-
-        private void Login_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            try
-            {
-                Dispose();
-            }
-            catch { }
         }
     }
 }
