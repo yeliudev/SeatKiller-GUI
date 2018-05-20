@@ -101,7 +101,7 @@ namespace SeatKiller_UI
         {
             //About about = new About();
             //about.ShowDialog();
-            MessageBox.Show("版本号：1.8.3\r\nGitHub仓库：https://github.com/goolhanrry/SeatKiller_UI\r\n还没搭好的个人主页：https://www.goolhanrry.club/\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Style写得一般，欢迎添加我的微信: aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶", "关于");
+            MessageBox.Show("版本号：1.8.4\r\nGitHub仓库：https://github.com/goolhanrry/SeatKiller_UI\r\n还没搭好的个人主页：https://www.goolhanrry.club/\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Style写得一般，欢迎添加我的微信: aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶", "关于");
         }
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
@@ -205,7 +205,7 @@ namespace SeatKiller_UI
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
             displayStartTimeList = new ArrayList();
-            if (comboBox3.SelectedIndex == 0)
+            if (comboBox3.SelectedIndex == 0 & DateTime.Now.TimeOfDay.TotalMinutes > 480)
             {
                 displayStartTimeList.Add(new DictionaryEntry("-1", "现在"));
                 for (int i = 0; i < startTimeList.Count; i++)
@@ -219,13 +219,12 @@ namespace SeatKiller_UI
                         break;
                     }
                 }
-                comboBox4.DataSource = displayStartTimeList;
             }
             else
             {
                 displayStartTimeList = startTimeList;
-                comboBox4.DataSource = displayStartTimeList;
             }
+            comboBox4.DataSource = displayStartTimeList;
         }
 
         private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
