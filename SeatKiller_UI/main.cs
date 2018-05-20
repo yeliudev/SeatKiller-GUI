@@ -40,8 +40,10 @@ namespace SeatKiller_UI
             {
                 Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入抢座模式---------------------------\r\n");
 
-                if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 22:44:40")) < 0)
+                if (DateTime.Now.TimeOfDay.TotalSeconds < 81880)
+                {
                     SeatKiller.Wait("22", "44", "40", false);
+                }
                 bool try_booking = true;
 
                 if (SeatKiller.GetToken() == "Success")
@@ -54,14 +56,13 @@ namespace SeatKiller_UI
                         SeatKiller.exchange = true;
                     }
 
-                    if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 22:45:00")) < 0)
+                    if (DateTime.Now.TimeOfDay.TotalMinutes < 1365)
                     {
                         SeatKiller.Wait("22", "45", "00");
                     }
-                    else if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 23:45:00")) > 0)
+                    else if (DateTime.Now.TimeOfDay.TotalMinutes > 1425)
                     {
-                        Config.config.textBox2.AppendText("\r\n预约系统开放时间已过，准备进入捡漏模式");
-                        SeatKiller.Wait("01", "00", "00");
+                        Config.config.textBox2.AppendText("\r\n预约系统开放时间已过");
 
                         if (SeatKiller.exchange)
                         {
@@ -133,7 +134,7 @@ namespace SeatKiller_UI
                                 return;
                             }
                         }
-                        else if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 23:45:00")) < 0)
+                        else if (DateTime.Now.TimeOfDay.TotalMinutes < 1425)
                         {
                             SeatKiller.freeSeats.Clear();
                             if (roomId == "0")

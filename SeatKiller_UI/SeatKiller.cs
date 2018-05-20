@@ -1064,10 +1064,12 @@ namespace SeatKiller_UI
         public static bool Loop(string buildingId, string[] rooms, string startTime, string endTime, string roomId = "0", string seatId = "0")
         {
             Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入捡漏模式---------------------------\r\n");
+            if (DateTime.Now.TimeOfDay.TotalMinutes < 60)
+            {
+                Wait("01", "00", "00", false);
+            }
             if (roomId == "0")
             {
-                if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 01:00:00")) < 0)
-                    Wait("01", "00", "00", false);
                 string date = DateTime.Now.ToString("yyyy-MM-dd");
                 GetRooms(buildingId);
                 while (true)
@@ -1102,16 +1104,14 @@ namespace SeatKiller_UI
                             }
                         }
 
-                        DateTime time = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00");
-                        if (DateTime.Compare(DateTime.Now, time) > 0)
+                        if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
                             Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------");
                             return false;
                         }
 
-                        TimeSpan delta = time.Subtract(DateTime.Now);
-                        Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + ((int)delta.TotalSeconds).ToString() + "秒\r\n");
+                        Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + (1320 - (int)DateTime.Now.TimeOfDay.TotalMinutes).ToString() + "秒\r\n");
                         Thread.Sleep(3000);
                     }
                     else
@@ -1150,7 +1150,7 @@ namespace SeatKiller_UI
                         }
                     }
 
-                    if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00")) > 0)
+                    if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
                         Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------");
@@ -1172,7 +1172,7 @@ namespace SeatKiller_UI
                         return true;
                     }
 
-                    if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00")) > 0)
+                    if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
                         Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------");
@@ -1186,12 +1186,14 @@ namespace SeatKiller_UI
         public static bool ExchangeLoop(string buildingId, string[] rooms, string startTime, string endTime, string roomId = "0", string seatId = "0")
         {
             Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入改签模式---------------------------\r\n");
+            if (DateTime.Now.TimeOfDay.TotalMinutes < 60)
+            {
+                Wait("01", "00", "00", false);
+            }
             bool cancelled = false;
             GetRooms(buildingId);
             if (roomId == "0")
             {
-                if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 01:00:00")) < 0)
-                    Wait("01", "00", "00", false);
                 string date = DateTime.Now.ToString("yyyy-MM-dd");
                 while (true)
                 {
@@ -1257,16 +1259,14 @@ namespace SeatKiller_UI
                             }
                         }
 
-                        DateTime time = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00");
-                        if (DateTime.Compare(DateTime.Now, time) > 0)
+                        if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
                             Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
                             return false;
                         }
 
-                        TimeSpan delta = time.Subtract(DateTime.Now);
-                        Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + ((int)delta.TotalSeconds).ToString() + "秒\r\n");
+                        Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + (1320 - (int)DateTime.Now.TimeOfDay.TotalMinutes).ToString() + "秒\r\n");
                         Thread.Sleep(3000);
                     }
                     else
@@ -1338,7 +1338,7 @@ namespace SeatKiller_UI
                         Thread.Sleep(2000);
                     }
 
-                    if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00")) > 0)
+                    if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
                         Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
@@ -1358,7 +1358,7 @@ namespace SeatKiller_UI
                         break;
                     }
 
-                    if (DateTime.Compare(DateTime.Now, Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 20:00:00")) > 0)
+                    if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
                         Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
