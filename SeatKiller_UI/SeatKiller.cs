@@ -914,7 +914,7 @@ namespace SeatKiller_UI
                 {
                     if (CheckResInf(false))
                     {
-                        if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & status == "RESERVE")
+                        if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & DateTime.Now.TimeOfDay.TotalMinutes < 1350 & status == "RESERVE")
                         {
                             int historyStartTimeInt = int.Parse(historyStartTime.Substring(0, 2)) * 60 + int.Parse(historyStartTime.Substring(3, 2));
                             int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
@@ -964,7 +964,7 @@ namespace SeatKiller_UI
                                 }
                             }
                         }
-                        else if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & status == "AWAY")
+                        else if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & DateTime.Now.TimeOfDay.TotalMinutes < 1350 & status == "AWAY")
                         {
                             int historyAwayStartTimeInt = int.Parse(historyAwayStartTime.Substring(0, 2)) * 60 + int.Parse(historyAwayStartTime.Substring(3, 2));
                             int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
