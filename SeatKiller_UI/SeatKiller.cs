@@ -910,34 +910,54 @@ namespace SeatKiller_UI
                     Config.config.textBox2.AppendText("\r\n\r\n座位锁定失败");
                     break;
                 }
-                if (GetToken(false) == "Success")
+                if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & DateTime.Now.TimeOfDay.TotalMinutes < 1350)
                 {
-                    if (CheckResInf(false))
+                    if (GetToken(false) == "Success")
                     {
-                        if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & DateTime.Now.TimeOfDay.TotalMinutes < 1350 & status == "RESERVE")
+                        if (CheckResInf(false))
                         {
-                            int historyStartTimeInt = int.Parse(historyStartTime.Substring(0, 2)) * 60 + int.Parse(historyStartTime.Substring(3, 2));
-                            int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
-                            if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyStartTimeInt >= 25)
+                            if (status == "RESERVE")
                             {
-                                if (historyEndTimeInt - (int)DateTime.Now.TimeOfDay.TotalMinutes < 5)
+                                int historyStartTimeInt = int.Parse(historyStartTime.Substring(0, 2)) * 60 + int.Parse(historyStartTime.Substring(3, 2));
+                                int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
+                                if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyStartTimeInt >= 25)
                                 {
-                                    Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动取消预约");
-                                    break;
-                                }
-                                if (CancelReservation(res_id, false))
-                                {
-                                    if (BookSeat(seatId, DateTime.Now.ToString("yyyy-MM-dd"), "-1", historyEndTimeInt.ToString(), false) != "Success")
+                                    if (historyEndTimeInt - (int)DateTime.Now.TimeOfDay.TotalMinutes < 5)
+                                    {
+                                        Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动取消预约");
+                                        break;
+                                    }
+                                    if (CancelReservation(res_id, false))
+                                    {
+                                        if (BookSeat(seatId, DateTime.Now.ToString("yyyy-MM-dd"), "-1", historyEndTimeInt.ToString(), false) != "Success")
+                                        {
+                                            if (doClear)
+                                            {
+                                                index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
+                                                Config.config.textBox2.Select(index - 1, Config.config.textBox2.TextLength - index + 1);
+                                                Config.config.textBox2.SelectedText = "\r\n重新预约座位失败，重试次数: " + count;
+                                            }
+                                            else
+                                            {
+                                                Config.config.textBox2.AppendText("\r\n重新预约座位失败，重试次数: " + count);
+                                                doClear = true;
+                                            }
+                                            Thread.Sleep(5000);
+                                            count += 1;
+                                            continue;
+                                        }
+                                    }
+                                    else
                                     {
                                         if (doClear)
                                         {
                                             index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
                                             Config.config.textBox2.Select(index - 1, Config.config.textBox2.TextLength - index + 1);
-                                            Config.config.textBox2.SelectedText = "\r\n重新预约座位失败，重试次数: " + count;
+                                            Config.config.textBox2.SelectedText = "\r\n取消预约失败，重试次数: " + count;
                                         }
                                         else
                                         {
-                                            Config.config.textBox2.AppendText("\r\n重新预约座位失败，重试次数: " + count);
+                                            Config.config.textBox2.AppendText("\r\n取消预约失败，重试次数: " + count);
                                             doClear = true;
                                         }
                                         Thread.Sleep(5000);
@@ -945,49 +965,49 @@ namespace SeatKiller_UI
                                         continue;
                                     }
                                 }
-                                else
+                            }
+                            else if (status == "AWAY")
+                            {
+                                int historyAwayStartTimeInt = int.Parse(historyAwayStartTime.Substring(0, 2)) * 60 + int.Parse(historyAwayStartTime.Substring(3, 2));
+                                int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
+                                if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyAwayStartTimeInt >= 25)
                                 {
-                                    if (doClear)
+                                    if (historyEndTimeInt - (int)DateTime.Now.TimeOfDay.TotalMinutes < 5)
                                     {
-                                        index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
-                                        Config.config.textBox2.Select(index - 1, Config.config.textBox2.TextLength - index + 1);
-                                        Config.config.textBox2.SelectedText = "\r\n取消预约失败，重试次数: " + count;
+                                        Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动释放座位");
+                                        break;
+                                    }
+                                    if (StopUsing(false))
+                                    {
+                                        if (BookSeat(seatId, DateTime.Now.ToString("yyyy-MM-dd"), "-1", historyEndTimeInt.ToString(), false) != "Success")
+                                        {
+                                            if (doClear)
+                                            {
+                                                index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
+                                                Config.config.textBox2.Select(index - 1, Config.config.textBox2.TextLength - index + 1);
+                                                Config.config.textBox2.SelectedText = "\r\n重新预约座位失败，重试次数: " + count;
+                                            }
+                                            else
+                                            {
+                                                Config.config.textBox2.AppendText("\r\n重新预约座位失败，重试次数: " + count);
+                                                doClear = true;
+                                            }
+                                            Thread.Sleep(5000);
+                                            count += 1;
+                                            continue;
+                                        }
                                     }
                                     else
-                                    {
-                                        Config.config.textBox2.AppendText("\r\n取消预约失败，重试次数: " + count);
-                                        doClear = true;
-                                    }
-                                    Thread.Sleep(5000);
-                                    count += 1;
-                                    continue;
-                                }
-                            }
-                        }
-                        else if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & DateTime.Now.TimeOfDay.TotalMinutes < 1350 & status == "AWAY")
-                        {
-                            int historyAwayStartTimeInt = int.Parse(historyAwayStartTime.Substring(0, 2)) * 60 + int.Parse(historyAwayStartTime.Substring(3, 2));
-                            int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
-                            if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyAwayStartTimeInt >= 25)
-                            {
-                                if (historyEndTimeInt - (int)DateTime.Now.TimeOfDay.TotalMinutes < 5)
-                                {
-                                    Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动释放座位");
-                                    break;
-                                }
-                                if (StopUsing(false))
-                                {
-                                    if (BookSeat(seatId, DateTime.Now.ToString("yyyy-MM-dd"), "-1", historyEndTimeInt.ToString(), false) != "Success")
                                     {
                                         if (doClear)
                                         {
                                             index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
                                             Config.config.textBox2.Select(index - 1, Config.config.textBox2.TextLength - index + 1);
-                                            Config.config.textBox2.SelectedText = "\r\n重新预约座位失败，重试次数: " + count;
+                                            Config.config.textBox2.SelectedText = "\r\n释放座位失败，重试次数: " + count;
                                         }
                                         else
                                         {
-                                            Config.config.textBox2.AppendText("\r\n重新预约座位失败，重试次数: " + count);
+                                            Config.config.textBox2.AppendText("\r\n释放座位失败，重试次数: " + count);
                                             doClear = true;
                                         }
                                         Thread.Sleep(5000);
@@ -995,33 +1015,25 @@ namespace SeatKiller_UI
                                         continue;
                                     }
                                 }
-                                else
-                                {
-                                    if (doClear)
-                                    {
-                                        index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
-                                        Config.config.textBox2.Select(index - 1, Config.config.textBox2.TextLength - index + 1);
-                                        Config.config.textBox2.SelectedText = "\r\n释放座位失败，重试次数: " + count;
-                                    }
-                                    else
-                                    {
-                                        Config.config.textBox2.AppendText("\r\n释放座位失败，重试次数: " + count);
-                                        doClear = true;
-                                    }
-                                    Thread.Sleep(5000);
-                                    count += 1;
-                                    continue;
-                                }
                             }
                         }
-                        count = 0;
-                        CheckResInf(false);
-                        linesCount = Config.config.textBox2.Lines.Count();
-                        index = Config.config.textBox2.GetFirstCharIndexFromLine(linesCount - (doClear ? 2 : 1));
-                        Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
-                        Config.config.textBox2.SelectedText = "当前有效" + ((status == "RESERVE") ? "预约" : "使用") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime;
-                        doClear = false;
-                        Thread.Sleep(250000);
+                        else
+                        {
+                            if (doClear)
+                            {
+                                index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
+                                Config.config.textBox2.Select(index - 1, Config.config.textBox2.TextLength - index + 1);
+                                Config.config.textBox2.SelectedText = "\r\n获取预约信息失败，重试次数: " + count;
+                            }
+                            else
+                            {
+                                Config.config.textBox2.AppendText("\r\n获取预约信息失败，重试次数: " + count);
+                                doClear = true;
+                            }
+                            Thread.Sleep(5000);
+                            count += 1;
+                            continue;
+                        }
                     }
                     else
                     {
@@ -1029,11 +1041,11 @@ namespace SeatKiller_UI
                         {
                             index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
                             Config.config.textBox2.Select(index - 1, Config.config.textBox2.TextLength - index + 1);
-                            Config.config.textBox2.SelectedText = "\r\n获取预约信息失败，重试次数: " + count;
+                            Config.config.textBox2.SelectedText = "\r\n获取token失败，重试次数: " + count;
                         }
                         else
                         {
-                            Config.config.textBox2.AppendText("\r\n获取预约信息失败，重试次数: " + count);
+                            Config.config.textBox2.AppendText("\r\n获取token失败，重试次数: " + count);
                             doClear = true;
                         }
                         Thread.Sleep(5000);
@@ -1041,23 +1053,14 @@ namespace SeatKiller_UI
                         continue;
                     }
                 }
-                else
-                {
-                    if (doClear)
-                    {
-                        index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
-                        Config.config.textBox2.Select(index - 1, Config.config.textBox2.TextLength - index + 1);
-                        Config.config.textBox2.SelectedText = "\r\n获取token失败，重试次数: " + count;
-                    }
-                    else
-                    {
-                        Config.config.textBox2.AppendText("\r\n获取token失败，重试次数: " + count);
-                        doClear = true;
-                    }
-                    Thread.Sleep(5000);
-                    count += 1;
-                    continue;
-                }
+                count = 0;
+                CheckResInf(false);
+                linesCount = Config.config.textBox2.Lines.Count();
+                index = Config.config.textBox2.GetFirstCharIndexFromLine(linesCount - (doClear ? 2 : 1));
+                Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
+                Config.config.textBox2.SelectedText = "当前有效" + ((status == "RESERVE") ? "预约" : "使用") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime;
+                doClear = false;
+                Thread.Sleep(250000);
             }
         }
 
