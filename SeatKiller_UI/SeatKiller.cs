@@ -1114,7 +1114,7 @@ namespace SeatKiller_UI
                             return false;
                         }
 
-                        Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + (1320 - (int)DateTime.Now.TimeOfDay.TotalMinutes).ToString() + "秒\r\n");
+                        Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + (79200 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
                         Thread.Sleep(3000);
                     }
                     else
@@ -1269,7 +1269,7 @@ namespace SeatKiller_UI
                             return false;
                         }
 
-                        Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + (1320 - (int)DateTime.Now.TimeOfDay.TotalMinutes).ToString() + "秒\r\n");
+                        Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + (79200 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
                         Thread.Sleep(3000);
                     }
                     else

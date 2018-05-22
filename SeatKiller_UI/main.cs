@@ -213,9 +213,7 @@ namespace SeatKiller_UI
                                             Thread.Sleep(2000);
                                             break;
                                         case "Connection lost":
-                                            DateTime time = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd") + " 23:45:00");
-                                            TimeSpan delta = time.Subtract(DateTime.Now);
-                                            Config.config.textBox2.AppendText("\r\n\r\n连接丢失，1分钟后重新尝试抢座，系统开放时间剩余" + ((int)delta.TotalSeconds).ToString() + "秒\r\n");
+                                            Config.config.textBox2.AppendText("\r\n\r\n连接丢失，1分钟后重新尝试抢座，系统开放时间剩余" + (85500 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
                                             Thread.Sleep(60000);
                                             break;
                                     }
