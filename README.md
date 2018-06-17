@@ -9,6 +9,8 @@
 
 代码引用请遵守 `Mozilla Public License 2.0` 协议，严禁修改代码后闭源，如有违约后果自负
 
+不想折腾的话可以 [点击此处](https://github.com/goolhanrry/SeatKiller_UI/releases) 下载编译好的最新版本的软件
+
 ## 已经实现的功能
 
 * 获取用户的信息，包括姓名、上次入馆时间、当前状态（未入馆、已进入某分馆）和累计违约次数
