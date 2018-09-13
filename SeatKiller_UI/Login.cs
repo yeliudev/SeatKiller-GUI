@@ -122,7 +122,7 @@ namespace SeatKiller_UI
                     e.Cancel = true;
                     return;
                 }
-                if (SeatKiller.GetToken(false) == "登录失败: 密码不正确")
+                if (SeatKiller.GetToken(false) == "登录失败: 用户名或密码不正确")
                 {
                     label4.Text = "Enable";
                     label4.ForeColor = Color.ForestGreen;
