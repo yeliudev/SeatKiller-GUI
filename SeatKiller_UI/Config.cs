@@ -8,6 +8,7 @@ namespace SeatKiller_UI
     public partial class Config : Form
     {
         public static Config config;
+        public bool booking = false;
         ArrayList displayStartTimeList;
         readonly ArrayList building_list = new ArrayList
         {
@@ -101,7 +102,7 @@ namespace SeatKiller_UI
         {
             //About about = new About();
             //about.ShowDialog();
-            MessageBox.Show("版本号：1.8.5\r\nGitHub仓库：https://github.com/goolhanrry/SeatKiller_UI\r\n还没搭好的个人主页：https://www.goolhanrry.club/\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Style写得一般，欢迎添加我的微信: aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶", "关于");
+            MessageBox.Show("版本号：1.8.6\r\nGitHub仓库：https://github.com/goolhanrry/SeatKiller_UI\r\n还没搭好的个人主页：https://www.goolhanrry.club/\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Style写得一般，欢迎添加我的微信: aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶", "关于");
         }
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
@@ -429,6 +430,28 @@ namespace SeatKiller_UI
                     Thread.Sleep(1000);
                 }
             }
+        }
+
+        private void backgroundWorker4_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            textBox2.AppendText("\r\n\r\n正在等待下一次循环\r\n");
+            while (true)
+            {
+                if (backgroundWorker4.CancellationPending)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                if (!booking & DateTime.Now.TimeOfDay.TotalMinutes >= 1394 & DateTime.Now.TimeOfDay.TotalMinutes <= 1395)
+                {
+                    break;
+                }
+                Thread.Sleep(1000);
+            }
+            comboBox3.SelectedIndex = 1;
+            Main.date = comboBox3.SelectedValue.ToString();
+            booking = true;
+            Main.Start();
         }
     }
 }

@@ -42,11 +42,11 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.Location = new System.Drawing.Point(12, 30);
+            this.label1.Location = new System.Drawing.Point(14, 30);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(750, 168);
             this.label1.TabIndex = 0;
-            this.label1.Text = "版本号：1.8.5\r\nGitHub仓库：\r\n不定时更新，最新版本将在下方QQ群和GitHub仓库中发布\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode" +
+            this.label1.Text = "版本号：1.8.6\r\nGitHub仓库：\r\n不定时更新，最新版本将在下方QQ群和GitHub仓库中发布\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode" +
     " Style写得一般，欢迎添加作者微信或QQ群交流探讨及提交bug ۹(๑•̀ω•́ ๑)۶";
             // 
             // pictureBox1

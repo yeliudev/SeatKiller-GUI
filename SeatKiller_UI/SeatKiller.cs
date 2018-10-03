@@ -925,6 +925,7 @@ namespace SeatKiller_UI
                                     if (historyEndTimeInt - (int)DateTime.Now.TimeOfDay.TotalMinutes < 5)
                                     {
                                         Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动取消预约");
+                                        CancelReservation(res_id);
                                         break;
                                     }
                                     if (CancelReservation(res_id, false))
@@ -975,6 +976,7 @@ namespace SeatKiller_UI
                                     if (historyEndTimeInt - (int)DateTime.Now.TimeOfDay.TotalMinutes < 5)
                                     {
                                         Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动释放座位");
+                                        StopUsing();
                                         break;
                                     }
                                     if (StopUsing(false))

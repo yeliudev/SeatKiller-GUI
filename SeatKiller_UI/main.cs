@@ -11,6 +11,10 @@ namespace SeatKiller_UI
 
         public static void Start()
         {
+            if (Config.config.backgroundWorker4.IsBusy)
+            {
+                Config.config.backgroundWorker4.CancelAsync();
+            }
             thread = new Thread(Run)
             {
                 IsBackground = true
@@ -20,17 +24,25 @@ namespace SeatKiller_UI
 
         public static void Stop()
         {
-            bool waiting = Config.config.backgroundWorker1.IsBusy ? true : false;
-            Config.config.backgroundWorker1.CancelAsync();
+            bool waitingWorker1 = Config.config.backgroundWorker1.IsBusy ? true : false;
+            bool waitingWorker4 = Config.config.backgroundWorker4.IsBusy ? true : false;
+            if (waitingWorker1)
+            {
+                Config.config.backgroundWorker1.CancelAsync();
+            }
+            if (waitingWorker4)
+            {
+                Config.config.backgroundWorker4.CancelAsync();
+            }
             while (true)
             {
-                if (!Config.config.backgroundWorker1.IsBusy)
+                if (!Config.config.backgroundWorker1.IsBusy & !Config.config.backgroundWorker4.IsBusy)
                 {
                     break;
                 }
             }
             thread.Abort();
-            Config.config.textBox2.AppendText((waiting ? "" : "\r\n") + "\r\n-----------------------------运行中断------------------------------\r\n");
+            Config.config.textBox2.AppendText(((waitingWorker1 || waitingWorker4) ? "" : "\r\n") + "\r\n-----------------------------运行中断------------------------------\r\n");
         }
 
         public static void Run()
@@ -113,11 +125,15 @@ namespace SeatKiller_UI
                             if (SeatKiller.BookSeat(seatId, date, startTime, endTime) == "Success")
                             {
                                 Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出抢座模式---------------------------\r\n");
+                                SeatKiller.LockSeat(SeatKiller.bookedSeatId);
                                 if (Config.config.checkBox6.Checked)
                                 {
-                                    SeatKiller.LockSeat(SeatKiller.bookedSeatId);
+                                    Config.config.backgroundWorker4.RunWorkerAsync();
                                 }
-                                EnableControls();
+                                else
+                                {
+                                    EnableControls();
+                                }
                                 return;
                             }
                             else if (Config.config.checkBox1.Checked)
@@ -203,11 +219,15 @@ namespace SeatKiller_UI
                                         case "Success":
                                             SeatKiller.bookedSeatId = freeSeat.ToString();
                                             Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出抢座模式---------------------------\r\n");
+                                            SeatKiller.LockSeat(SeatKiller.bookedSeatId);
                                             if (Config.config.checkBox6.Checked)
                                             {
-                                                SeatKiller.LockSeat(SeatKiller.bookedSeatId);
+                                                Config.config.backgroundWorker4.RunWorkerAsync();
                                             }
-                                            EnableControls();
+                                            else
+                                            {
+                                                EnableControls();
+                                            }
                                             return;
                                         case "Failed":
                                             Thread.Sleep(2000);
@@ -248,19 +268,31 @@ namespace SeatKiller_UI
                 {
                     Config.config.textBox2.AppendText("\r\n\r\n已检测到有效预约，将自动改签预约信息");
                     SeatKiller.exchange = true;
-                    if (SeatKiller.ExchangeLoop(buildingId, rooms, startTime, endTime, roomId, seatId) & Config.config.checkBox6.Checked)
+                    if (SeatKiller.ExchangeLoop(buildingId, rooms, startTime, endTime, roomId, seatId))
                     {
                         SeatKiller.LockSeat(SeatKiller.bookedSeatId, true);
+                        if (Config.config.checkBox6.Checked)
+                        {
+                            Config.config.backgroundWorker4.RunWorkerAsync();
+                        }
+                        else
+                        {
+                            EnableControls();
+                        }
                     }
                 }
-                else
+                else if (SeatKiller.Loop(buildingId, rooms, startTime, endTime, roomId, seatId))
                 {
-                    if (SeatKiller.Loop(buildingId, rooms, startTime, endTime, roomId, seatId) & Config.config.checkBox6.Checked)
+                    SeatKiller.LockSeat(SeatKiller.bookedSeatId, true);
+                    if (Config.config.checkBox6.Checked)
                     {
-                        SeatKiller.LockSeat(SeatKiller.bookedSeatId, true);
+                        Config.config.backgroundWorker4.RunWorkerAsync();
+                    }
+                    else
+                    {
+                        EnableControls();
                     }
                 }
-                EnableControls();
                 return;
             }
         }

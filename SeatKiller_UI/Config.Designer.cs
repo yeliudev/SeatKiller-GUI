@@ -59,6 +59,7 @@
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker3 = new System.ComponentModel.BackgroundWorker();
+            this.backgroundWorker4 = new System.ComponentModel.BackgroundWorker();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -121,9 +122,9 @@
             this.checkBox6.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox6.Location = new System.Drawing.Point(128, 519);
             this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(114, 29);
+            this.checkBox6.Size = new System.Drawing.Size(152, 29);
             this.checkBox6.TabIndex = 101;
-            this.checkBox6.Text = "锁定座位";
+            this.checkBox6.Text = "自动循环抢座";
             this.checkBox6.UseVisualStyleBackColor = true;
             // 
             // label10
@@ -217,11 +218,12 @@
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
+            this.checkBox2.Enabled = false;
             this.checkBox2.Location = new System.Drawing.Point(128, 550);
             this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(152, 29);
+            this.checkBox2.Size = new System.Drawing.Size(266, 29);
             this.checkBox2.TabIndex = 11;
-            this.checkBox2.Text = "启用邮件提醒\r\n";
+            this.checkBox2.Text = "启用邮件提醒（暂时关闭）\r\n";
             this.checkBox2.UseVisualStyleBackColor = true;
             this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
@@ -380,6 +382,10 @@
             // 
             this.backgroundWorker3.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker3_DoWork);
             // 
+            // backgroundWorker4
+            // 
+            this.backgroundWorker4.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker4_DoWork);
+            // 
             // Config
             // 
             this.AcceptButton = this.button1;
@@ -399,7 +405,7 @@
             this.Name = "Config";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "SeatKiller by goolhanrry v1.8.5";
+            this.Text = "SeatKiller by goolhanrry v1.8.6";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Config_FormClosed);
             this.Load += new System.EventHandler(this.Config_Load);
             this.groupBox1.ResumeLayout(false);
@@ -440,5 +446,6 @@
         private System.ComponentModel.BackgroundWorker backgroundWorker2;
         public System.Windows.Forms.CheckBox checkBox6;
         private System.ComponentModel.BackgroundWorker backgroundWorker3;
+        public System.ComponentModel.BackgroundWorker backgroundWorker4;
     }
 }
