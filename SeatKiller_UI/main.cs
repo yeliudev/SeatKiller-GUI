@@ -268,7 +268,7 @@ namespace SeatKiller_UI
                     SeatKiller.exchange = true;
                     if (SeatKiller.ExchangeLoop(buildingId, rooms, startTime, endTime, roomId, seatId))
                     {
-                        SeatKiller.LockSeat(SeatKiller.bookedSeatId, true);
+                        SeatKiller.LockSeat(SeatKiller.bookedSeatId);
                         if (Config.config.checkBox6.Checked)
                         {
                             Config.config.backgroundWorker4.RunWorkerAsync();
@@ -281,7 +281,7 @@ namespace SeatKiller_UI
                 }
                 else if (SeatKiller.Loop(buildingId, rooms, startTime, endTime, roomId, seatId))
                 {
-                    SeatKiller.LockSeat(SeatKiller.bookedSeatId, true);
+                    SeatKiller.LockSeat(SeatKiller.bookedSeatId);
                     if (Config.config.checkBox6.Checked)
                     {
                         Config.config.backgroundWorker4.RunWorkerAsync();

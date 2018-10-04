@@ -752,7 +752,7 @@ namespace SeatKiller_UI
                     stringData = Encoding.UTF8.GetString(data);
                     if (stringData == "success")
                     {
-                        Config.config.textBox2.AppendText("\r\n\r\n邮件提醒发送成功，若接收不到提醒，请将\"seatkiller@outlook.com\"添加至邮箱白名单");
+                        Config.config.textBox2.AppendText("\r\n\r\n邮件提醒发送成功\r\n若接收不到提醒，请将\"seatkiller@outlook.com\"添加至邮箱白名单");
                     }
                     else
                     {
@@ -898,11 +898,11 @@ namespace SeatKiller_UI
             }
         }
 
-        public static void LockSeat(string seatId, bool enter = false)
+        public static void LockSeat(string seatId)
         {
             int index, linesCount, count = 0;
             bool doClear = false;
-            Config.config.textBox2.AppendText((enter ? "\r\n" : "") + "\r\n正在锁定座位，ID: " + seatId + "\r\n");
+            Config.config.textBox2.AppendText("\r\n正在锁定座位，ID: " + seatId + "\r\n");
             while (true)
             {
                 if (count >= 50)
@@ -1062,7 +1062,7 @@ namespace SeatKiller_UI
                 Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
                 Config.config.textBox2.SelectedText = "当前有效" + ((status == "RESERVE") ? "预约" : "使用") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime;
                 doClear = false;
-                Thread.Sleep(250000);
+                Thread.Sleep(10000);
             }
         }
 
@@ -1097,7 +1097,7 @@ namespace SeatKiller_UI
                             {
                                 case "Success":
                                     Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
-                                    Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------");
+                                    Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
                                     return true;
                                 case "Failed":
                                     Thread.Sleep(2000);
@@ -1112,7 +1112,7 @@ namespace SeatKiller_UI
                         if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
-                            Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------");
+                            Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
                             return false;
                         }
 
@@ -1122,7 +1122,7 @@ namespace SeatKiller_UI
                     else
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n获取token失败，请检查网络后重试\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------");
+                        Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
                         return false;
                     }
                 }
@@ -1142,7 +1142,7 @@ namespace SeatKiller_UI
                             {
                                 case "Success":
                                     Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
-                                    Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------");
+                                    Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
                                     return true;
                                 case "Failed":
                                     Thread.Sleep(2000);
@@ -1158,7 +1158,7 @@ namespace SeatKiller_UI
                     if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------");
+                        Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
                         return false;
                     }
                     Thread.Sleep(2000);
@@ -1173,14 +1173,14 @@ namespace SeatKiller_UI
                     if (BookSeat(seatId, date, startTime, endTime) == "Success")
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------");
+                        Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
                         return true;
                     }
 
                     if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------");
+                        Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
                         return false;
                     }
                     Thread.Sleep(2000);
@@ -1229,7 +1229,7 @@ namespace SeatKiller_UI
                                         }
                                         else
                                         {
-                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------");
+                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
                                             return false;
                                         }
                                     }
@@ -1241,7 +1241,7 @@ namespace SeatKiller_UI
                                         }
                                         else
                                         {
-                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------");
+                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
                                             return false;
                                         }
                                     }
@@ -1250,7 +1250,7 @@ namespace SeatKiller_UI
                                     {
                                         case "Success":
                                             Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
-                                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
                                             return true;
                                         case "Failed":
                                             Thread.Sleep(2000);
@@ -1267,7 +1267,7 @@ namespace SeatKiller_UI
                         if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
-                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
                             return false;
                         }
 
@@ -1277,7 +1277,7 @@ namespace SeatKiller_UI
                     else
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n获取token失败，请检查网络后重试\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                        Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
                         return false;
                     }
                 }
@@ -1306,7 +1306,7 @@ namespace SeatKiller_UI
                                         }
                                         else
                                         {
-                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------");
+                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
                                             return false;
                                         }
                                     }
@@ -1318,7 +1318,7 @@ namespace SeatKiller_UI
                                         }
                                         else
                                         {
-                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------");
+                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
                                             return false;
                                         }
                                     }
@@ -1328,7 +1328,7 @@ namespace SeatKiller_UI
                                 {
                                     case "Success":
                                         Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
-                                        Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                                        Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
                                         return true;
                                     case "Failed":
                                         Thread.Sleep(2000);
@@ -1346,7 +1346,7 @@ namespace SeatKiller_UI
                     if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                        Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
                         return false;
                     }
                     Thread.Sleep(2000);
@@ -1366,7 +1366,7 @@ namespace SeatKiller_UI
                     if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                        Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
                         return false;
                     }
 
@@ -1381,19 +1381,19 @@ namespace SeatKiller_UI
                         if (BookSeat(seatId, date, startTime, endTime) == "Success")
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
-                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
                             return true;
                         }
                         else
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n改签失败，原座位已丢失\r\n");
-                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
                             return false;
                         }
                     }
                     else
                     {
-                        Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------");
+                        Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
                         return false;
                     }
                 }
@@ -1404,19 +1404,19 @@ namespace SeatKiller_UI
                         if (BookSeat(seatId, date, startTime, endTime) == "Success")
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
-                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
                             return true;
                         }
                         else
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n改签失败，原座位已丢失\r\n");
-                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------");
+                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
                             return false;
                         }
                     }
                     else
                     {
-                        Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------");
+                        Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
                         return false;
                     }
                 }
