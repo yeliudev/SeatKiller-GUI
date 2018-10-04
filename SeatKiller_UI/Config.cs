@@ -100,9 +100,8 @@ namespace SeatKiller_UI
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            //About about = new About();
-            //about.ShowDialog();
-            MessageBox.Show("版本号：1.8.6\r\nGitHub仓库：https://github.com/goolhanrry/SeatKiller_UI\r\n还没搭好的个人主页：https://www.goolhanrry.club/\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Style写得一般，欢迎添加我的微信: aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶", "关于");
+            About about = new About();
+            about.ShowDialog();
         }
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
@@ -312,13 +311,14 @@ namespace SeatKiller_UI
                 checkBox6.Enabled = false;
                 textBox1.Enabled = false;
                 button1.Text = "停止运行";
-
+                
                 Main.Start();
             }
             else
             {
                 Main.Stop();
 
+                booking = false;
                 label2.Enabled = true;
                 label3.Enabled = true;
                 label4.Enabled = true;
@@ -356,13 +356,8 @@ namespace SeatKiller_UI
         {
             int index = textBox2.GetFirstCharIndexOfCurrentLine();
             bool first = true;
-            while (true)
+            while (!backgroundWorker1.CancellationPending)
             {
-                if (backgroundWorker1.CancellationPending)
-                {
-                    e.Cancel = true;
-                    return;
-                }
                 TimeSpan delta = SeatKiller.time.Subtract(DateTime.Now);
                 if ((bool)e.Argument)
                 {
@@ -392,6 +387,7 @@ namespace SeatKiller_UI
                 }
                 Thread.Sleep(1000);
             }
+            e.Cancel = true;
         }
 
         private void backgroundWorker2_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
@@ -427,7 +423,7 @@ namespace SeatKiller_UI
                     {
                         break;
                     }
-                    Thread.Sleep(1000);
+                    Thread.Sleep(10000);
                 }
             }
         }
@@ -442,7 +438,7 @@ namespace SeatKiller_UI
                     e.Cancel = true;
                     return;
                 }
-                if (!booking & DateTime.Now.TimeOfDay.TotalMinutes >= 1394 & DateTime.Now.TimeOfDay.TotalMinutes <= 1395)
+                if (!booking & DateTime.Now.TimeOfDay.TotalMinutes >= 1360 & DateTime.Now.TimeOfDay.TotalMinutes <= 1365)
                 {
                     break;
                 }

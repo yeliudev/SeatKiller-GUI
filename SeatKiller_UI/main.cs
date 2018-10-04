@@ -24,25 +24,23 @@ namespace SeatKiller_UI
 
         public static void Stop()
         {
-            bool waitingWorker1 = Config.config.backgroundWorker1.IsBusy ? true : false;
-            bool waitingWorker4 = Config.config.backgroundWorker4.IsBusy ? true : false;
-            if (waitingWorker1)
+            bool workerBusy = false;
+            if (Config.config.backgroundWorker1.IsBusy)
             {
+                workerBusy = true;
                 Config.config.backgroundWorker1.CancelAsync();
             }
-            if (waitingWorker4)
+            if (Config.config.backgroundWorker4.IsBusy)
             {
+                workerBusy = true;
                 Config.config.backgroundWorker4.CancelAsync();
             }
-            while (true)
+            while (Config.config.backgroundWorker1.IsBusy || Config.config.backgroundWorker4.IsBusy)
             {
-                if (!Config.config.backgroundWorker1.IsBusy & !Config.config.backgroundWorker4.IsBusy)
-                {
-                    break;
-                }
+                Thread.Sleep(100);
             }
             thread.Abort();
-            Config.config.textBox2.AppendText(((waitingWorker1 || waitingWorker4) ? "" : "\r\n") + "\r\n-----------------------------运行中断------------------------------\r\n");
+            Config.config.textBox2.AppendText((workerBusy ? "" : "\r\n") + "\r\n-----------------------------运行中断------------------------------\r\n");
         }
 
         public static void Run()

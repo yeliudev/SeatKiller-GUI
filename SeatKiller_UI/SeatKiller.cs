@@ -724,7 +724,7 @@ namespace SeatKiller_UI
                 Config.config.textBox2.AppendText("\r\n\r\n尝试连接邮件服务器");
                 byte[] data = new byte[5];
                 Socket socketClient = new Socket(SocketType.Stream, ProtocolType.Tcp);
-                IPAddress ip = IPAddress.Parse("120.79.81.183");
+                IPAddress ip = IPAddress.Parse("134.175.186.17");
                 IPEndPoint point = new IPEndPoint(ip, 5210);
 
                 socketClient.Connect(point);

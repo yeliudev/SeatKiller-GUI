@@ -201,7 +201,7 @@
             this.textBox1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.textBox1.Location = new System.Drawing.Point(147, 589);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(302, 35);
+            this.textBox1.Size = new System.Drawing.Size(300, 35);
             this.textBox1.TabIndex = 12;
             // 
             // label7
@@ -218,12 +218,11 @@
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
-            this.checkBox2.Enabled = false;
             this.checkBox2.Location = new System.Drawing.Point(128, 550);
             this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(266, 29);
+            this.checkBox2.Size = new System.Drawing.Size(152, 29);
             this.checkBox2.TabIndex = 11;
-            this.checkBox2.Text = "启用邮件提醒（暂时关闭）\r\n";
+            this.checkBox2.Text = "启用邮件提醒";
             this.checkBox2.UseVisualStyleBackColor = true;
             this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
@@ -384,6 +383,7 @@
             // 
             // backgroundWorker4
             // 
+            this.backgroundWorker4.WorkerSupportsCancellation = true;
             this.backgroundWorker4.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker4_DoWork);
             // 
             // Config
@@ -405,7 +405,7 @@
             this.Name = "Config";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "SeatKiller by goolhanrry v1.8.6";
+            this.Text = "SeatKiller v1.8.6";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Config_FormClosed);
             this.Load += new System.EventHandler(this.Config_Load);
             this.groupBox1.ResumeLayout(false);

@@ -27,7 +27,7 @@ namespace SeatKiller_UI
             comboBox1.DataSource = bs;
             if (comboBox1.Items.Count > 0)
             {
-                User.users.Add("(清空登录信息)");
+                User.users.Add("（清空登录信息）");
                 bs.ResetBindings(false);
             }
         }
@@ -39,7 +39,7 @@ namespace SeatKiller_UI
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox1.Text == "(清空登录信息)")
+            if (comboBox1.Text == "（清空登录信息）")
             {
                 User.DeleteValue();
                 bs.ResetBindings(false);
@@ -72,9 +72,17 @@ namespace SeatKiller_UI
                 }
                 Close();
             }
+            else if (response == "System Maintenance")
+            {
+                MessageBox.Show("系统正在维护（23:45 ~ 0:15）", "登录失败");
+                if (!backgroundWorker1.IsBusy)
+                {
+                    backgroundWorker1.RunWorkerAsync();
+                }
+            }
             else if (response == "Connection lost")
             {
-                MessageBox.Show("登录失败，连接丢失", "提示");
+                MessageBox.Show("连接丢失，请稍后重试", "登录失败");
                 if (!backgroundWorker1.IsBusy)
                 {
                     backgroundWorker1.RunWorkerAsync();
@@ -115,24 +123,40 @@ namespace SeatKiller_UI
         {
             SeatKiller.username = "";
             SeatKiller.password = "";
-            while (true)
+            while (!backgroundWorker1.CancellationPending)
             {
-                if (backgroundWorker1.CancellationPending)
-                {
-                    e.Cancel = true;
-                    return;
-                }
                 if (SeatKiller.GetToken(false) == "登录失败: 用户名或密码不正确")
+                {
+                    backgroundWorker1.ReportProgress(100);
+                }
+                else
+                {
+                    backgroundWorker1.ReportProgress(0);
+                }
+                Thread.Sleep(200);
+            }
+            e.Cancel = true;
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            if (e.ProgressPercentage == 100)
+            {
+                try
                 {
                     label4.Text = "Enable";
                     label4.ForeColor = Color.ForestGreen;
                 }
-                else
+                catch { }
+            }
+            else
+            {
+                try
                 {
                     label4.Text = "Unable";
                     label4.ForeColor = Color.Red;
                 }
-                Thread.Sleep(200);
+                catch { }
             }
         }
 
@@ -141,10 +165,14 @@ namespace SeatKiller_UI
             if (SeatKiller.CheckUpdate())
             {
                 backgroundWorker1.CancelAsync();
-                Enabled = false;
-                Update update = new Update();
-                update.ShowDialog();
+                backgroundWorker2.ReportProgress(100);
             }
+        }
+
+        private void backgroundWorker2_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            Update update = new Update();
+            update.ShowDialog();
         }
     }
 }
