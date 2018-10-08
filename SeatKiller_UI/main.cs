@@ -45,7 +45,7 @@ namespace SeatKiller_UI
 
         public static void Run()
         {
-            bool cancelled = false;
+            bool cancelled = false, exchange = false;
             if (Config.config.comboBox3.SelectedIndex == 1)
             {
                 Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入抢座模式---------------------------\r\n");
@@ -63,7 +63,11 @@ namespace SeatKiller_UI
                     if (SeatKiller.CheckResInf(false))
                     {
                         Config.config.textBox2.AppendText("\r\n已检测到有效预约，将自动改签预约信息\r\n");
-                        SeatKiller.exchange = true;
+                        exchange = true;
+                    }
+                    else
+                    {
+                        exchange = false;
                     }
 
                     if (DateTime.Now.TimeOfDay.TotalMinutes < 1365)
@@ -74,7 +78,7 @@ namespace SeatKiller_UI
                     {
                         Config.config.textBox2.AppendText("\r\n预约系统开放时间已过");
 
-                        if (SeatKiller.exchange)
+                        if (exchange)
                         {
                             SeatKiller.ExchangeLoop(buildingId, rooms, startTime, endTime, roomId, seatId);
                         }
@@ -91,7 +95,7 @@ namespace SeatKiller_UI
                     {
                         if (seatId != "0")
                         {
-                            if (SeatKiller.exchange & SeatKiller.check_in & !cancelled)
+                            if (exchange & SeatKiller.check_in & !cancelled)
                             {
                                 if (SeatKiller.StopUsing())
                                 {
@@ -105,7 +109,7 @@ namespace SeatKiller_UI
                                     return;
                                 }
                             }
-                            else if (SeatKiller.exchange & !SeatKiller.check_in & !cancelled)
+                            else if (exchange & !SeatKiller.check_in & !cancelled)
                             {
                                 if (SeatKiller.CancelReservation(SeatKiller.res_id))
                                 {
@@ -183,7 +187,7 @@ namespace SeatKiller_UI
                             {
                                 foreach (var freeSeat in SeatKiller.freeSeats)
                                 {
-                                    if (SeatKiller.exchange & SeatKiller.check_in & !cancelled)
+                                    if (exchange & SeatKiller.check_in & !cancelled)
                                     {
                                         if (SeatKiller.StopUsing())
                                         {
@@ -197,7 +201,7 @@ namespace SeatKiller_UI
                                             return;
                                         }
                                     }
-                                    else if (SeatKiller.exchange & !SeatKiller.check_in & !cancelled)
+                                    else if (exchange & !SeatKiller.check_in & !cancelled)
                                     {
                                         if (SeatKiller.CancelReservation(SeatKiller.res_id))
                                         {
@@ -265,7 +269,6 @@ namespace SeatKiller_UI
                 if (SeatKiller.CheckResInf(false))
                 {
                     Config.config.textBox2.AppendText("\r\n\r\n已检测到有效预约，将自动改签预约信息");
-                    SeatKiller.exchange = true;
                     if (SeatKiller.ExchangeLoop(buildingId, rooms, startTime, endTime, roomId, seatId))
                     {
                         SeatKiller.LockSeat(SeatKiller.bookedSeatId);

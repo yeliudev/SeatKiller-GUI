@@ -447,6 +447,7 @@ namespace SeatKiller_UI
             comboBox3.SelectedIndex = 1;
             Main.date = comboBox3.SelectedValue.ToString();
             booking = true;
+            textBox2.Text = "";
             Main.Start();
         }
     }

@@ -41,7 +41,7 @@ namespace SeatKiller_UI
         public static ArrayList freeSeats = new ArrayList();
         private static ArrayList startTimes = new ArrayList(), endTimes = new ArrayList();
         public static string to_addr, res_id, username, password, newVersion, newVersionSize, updateInfo, downloadURL, status, bookedSeatId, historyDate, historyStartTime, historyEndTime, historyAwayStartTime, token = "", name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
-        public static bool exitFlag = true, check_in = false, exchange = false, onlyPower = false, onlyWindow = false, onlyComputer = false;
+        public static bool exitFlag = true, check_in = false, onlyPower = false, onlyWindow = false, onlyComputer = false;
         public static DateTime time;
 
         private static void SetHeaderValue(WebHeaderCollection header, string name, string value)
@@ -670,7 +670,6 @@ namespace SeatKiller_UI
                 if (jObject["status"].ToString() == "success")
                 {
                     bookedSeatId = seatId;
-                    exchange = true;
                     if (alert)
                     {
                         PrintBookInf(jObject);
