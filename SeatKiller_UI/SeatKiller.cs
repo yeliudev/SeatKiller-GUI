@@ -1054,6 +1054,10 @@ namespace SeatKiller_UI
                         continue;
                     }
                 }
+                else if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes >= 1350)
+                {
+                    break;
+                }
                 count = 0;
                 CheckResInf(false);
                 linesCount = Config.config.textBox2.Lines.Count();
