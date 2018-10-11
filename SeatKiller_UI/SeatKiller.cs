@@ -740,7 +740,7 @@ namespace SeatKiller_UI
                     Config.config.textBox2.AppendText("\r\n" + Encoding.UTF8.GetString(data));
 
                     data = new byte[128];
-                    socketClient.Send(Encoding.UTF8.GetBytes(to_addr));
+                    socketClient.Send(Encoding.UTF8.GetBytes("to" + to_addr));
                     socketClient.Receive(data);
                     Config.config.textBox2.AppendText("\r\n" + Encoding.UTF8.GetString(data));
 
@@ -768,6 +768,29 @@ namespace SeatKiller_UI
             else
             {
                 Config.config.textBox2.AppendText("\r\n\r\n邮箱地址输入错误，无法发送邮件");
+            }
+        }
+
+        public static void LoggedIn()
+        {
+            byte[] data = new byte[5];
+            Socket socketClient = new Socket(SocketType.Stream, ProtocolType.Tcp);
+            IPAddress ip = IPAddress.Parse("134.175.186.17");
+            IPEndPoint point = new IPEndPoint(ip, 5210);
+
+            socketClient.Connect(point);
+            socketClient.Receive(data);
+            string stringData = Encoding.UTF8.GetString(data);
+
+            if (stringData == "Hello")
+            {
+
+                data = new byte[128];
+                socketClient.Send(Encoding.UTF8.GetBytes("login" + username + name));
+                Thread.Sleep(1000);
+
+                socketClient.Send(Encoding.UTF8.GetBytes("exit"));
+                socketClient.Close();
             }
         }
 
@@ -909,11 +932,11 @@ namespace SeatKiller_UI
                     Config.config.textBox2.AppendText("\r\n\r\n座位锁定失败");
                     break;
                 }
-                if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & DateTime.Now.TimeOfDay.TotalMinutes < 1350)
+                if (GetToken(false) == "Success")
                 {
-                    if (GetToken(false) == "Success")
+                    if (CheckResInf(false))
                     {
-                        if (CheckResInf(false))
+                        if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & DateTime.Now.TimeOfDay.TotalMinutes < 1350)
                         {
                             if (status == "RESERVE")
                             {
@@ -934,8 +957,8 @@ namespace SeatKiller_UI
                                             if (doClear)
                                             {
                                                 index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
-                                                Config.config.textBox2.Select(index - 1, Config.config.textBox2.TextLength - index + 1);
-                                                Config.config.textBox2.SelectedText = "\r\n重新预约座位失败，重试次数: " + count;
+                                                Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
+                                                Config.config.textBox2.SelectedText = "重新预约座位失败，重试次数: " + count;
                                             }
                                             else
                                             {
@@ -952,8 +975,8 @@ namespace SeatKiller_UI
                                         if (doClear)
                                         {
                                             index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
-                                            Config.config.textBox2.Select(index - 1, Config.config.textBox2.TextLength - index + 1);
-                                            Config.config.textBox2.SelectedText = "\r\n取消预约失败，重试次数: " + count;
+                                            Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
+                                            Config.config.textBox2.SelectedText = "取消预约失败，重试次数: " + count;
                                         }
                                         else
                                         {
@@ -985,8 +1008,8 @@ namespace SeatKiller_UI
                                             if (doClear)
                                             {
                                                 index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
-                                                Config.config.textBox2.Select(index - 1, Config.config.textBox2.TextLength - index + 1);
-                                                Config.config.textBox2.SelectedText = "\r\n重新预约座位失败，重试次数: " + count;
+                                                Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
+                                                Config.config.textBox2.SelectedText = "重新预约座位失败，重试次数: " + count;
                                             }
                                             else
                                             {
@@ -1003,8 +1026,8 @@ namespace SeatKiller_UI
                                         if (doClear)
                                         {
                                             index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
-                                            Config.config.textBox2.Select(index - 1, Config.config.textBox2.TextLength - index + 1);
-                                            Config.config.textBox2.SelectedText = "\r\n释放座位失败，重试次数: " + count;
+                                            Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
+                                            Config.config.textBox2.SelectedText = "释放座位失败，重试次数: " + count;
                                         }
                                         else
                                         {
@@ -1018,35 +1041,24 @@ namespace SeatKiller_UI
                                 }
                             }
                         }
-                        else
-                        {
-                            if (doClear)
-                            {
-                                index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
-                                Config.config.textBox2.Select(index - 1, Config.config.textBox2.TextLength - index + 1);
-                                Config.config.textBox2.SelectedText = "\r\n获取预约信息失败，重试次数: " + count;
-                            }
-                            else
-                            {
-                                Config.config.textBox2.AppendText("\r\n获取预约信息失败，重试次数: " + count);
-                                doClear = true;
-                            }
-                            Thread.Sleep(5000);
-                            count += 1;
-                            continue;
-                        }
+                        count = 0;
+                        linesCount = Config.config.textBox2.Lines.Count();
+                        index = Config.config.textBox2.GetFirstCharIndexFromLine(linesCount - (doClear ? 2 : 1));
+                        Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
+                        Config.config.textBox2.SelectedText = "当前有效" + ((status == "RESERVE") ? "预约" : "使用") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime;
+                        doClear = false;
                     }
                     else
                     {
                         if (doClear)
                         {
                             index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
-                            Config.config.textBox2.Select(index - 1, Config.config.textBox2.TextLength - index + 1);
-                            Config.config.textBox2.SelectedText = "\r\n获取token失败，重试次数: " + count;
+                            Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
+                            Config.config.textBox2.SelectedText = "获取预约信息失败，重试次数: " + count;
                         }
                         else
                         {
-                            Config.config.textBox2.AppendText("\r\n获取token失败，重试次数: " + count);
+                            Config.config.textBox2.AppendText("\r\n获取预约信息失败，重试次数: " + count);
                             doClear = true;
                         }
                         Thread.Sleep(5000);
@@ -1054,17 +1066,23 @@ namespace SeatKiller_UI
                         continue;
                     }
                 }
-                else if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes >= 1350)
+                else
                 {
-                    break;
+                    if (doClear)
+                    {
+                        index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
+                        Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
+                        Config.config.textBox2.SelectedText = "获取token失败，重试次数: " + count;
+                    }
+                    else
+                    {
+                        Config.config.textBox2.AppendText("\r\n获取token失败，重试次数: " + count);
+                        doClear = true;
+                    }
+                    Thread.Sleep(5000);
+                    count += 1;
+                    continue;
                 }
-                count = 0;
-                CheckResInf(false);
-                linesCount = Config.config.textBox2.Lines.Count();
-                index = Config.config.textBox2.GetFirstCharIndexFromLine(linesCount - (doClear ? 2 : 1));
-                Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
-                Config.config.textBox2.SelectedText = "当前有效" + ((status == "RESERVE") ? "预约" : "使用") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime;
-                doClear = false;
                 Thread.Sleep(10000);
             }
         }

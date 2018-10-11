@@ -392,6 +392,12 @@ namespace SeatKiller_UI
 
         private void backgroundWorker2_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
+            if (SeatKiller.GetUsrInf(false))
+            {
+                label1.Text = "你好 , " + SeatKiller.name + "  上次入馆时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
+                SeatKiller.LoggedIn();
+            }
+            Thread.Sleep(10000);
             while (true)
             {
                 if (SeatKiller.GetUsrInf(false))

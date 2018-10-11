@@ -7,10 +7,12 @@ namespace SeatKiller_UI
     {
         public static string buildingId, roomId, seatId, date, startTime, endTime;
         public static string[] rooms;
+        public static bool enter;
         private static Thread thread;
 
-        public static void Start()
+        public static void Start(bool didClear = false)
         {
+            enter = !didClear;
             if (Config.config.backgroundWorker4.IsBusy)
             {
                 Config.config.backgroundWorker4.CancelAsync();
@@ -48,7 +50,7 @@ namespace SeatKiller_UI
             bool cancelled = false, exchange = false;
             if (Config.config.comboBox3.SelectedIndex == 1)
             {
-                Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入抢座模式---------------------------\r\n");
+                Config.config.textBox2.AppendText((enter ? "\r\n" : "") + "\r\n---------------------------进入抢座模式---------------------------\r\n");
 
                 if (DateTime.Now.TimeOfDay.TotalSeconds < 81880)
                 {
