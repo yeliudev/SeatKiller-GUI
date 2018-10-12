@@ -707,7 +707,7 @@ namespace SeatKiller_UI
             Config.config.textBox2.AppendText("\r\n---------------------------座位预约成功---------------------------");
             Config.config.textBox2.AppendText("\r\nID：" + jObject["data"]["id"]);
             Config.config.textBox2.AppendText("\r\n凭证号码：" + jObject["data"]["receipt"]);
-            Config.config.textBox2.AppendText("\r\n时间：" + jObject["data"]["onDate"] + " " + jObject["data"]["begin"] + "~" + jObject["data"]["end"]);
+            Config.config.textBox2.AppendText("\r\n时间：" + jObject["data"]["onDate"] + " " + jObject["data"]["begin"] + " ~ " + jObject["data"]["end"]);
             if (jObject["data"]["checkedIn"].ToString() == "False")
                 Config.config.textBox2.AppendText("\r\n状态：预约");
             else
@@ -726,39 +726,46 @@ namespace SeatKiller_UI
                 IPAddress ip = IPAddress.Parse("134.175.186.17");
                 IPEndPoint point = new IPEndPoint(ip, 5210);
 
-                socketClient.Connect(point);
-                socketClient.Receive(data);
-                string stringData = Encoding.UTF8.GetString(data);
-
-                if (stringData == "Hello")
+                try
                 {
-                    Config.config.textBox2.AppendText("\r\n连接成功");
-
-                    data = new byte[128];
-                    socketClient.Send(Encoding.UTF8.GetBytes("json" + json));
+                    socketClient.Connect(point);
                     socketClient.Receive(data);
-                    Config.config.textBox2.AppendText("\r\n" + Encoding.UTF8.GetString(data));
+                    string stringData = Encoding.UTF8.GetString(data);
 
-                    data = new byte[128];
-                    socketClient.Send(Encoding.UTF8.GetBytes("to" + to_addr));
-                    socketClient.Receive(data);
-                    Config.config.textBox2.AppendText("\r\n" + Encoding.UTF8.GetString(data));
-
-                    Config.config.textBox2.AppendText("\r\n正在发送邮件提醒至\"" + to_addr + "\"");
-                    data = new byte[7];
-                    socketClient.Send(Encoding.UTF8.GetBytes("SendMail"));
-                    socketClient.Receive(data);
-                    stringData = Encoding.UTF8.GetString(data);
-                    if (stringData == "success")
+                    if (stringData == "Hello")
                     {
-                        Config.config.textBox2.AppendText("\r\n\r\n邮件提醒发送成功\r\n若接收不到提醒，请将\"seatkiller@outlook.com\"添加至邮箱白名单");
+                        Config.config.textBox2.AppendText("\r\n连接成功");
+
+                        data = new byte[128];
+                        socketClient.Send(Encoding.UTF8.GetBytes("json" + json));
+                        socketClient.Receive(data);
+                        Config.config.textBox2.AppendText("\r\n" + Encoding.UTF8.GetString(data));
+
+                        data = new byte[128];
+                        socketClient.Send(Encoding.UTF8.GetBytes("to" + to_addr));
+                        socketClient.Receive(data);
+                        Config.config.textBox2.AppendText("\r\n" + Encoding.UTF8.GetString(data));
+
+                        Config.config.textBox2.AppendText("\r\n正在发送邮件提醒至\"" + to_addr + "\"");
+                        data = new byte[7];
+                        socketClient.Send(Encoding.UTF8.GetBytes("SendMail"));
+                        socketClient.Receive(data);
+                        stringData = Encoding.UTF8.GetString(data);
+                        if (stringData == "success")
+                        {
+                            Config.config.textBox2.AppendText("\r\n\r\n邮件提醒发送成功\r\n若接收不到提醒，请将\"seatkiller@outlook.com\"添加至邮箱白名单");
+                        }
+                        else
+                        {
+                            Config.config.textBox2.AppendText("\r\n\r\n邮箱提醒发送失败");
+                        }
+                        socketClient.Send(Encoding.UTF8.GetBytes("exit"));
+                        socketClient.Close();
                     }
-                    else
-                    {
-                        Config.config.textBox2.AppendText("\r\n\r\n邮箱提醒发送失败");
-                    }
-                    socketClient.Send(Encoding.UTF8.GetBytes("exit"));
-                    socketClient.Close();
+                }
+                catch
+                {
+                    Config.config.textBox2.AppendText("\r\n连接失败，邮件发送取消");
                 }
             }
             else if (to_addr == "")
@@ -778,20 +785,24 @@ namespace SeatKiller_UI
             IPAddress ip = IPAddress.Parse("134.175.186.17");
             IPEndPoint point = new IPEndPoint(ip, 5210);
 
-            socketClient.Connect(point);
-            socketClient.Receive(data);
-            string stringData = Encoding.UTF8.GetString(data);
-
-            if (stringData == "Hello")
+            try
             {
+                socketClient.Connect(point);
+                socketClient.Receive(data);
+                string stringData = Encoding.UTF8.GetString(data);
 
-                data = new byte[128];
-                socketClient.Send(Encoding.UTF8.GetBytes("login" + username + name));
-                Thread.Sleep(1000);
+                if (stringData == "Hello")
+                {
 
-                socketClient.Send(Encoding.UTF8.GetBytes("exit"));
-                socketClient.Close();
+                    data = new byte[128];
+                    socketClient.Send(Encoding.UTF8.GetBytes("login" + username + name));
+                    Thread.Sleep(1000);
+
+                    socketClient.Send(Encoding.UTF8.GetBytes("exit"));
+                    socketClient.Close();
+                }
             }
+            catch { }
         }
 
         public static bool CheckStartTime(string seatId, string date, string startTime)

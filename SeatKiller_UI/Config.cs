@@ -311,7 +311,7 @@ namespace SeatKiller_UI
                 checkBox6.Enabled = false;
                 textBox1.Enabled = false;
                 button1.Text = "停止运行";
-                
+
                 Main.Start();
             }
             else
@@ -394,7 +394,7 @@ namespace SeatKiller_UI
         {
             if (SeatKiller.GetUsrInf(false))
             {
-                label1.Text = "你好 , " + SeatKiller.name + "  上次入馆时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
+                label1.Text = "你好 , " + SeatKiller.name + "  上次网页登录时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
                 SeatKiller.LoggedIn();
             }
             Thread.Sleep(10000);
@@ -402,7 +402,7 @@ namespace SeatKiller_UI
             {
                 if (SeatKiller.GetUsrInf(false))
                 {
-                    label1.Text = "你好 , " + SeatKiller.name + "  上次入馆时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
+                    label1.Text = "你好 , " + SeatKiller.name + "  上次网页登录时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
                 }
                 else
                 {
@@ -436,7 +436,7 @@ namespace SeatKiller_UI
 
         private void backgroundWorker4_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            textBox2.AppendText("\r\n\r\n正在等待下一次循环\r\n");
+            textBox2.AppendText("\r\n\r\n正在等待下一次循环...\r\n");
             while (true)
             {
                 if (backgroundWorker4.CancellationPending)
