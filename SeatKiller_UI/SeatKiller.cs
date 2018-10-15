@@ -31,6 +31,7 @@ namespace SeatKiller_UI
         private static readonly string book_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/freeBook";  // 座位预约API
         private static readonly string cancel_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/cancel/";  // 取消预约API（拼接预约ID）
         private static readonly string stop_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/stop";  // 座位释放API
+        private static readonly string server = "134.175.186.17";  // 邮件服务器地址
 
         public static readonly string[] xt = { "6", "7", "8", "9", "10", "11", "12", "16", "4", "5", "14", "15" };
         public static readonly string[] xt_less = { "6", "7", "8", "9", "10", "11", "12", "16" };
@@ -40,8 +41,8 @@ namespace SeatKiller_UI
 
         public static ArrayList freeSeats = new ArrayList();
         private static ArrayList startTimes = new ArrayList(), endTimes = new ArrayList();
-        public static string to_addr, res_id, username, password, newVersion, newVersionSize, updateInfo, downloadURL, status, bookedSeatId, historyDate, historyStartTime, historyEndTime, historyAwayStartTime, token = "", name = "unknown", last_login_time = "unknown", state = "unknown", violationCount = "unknown";
-        public static bool exitFlag = true, check_in = false, onlyPower = false, onlyWindow = false, onlyComputer = false;
+        public static string to_addr, res_id, username, password, newVersion, newVersionSize, updateInfo, downloadURL, status, bookedSeatId, historyDate, historyStartTime, historyEndTime, historyAwayStartTime, token, name, last_login_time, state, violationCount;
+        public static bool exitFlag = true, reserving = false, onlyPower = false, onlyWindow = false, onlyComputer = false;
         public static DateTime time;
 
         private static void SetHeaderValue(WebHeaderCollection header, string name, string value)
@@ -214,26 +215,26 @@ namespace SeatKiller_UI
                                 switch (res["stat"].ToString())
                                 {
                                     case "RESERVE":
-                                        reservation.label2.Text = reservation.label2.Text + "\r\n 状态: 预约";
+                                        reservation.label2.Text += "\r\n 状态: 预约";
                                         reservation.label3.Text = "是否取消此预约？（若不取消可自动改签座位）";
-                                        check_in = false;
+                                        reserving = true;
                                         break;
                                     case "CHECK_IN":
                                         if (res["awayEnd"].ToString() != "")
                                         {
-                                            reservation.label2.Text = reservation.label2.Text + "\r\n 暂离时间: " + res["awayBegin"].ToString() + "~" + res["awayEnd"].ToString();
+                                            reservation.label2.Text += "\r\n 暂离时间: " + res["awayBegin"].ToString() + "~" + res["awayEnd"].ToString();
                                             reservation.label3.Location = new Point(120, 253);
                                         }
-                                        reservation.label2.Text = reservation.label2.Text + "\r\n 状态: 履约中";
+                                        reservation.label2.Text += "\r\n 状态: 履约中";
                                         reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
-                                        check_in = true;
+                                        reserving = false;
                                         break;
                                     default:
-                                        reservation.label2.Text = reservation.label2.Text + "\r\n 暂离时间: " + res["awayBegin"].ToString();
-                                        reservation.label2.Text = reservation.label2.Text + "\r\n 状态: 暂离";
+                                        reservation.label2.Text += "\r\n 暂离时间: " + res["awayBegin"].ToString();
+                                        reservation.label2.Text += "\r\n 状态: 暂离";
                                         reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
                                         reservation.label3.Location = new Point(120, 253);
-                                        check_in = true;
+                                        reserving = false;
                                         break;
                                 }
                                 reservation.label2.Text = reservation.label2.Text + "\r\n 地址: " + res["loc"].ToString() + "\r\n------------------------------------------------------------------";
@@ -245,7 +246,8 @@ namespace SeatKiller_UI
                                 historyDate = res["date"].ToString();
                                 historyStartTime = res["begin"].ToString();
                                 historyEndTime = res["end"].ToString();
-                                if (res["stat"].ToString() == "AWAY")
+                                reserving = (status == "RESERVE") ? true : false;
+                                if (status == "AWAY")
                                 {
                                     historyAwayStartTime = res["awayBegin"].ToString();
                                 }
@@ -299,12 +301,10 @@ namespace SeatKiller_UI
                     last_login_time = jObject["data"]["lastLogin"].ToString();
                     if (jObject["data"]["checkedIn"].ToString() == "True")
                     {
-                        check_in = true;
                         state = "已进入" + jObject["data"]["lastInBuildingName"].ToString();
                     }
                     else
                     {
-                        check_in = false;
                         state = "未入馆";
                     }
                     violationCount = jObject["data"]["violationCount"].ToString();
@@ -600,11 +600,17 @@ namespace SeatKiller_UI
                     foreach (var num in seats)
                     {
                         if (onlyPower && num.First["power"].ToString() == "False")
+                        {
                             continue;
+                        }
                         if (onlyWindow && num.First["window"].ToString() == "False")
+                        {
                             continue;
+                        }
                         if (onlyComputer && num.First["computer"].ToString() == "False")
+                        {
                             continue;
+                        }
                         freeSeats.Add(num.First["id"].ToString());
                     }
                     if (freeSeats.Count > 0)
@@ -678,6 +684,7 @@ namespace SeatKiller_UI
                             jObject.Add("username", username);
                             jObject.Add("name", name);
                             jObject.Add("client", "C#");
+                            jObject.Add("version", Application.ProductVersion);
                             SendMail(jObject.ToString(), to_addr);
                         }
                     }
@@ -723,7 +730,7 @@ namespace SeatKiller_UI
                 Config.config.textBox2.AppendText("\r\n\r\n尝试连接邮件服务器");
                 byte[] data = new byte[5];
                 Socket socketClient = new Socket(SocketType.Stream, ProtocolType.Tcp);
-                IPAddress ip = IPAddress.Parse("134.175.186.17");
+                IPAddress ip = IPAddress.Parse(server);
                 IPEndPoint point = new IPEndPoint(ip, 5210);
 
                 try
@@ -782,7 +789,7 @@ namespace SeatKiller_UI
         {
             byte[] data = new byte[5];
             Socket socketClient = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            IPAddress ip = IPAddress.Parse("134.175.186.17");
+            IPAddress ip = IPAddress.Parse(server);
             IPEndPoint point = new IPEndPoint(ip, 5210);
 
             try
@@ -943,11 +950,11 @@ namespace SeatKiller_UI
                     Config.config.textBox2.AppendText("\r\n\r\n座位锁定失败");
                     break;
                 }
-                if (GetToken(false) == "Success")
+                if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & DateTime.Now.TimeOfDay.TotalMinutes < 1350)
                 {
-                    if (CheckResInf(false))
+                    if (GetToken(false) == "Success")
                     {
-                        if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & DateTime.Now.TimeOfDay.TotalMinutes < 1350)
+                        if (CheckResInf(false))
                         {
                             if (status == "RESERVE")
                             {
@@ -1052,12 +1059,23 @@ namespace SeatKiller_UI
                                 }
                             }
                         }
-                        count = 0;
-                        linesCount = Config.config.textBox2.Lines.Count();
-                        index = Config.config.textBox2.GetFirstCharIndexFromLine(linesCount - (doClear ? 2 : 1));
-                        Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
-                        Config.config.textBox2.SelectedText = "当前有效" + ((status == "RESERVE") ? "预约" : "使用") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime;
-                        doClear = false;
+                        else
+                        {
+                            if (doClear)
+                            {
+                                index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
+                                Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
+                                Config.config.textBox2.SelectedText = "获取预约信息失败，重试次数: " + count;
+                            }
+                            else
+                            {
+                                Config.config.textBox2.AppendText("\r\n获取预约信息失败，重试次数: " + count);
+                                doClear = true;
+                            }
+                            Thread.Sleep(5000);
+                            count += 1;
+                            continue;
+                        }
                     }
                     else
                     {
@@ -1065,11 +1083,11 @@ namespace SeatKiller_UI
                         {
                             index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
                             Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
-                            Config.config.textBox2.SelectedText = "获取预约信息失败，重试次数: " + count;
+                            Config.config.textBox2.SelectedText = "获取token失败，重试次数: " + count;
                         }
                         else
                         {
-                            Config.config.textBox2.AppendText("\r\n获取预约信息失败，重试次数: " + count);
+                            Config.config.textBox2.AppendText("\r\n获取token失败，重试次数: " + count);
                             doClear = true;
                         }
                         Thread.Sleep(5000);
@@ -1077,23 +1095,12 @@ namespace SeatKiller_UI
                         continue;
                     }
                 }
-                else
-                {
-                    if (doClear)
-                    {
-                        index = Config.config.textBox2.GetFirstCharIndexOfCurrentLine();
-                        Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
-                        Config.config.textBox2.SelectedText = "获取token失败，重试次数: " + count;
-                    }
-                    else
-                    {
-                        Config.config.textBox2.AppendText("\r\n获取token失败，重试次数: " + count);
-                        doClear = true;
-                    }
-                    Thread.Sleep(5000);
-                    count += 1;
-                    continue;
-                }
+                count = 0;
+                linesCount = Config.config.textBox2.Lines.Count();
+                index = Config.config.textBox2.GetFirstCharIndexFromLine(linesCount - (doClear ? 2 : 1));
+                Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
+                Config.config.textBox2.SelectedText = "当前有效" + ((status == "RESERVE") ? "预约" : "使用") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime;
+                doClear = false;
                 Thread.Sleep(10000);
             }
         }
@@ -1253,7 +1260,7 @@ namespace SeatKiller_UI
                                 if (CheckStartTime(freeSeatId.ToString(), date, startTime) & CheckEndTime(freeSeatId.ToString(), date, startTime, endTime))
                                 {
                                     GetUsrInf(true);
-                                    if (check_in)
+                                    if (!reserving)
                                     {
                                         if (StopUsing())
                                         {
@@ -1330,7 +1337,7 @@ namespace SeatKiller_UI
                                 if (!cancelled)
                                 {
                                     GetUsrInf(true);
-                                    if (check_in)
+                                    if (!reserving)
                                     {
                                         if (StopUsing())
                                         {
@@ -1406,7 +1413,7 @@ namespace SeatKiller_UI
                 }
 
                 GetUsrInf(true);
-                if (check_in)
+                if (!reserving)
                 {
                     if (StopUsing())
                     {

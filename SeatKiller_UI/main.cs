@@ -97,7 +97,7 @@ namespace SeatKiller_UI
                     {
                         if (seatId != "0")
                         {
-                            if (exchange & SeatKiller.check_in & !cancelled)
+                            if (exchange & !SeatKiller.reserving & !cancelled)
                             {
                                 if (SeatKiller.StopUsing())
                                 {
@@ -111,7 +111,7 @@ namespace SeatKiller_UI
                                     return;
                                 }
                             }
-                            else if (exchange & !SeatKiller.check_in & !cancelled)
+                            else if (exchange & SeatKiller.reserving & !cancelled)
                             {
                                 if (SeatKiller.CancelReservation(SeatKiller.res_id))
                                 {
@@ -189,7 +189,7 @@ namespace SeatKiller_UI
                             {
                                 foreach (var freeSeat in SeatKiller.freeSeats)
                                 {
-                                    if (exchange & SeatKiller.check_in & !cancelled)
+                                    if (exchange & !SeatKiller.reserving & !cancelled)
                                     {
                                         if (SeatKiller.StopUsing())
                                         {
@@ -203,7 +203,7 @@ namespace SeatKiller_UI
                                             return;
                                         }
                                     }
-                                    else if (exchange & !SeatKiller.check_in & !cancelled)
+                                    else if (exchange & SeatKiller.reserving & !cancelled)
                                     {
                                         if (SeatKiller.CancelReservation(SeatKiller.res_id))
                                         {

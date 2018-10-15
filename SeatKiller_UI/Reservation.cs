@@ -17,7 +17,7 @@ namespace SeatKiller_UI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (SeatKiller.check_in)
+            if (!SeatKiller.reserving)
             {
                 if (!SeatKiller.StopUsing(false))
                 {
