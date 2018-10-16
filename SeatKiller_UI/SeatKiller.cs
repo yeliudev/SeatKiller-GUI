@@ -802,7 +802,7 @@ namespace SeatKiller_UI
                 {
 
                     data = new byte[128];
-                    socketClient.Send(Encoding.UTF8.GetBytes("login" + username + name + "（" + Application.ProductVersion + ")"));
+                    socketClient.Send(Encoding.UTF8.GetBytes("login" + username + name + " (" + Application.ProductVersion + ")"));
                     Thread.Sleep(1000);
 
                     socketClient.Send(Encoding.UTF8.GetBytes("exit"));
