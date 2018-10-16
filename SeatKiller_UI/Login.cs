@@ -18,6 +18,8 @@ namespace SeatKiller_UI
 
         private void Login_Load(object sender, EventArgs e)
         {
+            Text += " v" + Application.ProductVersion;
+
             backgroundWorker1.RunWorkerAsync();
             backgroundWorker2.RunWorkerAsync();
             User.CreateSubKey();

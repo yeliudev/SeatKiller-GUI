@@ -42,10 +42,8 @@
             this.label1.Location = new System.Drawing.Point(23, 52);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(794, 168);
+            this.label1.Size = new System.Drawing.Size(0, 28);
             this.label1.TabIndex = 0;
-            this.label1.Text = "版本号：1.8.8\r\nGitHub仓库：\r\n不定时更新，最新版本将在上方GitHub仓库中发布\r\n\r\n本软件完全开源，也不会以任何形式收取捐赠\r\nCode Sty" +
-    "le写得一般，欢迎添加我的微信：aweawds 交流探讨或提交bug ۹(๑•̀ω•́ ๑)۶";
             // 
             // linkLabel1
             // 
@@ -101,6 +99,7 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "关于";
+            this.Load += new System.EventHandler(this.About_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

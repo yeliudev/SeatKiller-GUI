@@ -58,6 +58,8 @@ namespace SeatKiller_UI
 
         private void Config_Load(object sender, EventArgs e)
         {
+            Text += " v" + Application.ProductVersion;
+
             textBox2.AppendText("Try getting token.....Status : success");
             textBox2.AppendText("\r\nTry getting user information.....Status : success");
 
