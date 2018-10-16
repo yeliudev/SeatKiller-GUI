@@ -461,7 +461,7 @@ namespace SeatKiller_UI
 
         private void pictureBox2_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("开启后可以每天自动抢上一次预约的座位，无需手动点击开始~", "关于循环抢座");
+            MessageBox.Show("循环抢座功能需要保持软件开启，可用于每天自动抢上一次预约的座位，无需手动点击开始~", "帮助");
         }
     }
 }

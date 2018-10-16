@@ -177,6 +177,8 @@
   <ItemGroup>
     <Content Include="about.png" />
     <Content Include="description.png" />
+    <Content Include="forkme.png" />
+    <Content Include="logo.png" />
     <Content Include="icon.ico" />
     <EmbeddedResource Include="Newtonsoft.Json.dll" />
   </ItemGroup>

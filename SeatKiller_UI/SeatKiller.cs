@@ -943,6 +943,11 @@ namespace SeatKiller_UI
             int index, linesCount, count = 0;
             bool doClear = false;
             Config.config.textBox2.AppendText("\r\n正在锁定座位，ID: " + seatId + "\r\n");
+            if (!CheckResInf(false))
+            {
+                Config.config.textBox2.AppendText("\r\n\r\n预约信息获取失败");
+                return;
+            }
             while (true)
             {
                 if (count >= 50)
