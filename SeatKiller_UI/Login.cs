@@ -115,7 +115,7 @@ namespace SeatKiller_UI
             }
             else if (SeatKiller.exitFlag)
             {
-                Application.Exit();
+                Environment.Exit(0);
             }
         }
 

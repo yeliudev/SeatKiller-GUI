@@ -20,7 +20,7 @@ namespace SeatKiller_UI
         private void button1_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(SeatKiller.downloadURL);
-            Application.Exit();
+            Environment.Exit(0);
         }
 
         private void button2_Click(object sender, EventArgs e)

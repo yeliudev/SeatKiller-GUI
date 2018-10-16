@@ -95,7 +95,7 @@ namespace SeatKiller_UI
 
         private void Config_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Application.Exit();
+            Environment.Exit(0);
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

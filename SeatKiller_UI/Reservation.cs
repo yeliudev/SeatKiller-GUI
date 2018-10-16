@@ -52,7 +52,7 @@ namespace SeatKiller_UI
         {
             if (!SeatKiller.exitFlag)
             {
-                Application.Exit();
+                Environment.Exit(0);
             }
         }
     }
