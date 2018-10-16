@@ -175,6 +175,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="about.png" />
+    <Content Include="description.png" />
     <Content Include="icon.ico" />
     <EmbeddedResource Include="Newtonsoft.Json.dll" />
   </ItemGroup>

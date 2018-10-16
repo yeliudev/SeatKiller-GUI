@@ -237,7 +237,7 @@ namespace SeatKiller_UI
                                         reserving = false;
                                         break;
                                 }
-                                reservation.label2.Text = reservation.label2.Text + "\r\n 地址: " + res["loc"].ToString() + "\r\n------------------------------------------------------------------";
+                                reservation.label2.Text = reservation.label2.Text + "\r\n 地址: " + res["loc"].ToString() + "\r\n----------------------------------------------------------------";
                                 reservation.Show();
                             }
                             else

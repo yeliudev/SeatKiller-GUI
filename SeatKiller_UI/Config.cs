@@ -100,12 +100,6 @@ namespace SeatKiller_UI
             Environment.Exit(0);
         }
 
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            About about = new About();
-            about.ShowDialog();
-        }
-
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox2.Checked == true)
@@ -457,6 +451,17 @@ namespace SeatKiller_UI
             booking = true;
             textBox2.Text = "";
             Main.Start(true);
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            About about = new About();
+            about.ShowDialog();
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("开启后可以每天自动抢上一次预约的座位，无需手动点击开始~", "关于循环抢座");
         }
     }
 }
