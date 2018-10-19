@@ -57,7 +57,7 @@
             this.pictureBox1.ErrorImage = null;
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.InitialImage = null;
-            this.pictureBox1.Location = new System.Drawing.Point(130, 49);
+            this.pictureBox1.Location = new System.Drawing.Point(128, 49);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(140, 140);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -67,7 +67,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(128, 214);
+            this.label1.Location = new System.Drawing.Point(125, 214);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(142, 28);
             this.label1.TabIndex = 5;
@@ -77,7 +77,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label2.Location = new System.Drawing.Point(40, 307);
+            this.label2.Location = new System.Drawing.Point(39, 307);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(309, 28);
             this.label2.TabIndex = 6;
@@ -101,7 +101,7 @@
             // 
             this.linkLabel1.AutoSize = true;
             this.linkLabel1.LinkColor = System.Drawing.SystemColors.HotTrack;
-            this.linkLabel1.Location = new System.Drawing.Point(95, 260);
+            this.linkLabel1.Location = new System.Drawing.Point(91, 260);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(96, 28);
             this.linkLabel1.TabIndex = 8;
@@ -113,7 +113,7 @@
             // 
             this.linkLabel2.AutoSize = true;
             this.linkLabel2.LinkColor = System.Drawing.SystemColors.HotTrack;
-            this.linkLabel2.Location = new System.Drawing.Point(207, 260);
+            this.linkLabel2.Location = new System.Drawing.Point(204, 260);
             this.linkLabel2.Name = "linkLabel2";
             this.linkLabel2.Size = new System.Drawing.Size(96, 28);
             this.linkLabel2.TabIndex = 9;
