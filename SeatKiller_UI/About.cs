@@ -9,6 +9,11 @@ namespace SeatKiller_UI
             InitializeComponent();
         }
 
+        private void About_Load(object sender, System.EventArgs e)
+        {
+            label1.Text += Application.ProductVersion;
+        }
+
         private void button1_Click(object sender, System.EventArgs e)
         {
             Close();

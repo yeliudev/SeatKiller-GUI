@@ -17,18 +17,18 @@ namespace SeatKiller_UI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (!SeatKiller.reserving)
-            {
-                if (!SeatKiller.StopUsing(false))
-                {
-                    MessageBox.Show("释放座位失败，请稍后重试", "失败");
-                }
-            }
-            else
+            if (SeatKiller.reserving)
             {
                 if (!SeatKiller.CancelReservation(SeatKiller.res_id, false))
                 {
                     MessageBox.Show("取消预约失败，请稍后重试", "失败");
+                }
+            }
+            else
+            {
+                if (!SeatKiller.StopUsing(false))
+                {
+                    MessageBox.Show("释放座位失败，请稍后重试", "失败");
                 }
             }
 

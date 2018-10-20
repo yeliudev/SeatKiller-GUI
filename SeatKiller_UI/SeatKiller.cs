@@ -42,7 +42,7 @@ namespace SeatKiller_UI
         public static ArrayList freeSeats = new ArrayList();
         private static ArrayList startTimes = new ArrayList(), endTimes = new ArrayList();
         public static string to_addr, res_id, username, password, newVersion, newVersionSize, updateInfo, downloadURL, status, bookedSeatId, historyDate, historyStartTime, historyEndTime, historyAwayStartTime, token, name, last_login_time, state, violationCount;
-        public static bool exitFlag = true, reserving = false, onlyPower = false, onlyWindow = false, onlyComputer = false;
+        public static bool exitFlag = true, checkedIn = false, reserving = false, onlyPower = false, onlyWindow = false, onlyComputer = false;
         public static DateTime time;
 
         private static void SetHeaderValue(WebHeaderCollection header, string name, string value)
@@ -212,7 +212,8 @@ namespace SeatKiller_UI
                             {
                                 Reservation reservation = new Reservation();
                                 reservation.label2.Text = " ID: " + res["id"] + "\r\n 时间: " + res["date"] + " " + res["begin"] + "~" + res["end"];
-                                switch (res["stat"].ToString())
+                                status = res["stat"].ToString();
+                                switch (status)
                                 {
                                     case "RESERVE":
                                         reservation.label2.Text += "\r\n 状态: 预约";
@@ -229,7 +230,7 @@ namespace SeatKiller_UI
                                         reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
                                         reserving = false;
                                         break;
-                                    default:
+                                    case "AWAY":
                                         reservation.label2.Text += "\r\n 暂离时间: " + res["awayBegin"].ToString();
                                         reservation.label2.Text += "\r\n 状态: 暂离";
                                         reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
@@ -301,10 +302,12 @@ namespace SeatKiller_UI
                     last_login_time = jObject["data"]["lastLogin"].ToString();
                     if (jObject["data"]["checkedIn"].ToString() == "True")
                     {
+                        checkedIn = true;
                         state = "已进入" + jObject["data"]["lastInBuildingName"].ToString();
                     }
                     else
                     {
+                        checkedIn = false;
                         state = "未入馆";
                     }
                     violationCount = jObject["data"]["violationCount"].ToString();
@@ -955,24 +958,36 @@ namespace SeatKiller_UI
                     Config.config.textBox2.AppendText("\r\n\r\n座位锁定失败");
                     break;
                 }
+
                 if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & DateTime.Now.TimeOfDay.TotalMinutes < 1350)
                 {
                     if (GetToken(false) == "Success")
                     {
                         if (CheckResInf(false))
                         {
-                            if (status == "RESERVE")
+                            int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
+
+                            if (historyEndTimeInt - (int)DateTime.Now.TimeOfDay.TotalMinutes < 2)
+                            {
+                                if (reserving)
+                                {
+                                    Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动取消预约");
+                                    CancelReservation(res_id);
+                                }
+                                else
+                                {
+                                    Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动释放座位");
+                                    StopUsing();
+                                }
+                                break;
+                            }
+
+                            if (reserving & !checkedIn)
                             {
                                 int historyStartTimeInt = int.Parse(historyStartTime.Substring(0, 2)) * 60 + int.Parse(historyStartTime.Substring(3, 2));
-                                int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
+
                                 if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyStartTimeInt >= 25)
                                 {
-                                    if (historyEndTimeInt - (int)DateTime.Now.TimeOfDay.TotalMinutes < 5)
-                                    {
-                                        Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动取消预约");
-                                        CancelReservation(res_id);
-                                        break;
-                                    }
                                     if (CancelReservation(res_id, false))
                                     {
                                         if (BookSeat(seatId, DateTime.Now.ToString("yyyy-MM-dd"), "-1", historyEndTimeInt.ToString(), false) != "Success")
@@ -1015,15 +1030,9 @@ namespace SeatKiller_UI
                             else if (status == "AWAY")
                             {
                                 int historyAwayStartTimeInt = int.Parse(historyAwayStartTime.Substring(0, 2)) * 60 + int.Parse(historyAwayStartTime.Substring(3, 2));
-                                int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
+
                                 if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyAwayStartTimeInt >= 25)
                                 {
-                                    if (historyEndTimeInt - (int)DateTime.Now.TimeOfDay.TotalMinutes < 5)
-                                    {
-                                        Config.config.textBox2.AppendText("\r\n\r\n座位预约时间已过，自动释放座位");
-                                        StopUsing();
-                                        break;
-                                    }
                                     if (StopUsing(false))
                                     {
                                         if (BookSeat(seatId, DateTime.Now.ToString("yyyy-MM-dd"), "-1", historyEndTimeInt.ToString(), false) != "Success")
@@ -1104,7 +1113,7 @@ namespace SeatKiller_UI
                 linesCount = Config.config.textBox2.Lines.Count();
                 index = Config.config.textBox2.GetFirstCharIndexFromLine(linesCount - (doClear ? 2 : 1));
                 Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
-                Config.config.textBox2.SelectedText = "当前有效" + ((status == "RESERVE") ? "预约" : "使用") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime;
+                Config.config.textBox2.SelectedText = "当前有效" + (reserving ? "预约" : "使用") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime;
                 doClear = false;
                 Thread.Sleep(10000);
             }

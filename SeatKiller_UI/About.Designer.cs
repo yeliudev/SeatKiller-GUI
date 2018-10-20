@@ -69,9 +69,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(125, 214);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(142, 28);
+            this.label1.Size = new System.Drawing.Size(96, 28);
             this.label1.TabIndex = 5;
-            this.label1.Text = "版本号：1.8.8";
+            this.label1.Text = "版本号：";
             // 
             // label2
             // 
@@ -143,6 +143,7 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "关于";
+            this.Load += new System.EventHandler(this.About_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
