@@ -388,21 +388,24 @@ namespace SeatKiller_UI
 
         private void backgroundWorker2_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            if (SeatKiller.GetUsrInf(false))
-            {
-                label1.Text = "你好 , " + SeatKiller.name + "  上次网页登录时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
-                SeatKiller.LoggedIn();
-            }
-            Thread.Sleep(10000);
+            bool flag = true;
             while (true)
             {
                 if (SeatKiller.GetUsrInf(false))
                 {
                     label1.Text = "你好 , " + SeatKiller.name + "  上次网页登录时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
+                    if (flag)
+                    {
+                        SeatKiller.LoggedIn();
+                        flag = false;
+                    }
                 }
                 else
                 {
-                    SeatKiller.GetToken(false);
+                    if (SeatKiller.GetToken(false) == "Success")
+                    {
+                        continue;
+                    }
                 }
                 Thread.Sleep(10000);
             }
