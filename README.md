@@ -1,8 +1,8 @@
 # SeatKiller_UI
 
-[![License](https://img.shields.io/badge/License-MPL--2.0-red.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-MPL--2.0-red.svg)](LICENSE)
 [![Language](https://img.shields.io/badge/language-C%23-blue.svg)](https://docs.microsoft.com/en-us/dotnet/csharp/)
-![Github All Releases](https://img.shields.io/github/downloads/goolhanrry/Seatkiller_UI/total.svg)
+[![Github All Releases](https://img.shields.io/github/downloads/goolhanrry/Seatkiller_UI/total.svg)](https://github.com/goolhanrry/SeatKiller_UI/releases)
 [![GitHub repo size in bytes](https://img.shields.io/github/repo-size/goolhanrry/SeatKiller_UI.svg?colorB=ff7e00#)](https://github.com/goolhanrry/SeatKiller_UI)
 
 用C#重写的 [SeatKiller](https://github.com/goolhanrry/SeatKiller) GUI 版本，新增了座位改签和座位锁定的功能，欢迎添加我的微信：`aweawds` 交流讨论
