@@ -128,7 +128,7 @@
             // 
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.pictureBox1.ErrorImage = null;
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Image = global::SeatKiller_UI.Properties.Resources.cat;
             this.pictureBox1.InitialImage = null;
             this.pictureBox1.Location = new System.Drawing.Point(236, 11);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(4);

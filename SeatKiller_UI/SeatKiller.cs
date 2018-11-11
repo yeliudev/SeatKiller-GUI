@@ -21,7 +21,6 @@ namespace SeatKiller_UI
     {
         private static readonly string login_url = "https://seat.lib.whu.edu.cn:8443/rest/auth";  // 图书馆移动端登陆API
         private static readonly string usr_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/user";  // 用户信息API
-        private static readonly string filters_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/free/filters";  // 分馆和区域信息API
         private static readonly string stats_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/room/stats2/";  // 单一分馆区域信息API（拼接buildingId）
         private static readonly string layout_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/room/layoutByDate/";  // 单一区域座位信息API（拼接roomId+date）
         private static readonly string search_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/searchSeats/";  // 空位检索API（拼接date+startTime+endTime）
@@ -125,7 +124,9 @@ namespace SeatKiller_UI
                     while (true)
                     {
                         if (!Config.config.backgroundWorker1.IsBusy)
+                        {
                             break;
+                        }
                     }
                     break;
                 }
@@ -328,40 +329,6 @@ namespace SeatKiller_UI
                 {
                     Config.config.textBox2.AppendText("Connection lost");
                 }
-                return false;
-            }
-        }
-
-        public static bool GetBuildings()
-        {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(filters_url);
-            request.Method = "GET";
-            SetHeaderValues(request);
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-            request.Timeout = 5000;
-
-            Config.config.textBox2.AppendText("\r\nTry getting building information.....Status : ");
-            try
-            {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream stream = response.GetResponseStream();
-                Encoding encoding = Encoding.GetEncoding("UTF-8");
-                StreamReader streamReader = new StreamReader(stream, encoding);
-                string json = streamReader.ReadToEnd();
-                JObject jObject = JObject.Parse(json);
-                Config.config.textBox2.AppendText(jObject["status"].ToString());
-                if (jObject["status"].ToString() == "success")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch
-            {
-                Config.config.textBox2.AppendText("Connection lost");
                 return false;
             }
         }
@@ -944,7 +911,7 @@ namespace SeatKiller_UI
         public static void LockSeat(string seatId)
         {
             int index, linesCount, count = 0;
-            bool doClear = false;
+            bool doClear = false, reBook = false;
             Config.config.textBox2.AppendText("\r\n正在锁定座位，ID: " + seatId + "\r\n");
             if (!CheckResInf(false))
             {
@@ -959,11 +926,11 @@ namespace SeatKiller_UI
                     break;
                 }
 
-                if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & DateTime.Now.TimeOfDay.TotalMinutes < 1350)
+                if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & DateTime.Now.TimeOfDay.TotalMinutes < 1320)
                 {
                     if (GetToken(false) == "Success")
                     {
-                        if (CheckResInf(false))
+                        if (CheckResInf(false) || reBook)
                         {
                             int historyEndTimeInt = int.Parse(historyEndTime.Substring(0, 2)) * 60 + int.Parse(historyEndTime.Substring(3, 2));
 
@@ -988,7 +955,7 @@ namespace SeatKiller_UI
 
                                 if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyStartTimeInt >= 25)
                                 {
-                                    if (CancelReservation(res_id, false))
+                                    if (CancelReservation(res_id, false) || reBook)
                                     {
                                         if (BookSeat(seatId, DateTime.Now.ToString("yyyy-MM-dd"), "-1", historyEndTimeInt.ToString(), false) != "Success")
                                         {
@@ -1004,8 +971,13 @@ namespace SeatKiller_UI
                                                 doClear = true;
                                             }
                                             Thread.Sleep(5000);
+                                            reBook = true;
                                             count += 1;
                                             continue;
+                                        }
+                                        else
+                                        {
+                                            reBook = false;
                                         }
                                     }
                                     else
@@ -1033,7 +1005,7 @@ namespace SeatKiller_UI
 
                                 if ((int)DateTime.Now.TimeOfDay.TotalMinutes - historyAwayStartTimeInt >= 25)
                                 {
-                                    if (StopUsing(false))
+                                    if (StopUsing(false) || reBook)
                                     {
                                         if (BookSeat(seatId, DateTime.Now.ToString("yyyy-MM-dd"), "-1", historyEndTimeInt.ToString(), false) != "Success")
                                         {
@@ -1049,8 +1021,13 @@ namespace SeatKiller_UI
                                                 doClear = true;
                                             }
                                             Thread.Sleep(5000);
+                                            reBook = true;
                                             count += 1;
                                             continue;
+                                        }
+                                        else
+                                        {
+                                            reBook = false;
                                         }
                                     }
                                     else
@@ -1109,20 +1086,24 @@ namespace SeatKiller_UI
                         continue;
                     }
                 }
+                else if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 1320)
+                {
+                    return;
+                }
                 count = 0;
                 linesCount = Config.config.textBox2.Lines.Count();
                 index = Config.config.textBox2.GetFirstCharIndexFromLine(linesCount - (doClear ? 2 : 1));
                 Config.config.textBox2.Select(index, Config.config.textBox2.TextLength - index);
                 Config.config.textBox2.SelectedText = "当前有效" + (reserving ? "预约" : "使用") + "时间: " + historyDate + " " + historyStartTime + "~" + historyEndTime;
                 doClear = false;
-                Thread.Sleep(10000);
+                Thread.Sleep(30000);
             }
         }
 
         public static bool Loop(string buildingId, string[] rooms, string startTime, string endTime, string roomId = "0", string seatId = "0")
         {
             Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入捡漏模式---------------------------\r\n");
-            if (DateTime.Now.TimeOfDay.TotalMinutes < 60)
+            if (DateTime.Now.TimeOfDay.TotalMinutes < 60 || DateTime.Now.TimeOfDay.TotalMinutes > 1420)
             {
                 Wait("01", "00", "00", false);
             }
@@ -1244,7 +1225,7 @@ namespace SeatKiller_UI
         public static bool ExchangeLoop(string buildingId, string[] rooms, string startTime, string endTime, string roomId = "0", string seatId = "0")
         {
             Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入改签模式---------------------------\r\n");
-            if (DateTime.Now.TimeOfDay.TotalMinutes < 60)
+            if (DateTime.Now.TimeOfDay.TotalMinutes < 60 || DateTime.Now.TimeOfDay.TotalMinutes > 1420)
             {
                 Wait("01", "00", "00", false);
             }

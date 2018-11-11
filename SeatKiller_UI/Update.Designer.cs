@@ -42,9 +42,8 @@
             this.label1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label1.Location = new System.Drawing.Point(37, 35);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(122, 28);
+            this.label1.Size = new System.Drawing.Size(0, 28);
             this.label1.TabIndex = 0;
-            this.label1.Text = "updateInfo";
             // 
             // textBox1
             // 
@@ -100,6 +99,8 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
+            this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.MaximizeBox = false;

@@ -306,6 +306,8 @@ namespace SeatKiller_UI
                 checkBox5.Enabled = false;
                 checkBox6.Enabled = false;
                 textBox1.Enabled = false;
+                pictureBox2.Enabled = false;
+                pictureBox2.Image = Properties.Resources.description;
                 button1.Text = "停止运行";
 
                 Main.Start();
@@ -334,6 +336,8 @@ namespace SeatKiller_UI
                 checkBox4.Enabled = true;
                 checkBox5.Enabled = true;
                 checkBox6.Enabled = true;
+                pictureBox2.Enabled = true;
+                pictureBox2.Image = Properties.Resources.description_active;
                 if (checkBox2.Checked)
                 {
                     label7.Enabled = true;
@@ -346,6 +350,25 @@ namespace SeatKiller_UI
         private void textBox2_Enter(object sender, EventArgs e)
         {
             label1.Focus();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+            if (SeatKiller.GetUsrInf(false))
+            {
+                label1.Text = "你好 , " + SeatKiller.name + "  上次网页登录时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
+            }
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            About about = new About();
+            about.ShowDialog();
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("循环抢座功能需要保持软件开启，可用于每天自动抢上一次预约的座位，无需手动点击开始~", "帮助");
         }
 
         private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
@@ -402,10 +425,8 @@ namespace SeatKiller_UI
                 }
                 else
                 {
-                    if (SeatKiller.GetToken(false) == "Success")
-                    {
-                        continue;
-                    }
+                    Thread.Sleep(30000);
+                    SeatKiller.GetToken(false);
                 }
                 Thread.Sleep(10000);
             }
@@ -451,20 +472,10 @@ namespace SeatKiller_UI
             }
             comboBox3.SelectedIndex = 1;
             Main.date = comboBox3.SelectedValue.ToString();
+            Main.startTime = comboBox4.SelectedValue.ToString() == "-1" ? "480" : comboBox4.SelectedValue.ToString();
             booking = true;
             textBox2.Text = "";
             Main.Start(true);
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-            About about = new About();
-            about.ShowDialog();
-        }
-
-        private void pictureBox2_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("循环抢座功能需要保持软件开启，可用于每天自动抢上一次预约的座位，无需手动点击开始~", "帮助");
         }
     }
 }
