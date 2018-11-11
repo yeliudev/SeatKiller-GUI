@@ -1103,18 +1103,57 @@ namespace SeatKiller_UI
         public static bool Loop(string buildingId, string[] rooms, string startTime, string endTime, string roomId = "0", string seatId = "0")
         {
             Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入捡漏模式---------------------------\r\n");
+            string date = DateTime.Now.ToString("yyyy-MM-dd");
             if (DateTime.Now.TimeOfDay.TotalMinutes < 60 || DateTime.Now.TimeOfDay.TotalMinutes > 1420)
             {
                 Wait("01", "00", "00", false);
             }
-            if (roomId == "0")
+            GetRooms(buildingId);
+            if (seatId != "0" && !Config.config.checkBox1.Checked)
             {
-                string date = DateTime.Now.ToString("yyyy-MM-dd");
-                GetRooms(buildingId);
-                while (true)
+                Config.config.textBox2.AppendText("\r\n正在监控座位，ID: " + seatId + "\r\n");
+            }
+            else if (roomId != "0" && !Config.config.checkBox1.Checked)
+            {
+                Config.config.textBox2.AppendText("\r\n正在监控区域，ID: " + roomId + "\r\n");
+            }
+            while (true)
+            {
+                if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
+                {
+                    Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
+                    Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
+                    return false;
+                }
+
+                if (seatId != "0")
+                {
+                    string res = BookSeat(seatId, date, startTime, endTime);
+
+                    if (res == "Success")
+                    {
+                        Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
+                        Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
+                        return true;
+                    }
+                    else if (res == "Connection lost")
+                    {
+                        Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续预约空位\r\n");
+                        Thread.Sleep(30000);
+                        continue;
+                    }
+                    else if (Config.config.checkBox1.Checked)
+                    {
+                        Config.config.textBox2.AppendText("\r\n\r\n指定座位预约失败，尝试检索其他空位.....\r\n");
+                        seatId = "0";
+                        continue;
+                    }
+                }
+                else
                 {
                     freeSeats.Clear();
-                    if (GetToken() == "Success")
+
+                    if (roomId == "0")
                     {
                         foreach (var room in rooms)
                         {
@@ -1124,101 +1163,50 @@ namespace SeatKiller_UI
                                 Thread.Sleep(30000);
                             }
                         }
-
-                        foreach (var freeSeatId in freeSeats)
-                        {
-                            switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
-                            {
-                                case "Success":
-                                    Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
-                                    Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
-                                    return true;
-                                case "Failed":
-                                    Thread.Sleep(2000);
-                                    continue;
-                                case "Connection lost":
-                                    Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续预约空位\r\n");
-                                    Thread.Sleep(30000);
-                                    continue;
-                            }
-                        }
-
-                        if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
-                        {
-                            Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
-                            Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
-                            return false;
-                        }
-
-                        Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + (79200 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
-                        Thread.Sleep(3000);
                     }
                     else
                     {
-                        Config.config.textBox2.AppendText("\r\n\r\n获取token失败，请检查网络后重试\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
-                        return false;
-                    }
-                }
-            }
-            else if (seatId == "0")
-            {
-                Config.config.textBox2.AppendText("\r\n正在监控区域，ID: " + roomId + "\r\n");
-                string date = DateTime.Now.ToString("yyyy-MM-dd");
-                while (true)
-                {
-                    freeSeats.Clear();
-                    if (SearchFreeSeat(buildingId, roomId, date, startTime, endTime) == "Success")
-                    {
-                        foreach (var freeSeatId in freeSeats)
+                        string res = SearchFreeSeat(buildingId, roomId, date, startTime, endTime);
+                        if (res == "Connection lost")
                         {
-                            switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
+                            Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续检索空位\r\n");
+                            Thread.Sleep(30000);
+                        }
+                        else if (res == "Failed" && Config.config.checkBox1.Checked)
+                        {
+                            Config.config.textBox2.AppendText("\r\n\r\n当前区域暂无空位，尝试全馆检索空位.....\r\n");
+                            foreach (var room in rooms)
                             {
-                                case "Success":
-                                    Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
-                                    Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
-                                    return true;
-                                case "Failed":
-                                    Thread.Sleep(2000);
-                                    continue;
-                                case "Connection lost":
-                                    Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续预约空位\r\n");
+                                if (SearchFreeSeat(buildingId, room, date, startTime, endTime) == "Connection lost")
+                                {
+                                    Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续检索空位\r\n");
                                     Thread.Sleep(30000);
-                                    continue;
+                                }
                             }
                         }
                     }
 
-                    if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
+                    foreach (var freeSeatId in freeSeats)
                     {
-                        Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
-                        return false;
+                        switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
+                        {
+                            case "Success":
+                                Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
+                                Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
+                                return true;
+                            case "Failed":
+                                Thread.Sleep(2000);
+                                continue;
+                            case "Connection lost":
+                                Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续预约空位\r\n");
+                                Thread.Sleep(30000);
+                                continue;
+                        }
                     }
-                    Thread.Sleep(2000);
                 }
-            }
-            else
-            {
-                Config.config.textBox2.AppendText("\r\n正在监控座位，ID: " + seatId + "\r\n");
-                string date = DateTime.Now.ToString("yyyy-MM-dd");
-                while (true)
-                {
-                    if (BookSeat(seatId, date, startTime, endTime) == "Success")
-                    {
-                        Config.config.textBox2.AppendText("\r\n\r\n捡漏成功\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
-                        return true;
-                    }
 
-                    if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
-                    {
-                        Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
-                        return false;
-                    }
-                    Thread.Sleep(2000);
-                }
+                Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + (79200 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
+                Thread.Sleep(3000);
             }
         }
 
@@ -1230,14 +1218,83 @@ namespace SeatKiller_UI
                 Wait("01", "00", "00", false);
             }
             bool cancelled = false;
+            string date = DateTime.Now.ToString("yyyy-MM-dd");
             GetRooms(buildingId);
-            if (roomId == "0")
+            if (seatId != "0" && !Config.config.checkBox1.Checked)
             {
-                string date = DateTime.Now.ToString("yyyy-MM-dd");
-                while (true)
+                Config.config.textBox2.AppendText("\r\n正在监控座位，ID: " + seatId + "\r\n");
+            }
+            else if (roomId != "0" && !Config.config.checkBox1.Checked)
+            {
+                Config.config.textBox2.AppendText("\r\n正在监控区域，ID: " + roomId + "\r\n");
+            }
+            while (true)
+            {
+                if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
+                {
+                    Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
+                    Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
+                    return false;
+                }
+
+                if (seatId != "0")
+                {
+                    if (CheckStartTime(seatId, date, startTime) && CheckEndTime(seatId, date, startTime, endTime))
+                    {
+                        GetUsrInf(true);
+                        if (!reserving)
+                        {
+                            if (StopUsing())
+                            {
+                                if (BookSeat(seatId, date, startTime, endTime) == "Success")
+                                {
+                                    Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
+                                    Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
+                                    return true;
+                                }
+                                else
+                                {
+                                    Config.config.textBox2.AppendText("\r\n\r\n改签失败，原座位已丢失\r\n");
+                                    Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            if (CancelReservation(res_id))
+                            {
+                                if (BookSeat(seatId, date, startTime, endTime) == "Success")
+                                {
+                                    Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
+                                    Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
+                                    return true;
+                                }
+                                else
+                                {
+                                    Config.config.textBox2.AppendText("\r\n\r\n改签失败，原座位已丢失\r\n");
+                                    Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
+                                return false;
+                            }
+                        }
+                    }
+                }
+                else
                 {
                     freeSeats.Clear();
-                    if (GetToken() == "Success")
+
+                    if (roomId == "0")
                     {
                         foreach (var room in rooms)
                         {
@@ -1247,114 +1304,58 @@ namespace SeatKiller_UI
                                 Thread.Sleep(30000);
                             }
                         }
-
-                        foreach (var freeSeatId in freeSeats)
-                        {
-                            if (!cancelled)
-                            {
-                                if (CheckStartTime(freeSeatId.ToString(), date, startTime) & CheckEndTime(freeSeatId.ToString(), date, startTime, endTime))
-                                {
-                                    GetUsrInf(true);
-                                    if (!reserving)
-                                    {
-                                        if (StopUsing())
-                                        {
-                                            cancelled = true;
-                                        }
-                                        else
-                                        {
-                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
-                                            return false;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (CancelReservation(res_id))
-                                        {
-                                            cancelled = true;
-                                        }
-                                        else
-                                        {
-                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
-                                            return false;
-                                        }
-                                    }
-
-                                    switch (BookSeat(freeSeatId.ToString(), date, startTime, endTime))
-                                    {
-                                        case "Success":
-                                            Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
-                                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
-                                            return true;
-                                        case "Failed":
-                                            Thread.Sleep(2000);
-                                            continue;
-                                        case "Connection lost":
-                                            Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续预约空位\r\n");
-                                            Thread.Sleep(30000);
-                                            continue;
-                                    }
-                                }
-                            }
-                        }
-
-                        if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
-                        {
-                            Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
-                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
-                            return false;
-                        }
-
-                        Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + (79200 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
-                        Thread.Sleep(3000);
                     }
                     else
                     {
-                        Config.config.textBox2.AppendText("\r\n\r\n获取token失败，请检查网络后重试\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
-                        return false;
-                    }
-                }
-            }
-            else if (seatId == "0")
-            {
-                Config.config.textBox2.AppendText("\r\n正在监控区域，ID: " + roomId + "\r\n");
-                string date = DateTime.Now.ToString("yyyy-MM-dd");
-                while (true)
-                {
-                    freeSeats.Clear();
-                    if (SearchFreeSeat(buildingId, roomId, date, startTime, endTime) == "Success")
-                    {
-                        foreach (var freeSeatId in freeSeats)
+                        string res = SearchFreeSeat(buildingId, roomId, date, startTime, endTime);
+                        if (res == "Connection lost")
                         {
-                            if (CheckStartTime(freeSeatId.ToString(), date, startTime) & CheckEndTime(freeSeatId.ToString(), date, startTime, endTime))
+                            Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续检索空位\r\n");
+                            Thread.Sleep(30000);
+                        }
+                        else if (res == "Failed" && Config.config.checkBox1.Checked)
+                        {
+                            Config.config.textBox2.AppendText("\r\n\r\n当前区域暂无空位，尝试全馆检索空位.....\r\n");
+                            foreach (var room in rooms)
                             {
-                                if (!cancelled)
+                                if (SearchFreeSeat(buildingId, room, date, startTime, endTime) == "Connection lost")
                                 {
-                                    GetUsrInf(true);
-                                    if (!reserving)
+                                    Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续检索空位\r\n");
+                                    Thread.Sleep(30000);
+                                }
+                            }
+                        }
+                    }
+
+                    foreach (var freeSeatId in freeSeats)
+                    {
+                        if (!cancelled)
+                        {
+                            if (CheckStartTime(freeSeatId.ToString(), date, startTime) && CheckEndTime(freeSeatId.ToString(), date, startTime, endTime))
+                            {
+                                GetUsrInf(true);
+                                if (!reserving)
+                                {
+                                    if (StopUsing())
                                     {
-                                        if (StopUsing())
-                                        {
-                                            cancelled = true;
-                                        }
-                                        else
-                                        {
-                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
-                                            return false;
-                                        }
+                                        cancelled = true;
                                     }
                                     else
                                     {
-                                        if (CancelReservation(res_id))
-                                        {
-                                            cancelled = true;
-                                        }
-                                        else
-                                        {
-                                            Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
-                                            return false;
-                                        }
+                                        Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
+                                        return false;
+                                    }
+                                }
+                                else
+                                {
+                                    if (CancelReservation(res_id))
+                                    {
+                                        cancelled = true;
+                                    }
+                                    else
+                                    {
+                                        Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
+                                        return false;
                                     }
                                 }
 
@@ -1374,86 +1375,11 @@ namespace SeatKiller_UI
                                 }
                             }
                         }
-                        Thread.Sleep(2000);
-                    }
-
-                    if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
-                    {
-                        Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
-                        return false;
-                    }
-                    Thread.Sleep(2000);
-                }
-            }
-            else
-            {
-                Config.config.textBox2.AppendText("\r\n正在监控座位，ID: " + seatId + "\r\n");
-                string date = DateTime.Now.ToString("yyyy-MM-dd");
-                while (true)
-                {
-                    if (CheckStartTime(seatId, date, startTime) & CheckEndTime(seatId, date, startTime, endTime))
-                    {
-                        break;
-                    }
-
-                    if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
-                    {
-                        Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
-                        Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
-                        return false;
-                    }
-
-                    Thread.Sleep(2000);
-                }
-
-                GetUsrInf(true);
-                if (!reserving)
-                {
-                    if (StopUsing())
-                    {
-                        if (BookSeat(seatId, date, startTime, endTime) == "Success")
-                        {
-                            Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
-                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
-                            return true;
-                        }
-                        else
-                        {
-                            Config.config.textBox2.AppendText("\r\n\r\n改签失败，原座位已丢失\r\n");
-                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
-                        return false;
                     }
                 }
-                else
-                {
-                    if (CancelReservation(res_id))
-                    {
-                        if (BookSeat(seatId, date, startTime, endTime) == "Success")
-                        {
-                            Config.config.textBox2.AppendText("\r\n\r\n改签成功\r\n");
-                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
-                            return true;
-                        }
-                        else
-                        {
-                            Config.config.textBox2.AppendText("\r\n\r\n改签失败，原座位已丢失\r\n");
-                            Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        Config.config.textBox2.AppendText("\r\n\r\n---------------------------退出改签模式---------------------------\r\n");
-                        return false;
-                    }
-                }
+
+                Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + (79200 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
+                Thread.Sleep(3000);
             }
         }
     }
