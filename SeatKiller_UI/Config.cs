@@ -226,9 +226,9 @@ namespace SeatKiller_UI
         private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
         {
             ArrayList endTimeList = new ArrayList();
-            if (comboBox4.SelectedIndex == 0 & displayStartTimeList.Count == 30)
+            if (comboBox4.SelectedIndex == 0 && displayStartTimeList.Count == 30)
             {
-                for (int i = comboBox4.SelectedIndex + 2; i <= displayStartTimeList.Count - 1; i++)
+                for (int i = comboBox4.SelectedIndex + 2; i <= 29; i++)
                 {
                     endTimeList.Add(displayStartTimeList[i]);
                 }

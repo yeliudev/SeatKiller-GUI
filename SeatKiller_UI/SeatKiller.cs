@@ -527,14 +527,7 @@ namespace SeatKiller_UI
         {
             if (startTime == "-1")
             {
-                if (int.Parse(DateTime.Now.ToString("mm")) < 30)
-                {
-                    startTime = (int.Parse(DateTime.Now.ToString("HH")) * 60).ToString();
-                }
-                else
-                {
-                    startTime = (int.Parse(DateTime.Now.ToString("HH")) * 60 + 30).ToString();
-                }
+                startTime = ((int)DateTime.Now.TimeOfDay.TotalMinutes).ToString();
             }
 
             string url = search_url + date + "/" + startTime + "/" + endTime;
@@ -786,14 +779,7 @@ namespace SeatKiller_UI
         {
             if (startTime == "-1")
             {
-                if (int.Parse(DateTime.Now.ToString("mm")) < 30)
-                {
-                    startTime = (int.Parse(DateTime.Now.ToString("HH")) * 60).ToString();
-                }
-                else
-                {
-                    startTime = (int.Parse(DateTime.Now.ToString("HH")) * 60 + 30).ToString();
-                }
+                startTime = "now";
             }
 
             string url = startTime_url + seatId + "/" + date;
@@ -803,7 +789,7 @@ namespace SeatKiller_UI
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
             request.Timeout = 5000;
 
-            Config.config.textBox2.AppendText("\r\nTry checking startTimes of seat No." + seatId + ".....Status : ");
+            Config.config.textBox2.AppendText("\r\nTry checking start time of seat No." + seatId + ".....Status : ");
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -849,14 +835,7 @@ namespace SeatKiller_UI
         {
             if (startTime == "-1")
             {
-                if (int.Parse(DateTime.Now.ToString("mm")) < 30)
-                {
-                    startTime = (int.Parse(DateTime.Now.ToString("HH")) * 60).ToString();
-                }
-                else
-                {
-                    startTime = (int.Parse(DateTime.Now.ToString("HH")) * 60 + 30).ToString();
-                }
+                startTime = ((int)DateTime.Now.TimeOfDay.TotalMinutes).ToString();
             }
 
             string url = endTime_url + seatId + "/" + date + "/" + startTime;
