@@ -19,21 +19,12 @@ namespace SeatKiller_UI
 {
     public static class SeatKiller
     {
-        private static readonly string login_url = "https://seat.lib.whu.edu.cn:8443/rest/auth";  // 图书馆移动端登陆API
-        private static readonly string usr_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/user";  // 用户信息API
-        private static readonly string stats_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/room/stats2/";  // 单一分馆区域信息API（拼接buildingId）
-        private static readonly string layout_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/room/layoutByDate/";  // 单一区域座位信息API（拼接roomId+date）
-        private static readonly string search_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/searchSeats/";  // 空位检索API（拼接date+startTime+endTime）
-        private static readonly string history_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/history/1/";  // 预约历史记录API（拼接历史记录个数）
-        private static readonly string startTime_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/startTimesForSeat/";  // 座位开始时间API（拼接roomId+date）
-        private static readonly string endTime_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/endTimesForSeat/";  // 座位结束时间API（拼接roomId+date+startTime）
-        private static readonly string book_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/freeBook";  // 座位预约API
-        private static readonly string cancel_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/cancel/";  // 取消预约API（拼接预约ID）
-        private static readonly string stop_url = "https://seat.lib.whu.edu.cn:8443/rest/v2/stop";  // 座位释放API
-        private static readonly string server = "134.175.186.17";  // 邮件服务器地址
+        private const string API_ROOT = "https://seat.lib.whu.edu.cn:8443/rest/";
+        private const string API_V2_ROOT = "https://seat.lib.whu.edu.cn:8443/rest/v2/";
+        private const string SERVER = "134.175.186.17";
 
         public static readonly string[] xt = { "6", "7", "8", "9", "10", "11", "12", "16", "4", "5", "14", "15" };
-        public static readonly string[] xt_less = { "6", "7", "8", "9", "10", "11", "12", "16" };
+        public static readonly string[] xt_elite = { "6", "7", "8", "9", "10", "11", "16" };
         public static readonly string[] gt = { "19", "29", "31", "32", "33", "34", "35", "37", "38" };
         public static readonly string[] yt = { "20", "21", "23", "24", "26", "27" };
         public static readonly string[] zt = { "39", "40", "51", "52", "56", "59", "60", "61", "62", "65", "66" };
@@ -41,7 +32,7 @@ namespace SeatKiller_UI
         public static ArrayList freeSeats = new ArrayList();
         private static ArrayList startTimes = new ArrayList(), endTimes = new ArrayList();
         public static string to_addr, res_id, username, password, newVersion, newVersionSize, updateInfo, downloadURL, status, bookedSeatId, historyDate, historyStartTime, historyEndTime, historyAwayStartTime, token, name, last_login_time, state, violationCount;
-        public static bool exitFlag = true, checkedIn = false, reserving = false, onlyPower = false, onlyWindow = false, onlyComputer = false;
+        public static bool checkedIn, reserving, onlyPower, onlyWindow, onlyComputer, exitFlag = true;
         public static DateTime time;
 
         private static void SetHeaderValue(WebHeaderCollection header, string name, string value)
@@ -54,7 +45,7 @@ namespace SeatKiller_UI
             }
         }
 
-        public static void SetHeaderValues(HttpWebRequest request)
+        private static void SetHeaderValues(HttpWebRequest request)
         {
             SetHeaderValue(request.Headers, "Host", "seat.lib.whu.edu.cn:8443");
             SetHeaderValue(request.Headers, "Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
@@ -64,6 +55,38 @@ namespace SeatKiller_UI
             SetHeaderValue(request.Headers, "Accept-Language", "zh-cn");
             SetHeaderValue(request.Headers, "token", token);
             SetHeaderValue(request.Headers, "Accept-Encoding", "gzip, deflate");
+        }
+
+        private static JObject HttpGetRequest(string url, int timeout = 5000)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "GET";
+            SetHeaderValues(request);
+            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+            request.Timeout = timeout;
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream stream = response.GetResponseStream();
+            StreamReader streamReader = new StreamReader(stream, Encoding.GetEncoding("UTF-8"));
+
+            return JObject.Parse(streamReader.ReadToEnd());
+        }
+
+        private static JObject HttpPostRequest(string url, byte[] data)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "POST";
+            SetHeaderValues(request);
+            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+            request.ContentLength = data.Length;
+            request.GetRequestStream().Write(data, 0, data.Length);
+            request.Timeout = 5000;
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream stream = response.GetResponseStream();
+            StreamReader streamReader = new StreamReader(stream, Encoding.GetEncoding("UTF-8"));
+
+            return JObject.Parse(streamReader.ReadToEnd());
         }
 
         private static bool RemoteCertificateValidate(object sender, X509Certificate cert, X509Chain chain, SslPolicyErrors error)
@@ -87,13 +110,13 @@ namespace SeatKiller_UI
                 Encoding encoding = Encoding.GetEncoding("UTF-8");
                 StreamReader streamReader = new StreamReader(stream, encoding);
                 string json = streamReader.ReadToEnd();
-                JObject jObject = JObject.Parse(json);
-                if (new Version(jObject["tag_name"].ToString().Substring(1)) > new Version(Application.ProductVersion))
+                JObject res = JObject.Parse(json);
+                if (new Version(res["tag_name"].ToString().Substring(1)) > new Version(Application.ProductVersion))
                 {
-                    newVersion = jObject["tag_name"].ToString().Substring(1);
-                    newVersionSize = (Convert.ToDouble(jObject["assets"].First["size"].ToString()) / (1024 * 1024)).ToString().Substring(0, 4) + " MB";
-                    updateInfo = jObject["body"].ToString();
-                    downloadURL = jObject["assets"].First["browser_download_url"].ToString();
+                    newVersion = res["tag_name"].ToString().Substring(1);
+                    newVersionSize = (Convert.ToDouble(res["assets"].First["size"].ToString()) / (1024 * 1024)).ToString().Substring(0, 4) + " MB";
+                    updateInfo = res["body"].ToString();
+                    downloadURL = res["assets"].First["browser_download_url"].ToString();
                     return true;
                 }
                 else
@@ -137,41 +160,34 @@ namespace SeatKiller_UI
 
         public static string GetToken(bool alert = true)
         {
-            string url = login_url + "?username=" + username + "&password=" + password;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "GET";
-            SetHeaderValues(request);
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-            request.Timeout = 3000;
+            string url = API_ROOT + "auth?username=" + username + "&password=" + password;
 
             if (alert)
             {
-                Config.config.textBox2.AppendText("\r\nTry getting token.....Status : ");
+                Config.config.textBox2.AppendText("\r\nRequesting for token.....Status : ");
             }
+
             try
             {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream stream = response.GetResponseStream();
-                Encoding encoding = Encoding.GetEncoding("UTF-8");
-                StreamReader streamReader = new StreamReader(stream, encoding);
-                string json = streamReader.ReadToEnd();
-                JObject jObject = JObject.Parse(json);
+                JObject res = HttpGetRequest(url, 3000);
+
                 if (alert)
                 {
-                    Config.config.textBox2.AppendText(jObject["status"].ToString());
+                    Config.config.textBox2.AppendText(res["status"].ToString());
                 }
-                if (jObject["status"].ToString() == "success")
+
+                if (res["status"].ToString() == "success")
                 {
-                    token = jObject["data"]["token"].ToString();
+                    token = res["data"]["token"].ToString();
                     return "Success";
                 }
                 else
                 {
                     if (alert)
                     {
-                        Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                        Config.config.textBox2.AppendText("\r\n" + res.ToString());
                     }
-                    return jObject["message"].ToString();
+                    return res["message"].ToString();
                 }
             }
             catch
@@ -186,34 +202,25 @@ namespace SeatKiller_UI
 
         public static bool CheckResInf(bool alert = true)
         {
-            string url = history_url + "30";
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "GET";
-            SetHeaderValues(request);
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-            request.Timeout = 2000;
+            string url = API_V2_ROOT + "history/1/30";
+            string[] probableStatus = { "RESERVE", "CHECK_IN", "AWAY" };
 
             try
             {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream stream = response.GetResponseStream();
-                Encoding encoding = Encoding.GetEncoding("UTF-8");
-                StreamReader streamReader = new StreamReader(stream, encoding);
-                string json = streamReader.ReadToEnd();
-                JObject jObject = JObject.Parse(json);
-                string[] probableStatus = { "RESERVE", "CHECK_IN", "AWAY" };
-                if (jObject["status"].ToString() == "success")
+                JObject res = HttpGetRequest(url, 2000);
+
+                if (res["status"].ToString() == "success")
                 {
-                    foreach (JToken res in jObject["data"]["reservations"])
+                    foreach (JToken reservations in res["data"]["reservations"])
                     {
-                        if (probableStatus.Contains(res["stat"].ToString()))
+                        if (probableStatus.Contains(reservations["stat"].ToString()))
                         {
-                            res_id = res["id"].ToString();
+                            res_id = reservations["id"].ToString();
                             if (alert)
                             {
                                 Reservation reservation = new Reservation();
-                                reservation.label2.Text = " ID: " + res["id"] + "\r\n 时间: " + res["date"] + " " + res["begin"] + "~" + res["end"];
-                                status = res["stat"].ToString();
+                                reservation.label2.Text = " ID: " + reservations["id"] + "\r\n 时间: " + reservations["date"] + " " + reservations["begin"] + "~" + reservations["end"];
+                                status = reservations["stat"].ToString();
                                 switch (status)
                                 {
                                     case "RESERVE":
@@ -222,9 +229,9 @@ namespace SeatKiller_UI
                                         reserving = true;
                                         break;
                                     case "CHECK_IN":
-                                        if (res["awayEnd"].ToString() != "")
+                                        if (reservations["awayEnd"].ToString() != "")
                                         {
-                                            reservation.label2.Text += "\r\n 暂离时间: " + res["awayBegin"].ToString() + "~" + res["awayEnd"].ToString();
+                                            reservation.label2.Text += "\r\n 暂离时间: " + reservations["awayBegin"].ToString() + "~" + reservations["awayEnd"].ToString();
                                             reservation.label3.Location = new Point(120, 253);
                                         }
                                         reservation.label2.Text += "\r\n 状态: 履约中";
@@ -232,31 +239,33 @@ namespace SeatKiller_UI
                                         reserving = false;
                                         break;
                                     case "AWAY":
-                                        reservation.label2.Text += "\r\n 暂离时间: " + res["awayBegin"].ToString();
+                                        reservation.label2.Text += "\r\n 暂离时间: " + reservations["awayBegin"].ToString();
                                         reservation.label2.Text += "\r\n 状态: 暂离";
                                         reservation.label3.Text = "是否释放此座位？（若不释放可自动改签座位）";
                                         reservation.label3.Location = new Point(120, 253);
                                         reserving = false;
                                         break;
                                 }
-                                reservation.label2.Text = reservation.label2.Text + "\r\n 地址: " + res["loc"].ToString() + "\r\n----------------------------------------------------------------";
+                                reservation.label2.Text = reservation.label2.Text + "\r\n 地址: " + reservations["loc"].ToString() + "\r\n----------------------------------------------------------------";
                                 reservation.Show();
                             }
                             else
                             {
-                                status = res["stat"].ToString();
-                                historyDate = res["date"].ToString();
-                                historyStartTime = res["begin"].ToString();
-                                historyEndTime = res["end"].ToString();
+                                status = reservations["stat"].ToString();
+                                historyDate = reservations["date"].ToString();
+                                historyStartTime = reservations["begin"].ToString();
+                                historyEndTime = reservations["end"].ToString();
                                 reserving = (status == "RESERVE") ? true : false;
                                 if (status == "AWAY")
                                 {
-                                    historyAwayStartTime = res["awayBegin"].ToString();
+                                    historyAwayStartTime = reservations["awayBegin"].ToString();
                                 }
                             }
+
                             return true;
                         }
                     }
+
                     return false;
                 }
                 else
@@ -272,53 +281,46 @@ namespace SeatKiller_UI
 
         public static bool GetUsrInf(bool alert = true)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(usr_url);
-            request.Method = "GET";
-            SetHeaderValues(request);
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-            request.Timeout = 5000;
+            string url = API_V2_ROOT + "user";
 
             if (alert)
             {
-                Config.config.textBox2.AppendText("\r\nTry getting user information.....Status : ");
+                Config.config.textBox2.AppendText("\r\nFetching user information.....Status : ");
             }
 
             try
             {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream stream = response.GetResponseStream();
-                Encoding encoding = Encoding.GetEncoding("UTF-8");
-                StreamReader streamReader = new StreamReader(stream, encoding);
-                string json = streamReader.ReadToEnd();
-                JObject jObject = JObject.Parse(json);
+                JObject res = HttpGetRequest(url);
 
                 if (alert)
                 {
-                    Config.config.textBox2.AppendText(jObject["status"].ToString());
+                    Config.config.textBox2.AppendText(res["status"].ToString());
                 }
 
-                if (jObject["status"].ToString() == "success")
+                if (res["status"].ToString() == "success")
                 {
-                    name = jObject["data"]["name"].ToString();
-                    last_login_time = jObject["data"]["lastLogin"].ToString();
-                    if (jObject["data"]["checkedIn"].ToString() == "True")
+                    name = res["data"]["name"].ToString();
+                    last_login_time = res["data"]["lastLogin"].ToString();
+                    if (res["data"]["checkedIn"].ToString() == "True")
                     {
                         checkedIn = true;
-                        state = "已进入" + jObject["data"]["lastInBuildingName"].ToString();
+                        state = "已进入" + res["data"]["lastInBuildingName"].ToString();
                     }
                     else
                     {
                         checkedIn = false;
                         state = "未入馆";
                     }
-                    violationCount = jObject["data"]["violationCount"].ToString();
+
+                    violationCount = res["data"]["violationCount"].ToString();
+
                     return true;
                 }
                 else
                 {
                     if (alert)
                     {
-                        Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                        Config.config.textBox2.AppendText("\r\n" + res.ToString());
                     }
                     return false;
                 }
@@ -335,32 +337,25 @@ namespace SeatKiller_UI
 
         public static bool GetRooms(string buildingId)
         {
-            string url = stats_url + buildingId;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "GET";
-            SetHeaderValues(request);
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-            request.Timeout = 5000;
+            string url = API_V2_ROOT + "room/stats2/" + buildingId;
+            Config.config.textBox2.AppendText("\r\nFetching room information.....Status : ");
 
-            Config.config.textBox2.AppendText("\r\nTry getting room information.....Status : ");
             try
             {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream stream = response.GetResponseStream();
-                Encoding encoding = Encoding.GetEncoding("UTF-8");
-                StreamReader streamReader = new StreamReader(stream, encoding);
-                string json = streamReader.ReadToEnd();
-                JObject jObject = JObject.Parse(json);
-                Config.config.textBox2.AppendText(jObject["status"].ToString());
-                if (jObject["status"].ToString() == "success")
+                JObject res = HttpGetRequest(url);
+                Config.config.textBox2.AppendText(res["status"].ToString());
+
+                if (res["status"].ToString() == "success")
                 {
-                    JToken jToken = jObject["data"];
+                    JToken jToken = res["data"];
                     Config.config.textBox2.AppendText("\r\n\r\n当前座位状态：");
+
                     foreach (var room in jToken)
                     {
                         Config.config.textBox2.AppendText("\r\n\r\n" + room["room"].ToString() + "\r\n楼层：" + room["floor"].ToString() + "\r\n总座位数：" + room["totalSeats"].ToString() + "\r\n已预约：" + room["reserved"].ToString() + "\r\n正在使用：" + room["inUse"].ToString() + "\r\n暂离：" + room["away"].ToString() + "\r\n空闲：" + room["free"].ToString());
                     }
                     Config.config.textBox2.AppendText("\r\n");
+
                     return true;
                 }
                 else
@@ -377,26 +372,17 @@ namespace SeatKiller_UI
 
         public static bool GetSeats(string roomId, ArrayList seats)
         {
-            string url = layout_url + roomId + "/" + DateTime.Now.ToString("yyyy-MM-dd");
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "GET";
-            SetHeaderValues(request);
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-            request.Timeout = 5000;
+            string url = API_V2_ROOT + "room/layoutByDate/" + roomId + "/" + DateTime.Now.ToString("yyyy-MM-dd");
+            Config.config.textBox2.AppendText("\r\nFetching seat information in room " + roomId + ".....Status : ");
 
-            Config.config.textBox2.AppendText("\r\nTry getting seat information in room " + roomId + ".....Status : ");
             try
             {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream stream = response.GetResponseStream();
-                Encoding encoding = Encoding.GetEncoding("UTF-8");
-                StreamReader streamReader = new StreamReader(stream, encoding);
-                string json = streamReader.ReadToEnd();
-                JObject jObject = JObject.Parse(json);
-                Config.config.textBox2.AppendText(jObject["status"].ToString());
-                if (jObject["status"].ToString() == "success")
+                JObject res = HttpGetRequest(url);
+                Config.config.textBox2.AppendText(res["status"].ToString());
+
+                if (res["status"].ToString() == "success")
                 {
-                    JToken layout = jObject["data"]["layout"];
+                    JToken layout = res["data"]["layout"];
                     foreach (var num in layout)
                     {
                         if (num.First["type"].ToString() == "seat")
@@ -413,11 +399,12 @@ namespace SeatKiller_UI
                     }
                     NewComparer newComparer = new NewComparer();
                     seats.Sort(newComparer);
+
                     return true;
                 }
                 else
                 {
-                    Config.config.textBox2.AppendText("\r\n" + jObject.ToString());
+                    Config.config.textBox2.AppendText("\r\n" + res.ToString());
                     return false;
                 }
             }
@@ -430,30 +417,23 @@ namespace SeatKiller_UI
 
         public static bool CancelReservation(string id, bool alert = true)
         {
-            string url = cancel_url + id;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "GET";
-            SetHeaderValues(request);
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-            request.Timeout = 5000;
+            string url = API_V2_ROOT + "cancel/" + id;
 
             if (alert)
             {
-                Config.config.textBox2.AppendText("\r\nTry cancelling reservation.....Status : ");
+                Config.config.textBox2.AppendText("\r\nCancelling reservation.....Status : ");
             }
+
             try
             {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream stream = response.GetResponseStream();
-                Encoding encoding = Encoding.GetEncoding("UTF-8");
-                StreamReader streamReader = new StreamReader(stream, encoding);
-                string json = streamReader.ReadToEnd();
-                JObject jObject = JObject.Parse(json);
+                JObject res = HttpGetRequest(url);
+
                 if (alert)
                 {
-                    Config.config.textBox2.AppendText(jObject["status"].ToString());
+                    Config.config.textBox2.AppendText(res["status"].ToString());
                 }
-                if (jObject["status"].ToString() == "success")
+
+                if (res["status"].ToString() == "success")
                 {
                     return true;
                 }
@@ -461,7 +441,7 @@ namespace SeatKiller_UI
                 {
                     if (alert)
                     {
-                        Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，原因：" + jObject["message"].ToString());
+                        Config.config.textBox2.AppendText("\r\n\r\n取消预约失败，原因：" + res["message"].ToString());
                     }
                     return false;
                 }
@@ -478,29 +458,23 @@ namespace SeatKiller_UI
 
         public static bool StopUsing(bool alert = true)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(stop_url);
-            request.Method = "GET";
-            SetHeaderValues(request);
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-            request.Timeout = 5000;
+            string url = API_V2_ROOT + "stop";
 
             if (alert)
             {
-                Config.config.textBox2.AppendText("\r\nTry releasing seat.....Status : ");
+                Config.config.textBox2.AppendText("\r\nReleasing seat.....Status : ");
             }
+
             try
             {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream stream = response.GetResponseStream();
-                Encoding encoding = Encoding.GetEncoding("UTF-8");
-                StreamReader streamReader = new StreamReader(stream, encoding);
-                string json = streamReader.ReadToEnd();
-                JObject jObject = JObject.Parse(json);
+                JObject res = HttpGetRequest(url);
+
                 if (alert)
                 {
-                    Config.config.textBox2.AppendText(jObject["status"].ToString());
+                    Config.config.textBox2.AppendText(res["status"].ToString());
                 }
-                if (jObject["status"].ToString() == "success")
+
+                if (res["status"].ToString() == "success")
                 {
                     return true;
                 }
@@ -508,7 +482,7 @@ namespace SeatKiller_UI
                 {
                     if (alert)
                     {
-                        Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，原因：" + jObject["message"].ToString());
+                        Config.config.textBox2.AppendText("\r\n\r\n释放座位失败，原因：" + res["message"].ToString());
                     }
                     return false;
                 }
@@ -530,12 +504,8 @@ namespace SeatKiller_UI
                 startTime = ((int)DateTime.Now.TimeOfDay.TotalMinutes).ToString();
             }
 
-            string url = search_url + date + "/" + startTime + "/" + endTime;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "POST";
-            SetHeaderValues(request);
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-            request.Timeout = 5000;
+            string url = API_V2_ROOT + "searchSeats/" + date + "/" + startTime + "/" + endTime;
+            Config.config.textBox2.AppendText("\r\nFetching free seats in room " + roomId + ".....Status : ");
 
             StringBuilder buffer = new StringBuilder();
             buffer.AppendFormat("{0}={1}", "t", "1");
@@ -545,21 +515,14 @@ namespace SeatKiller_UI
             buffer.AppendFormat("&{0}={1}", "page", "1");
             buffer.AppendFormat("&{0}={1}", "t2", "2");
             byte[] data = Encoding.UTF8.GetBytes(buffer.ToString());
-            request.ContentLength = data.Length;
-            request.GetRequestStream().Write(data, 0, data.Length);
 
-            Config.config.textBox2.AppendText("\r\nTry searching for free seats in room " + roomId + ".....Status : ");
             try
             {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream stream = response.GetResponseStream();
-                Encoding encoding = Encoding.GetEncoding("UTF-8");
-                StreamReader streamReader = new StreamReader(stream, encoding);
-                string json = streamReader.ReadToEnd();
-                JObject jObject = JObject.Parse(json);
-                if (jObject["data"]["seats"].ToString() != "{}")
+                JObject res = HttpPostRequest(url, data);
+
+                if (res["data"]["seats"].ToString() != "{}")
                 {
-                    JToken seats = jObject["data"]["seats"];
+                    JToken seats = res["data"]["seats"];
                     foreach (var num in seats)
                     {
                         if (onlyPower && num.First["power"].ToString() == "False")
@@ -600,13 +563,103 @@ namespace SeatKiller_UI
             }
         }
 
+        public static bool CheckStartTime(string seatId, string date, string startTime)
+        {
+            if (startTime == "-1")
+            {
+                startTime = "now";
+            }
+
+            string url = API_V2_ROOT + "startTimesForSeat/" + seatId + "/" + date;
+            Config.config.textBox2.AppendText("\r\nChecking start time of seat No." + seatId + ".....Status : ");
+
+            try
+            {
+                JObject res = HttpGetRequest(url);
+
+                if (res["status"].ToString() == "success")
+                {
+                    startTimes.Clear();
+                    JToken getStartTimes = res["data"]["startTimes"];
+                    foreach (var time in getStartTimes)
+                    {
+                        startTimes.Add((time["id"].ToString()));
+                    }
+
+                    if (startTimes.Contains(startTime))
+                    {
+                        Config.config.textBox2.AppendText("success");
+                        return true;
+                    }
+                    else
+                    {
+                        Config.config.textBox2.AppendText("fail");
+                        return false;
+                    }
+                }
+                else
+                {
+                    Config.config.textBox2.AppendText("fail");
+                    return false;
+                }
+            }
+            catch
+            {
+                Config.config.textBox2.AppendText("Connection lost");
+                return false;
+            }
+        }
+
+        public static bool CheckEndTime(string seatId, string date, string startTime, string endTime)
+        {
+            if (startTime == "-1")
+            {
+                startTime = ((int)DateTime.Now.TimeOfDay.TotalMinutes).ToString();
+            }
+
+            string url = API_V2_ROOT + "endTimesForSeat/" + seatId + "/" + date + "/" + startTime;
+            Config.config.textBox2.AppendText("\r\nChecking endTimes of seat No." + seatId + ".....Status : ");
+
+            try
+            {
+                JObject res = HttpGetRequest(url);
+
+                if (res["status"].ToString() == "success")
+                {
+                    endTimes.Clear();
+                    JToken getEndTimes = res["data"]["endTimes"];
+                    foreach (var time in getEndTimes)
+                    {
+                        endTimes.Add((time["id"].ToString()));
+                    }
+
+                    if (endTimes.Contains(endTime))
+                    {
+                        Config.config.textBox2.AppendText("success");
+                        return true;
+                    }
+                    else
+                    {
+                        Config.config.textBox2.AppendText("fail");
+                        return false;
+                    }
+                }
+                else
+                {
+                    Config.config.textBox2.AppendText("fail");
+                    return false;
+                }
+            }
+            catch
+            {
+                Config.config.textBox2.AppendText("Connection lost");
+                return false;
+            }
+        }
+
         public static string BookSeat(string seatId, string date, string startTime, string endTime, bool alert = true)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(book_url);
-            request.Method = "POST";
-            SetHeaderValues(request);
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-            request.Timeout = 5000;
+            string url = API_V2_ROOT + "freeBook";
 
             StringBuilder buffer = new StringBuilder();
             buffer.AppendFormat("{0}={1}", "t", "1");
@@ -616,39 +669,34 @@ namespace SeatKiller_UI
             buffer.AppendFormat("&{0}={1}", "date", date);
             buffer.AppendFormat("&{0}={1}", "t2", "2");
             byte[] data = Encoding.UTF8.GetBytes(buffer.ToString());
-            request.ContentLength = data.Length;
-            request.GetRequestStream().Write(data, 0, data.Length);
 
             if (alert)
             {
-                Config.config.textBox2.AppendText("\r\n\r\nTry booking seat.....Status : ");
+                Config.config.textBox2.AppendText("\r\n\r\nBooking seat No." + seatId + ".....Status : ");
             }
 
             try
             {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream stream = response.GetResponseStream();
-                Encoding encoding = Encoding.GetEncoding("UTF-8");
-                StreamReader streamReader = new StreamReader(stream, encoding);
-                string json = streamReader.ReadToEnd();
-                JObject jObject = JObject.Parse(json);
+                JObject res = HttpPostRequest(url, data);
+
                 if (alert)
                 {
-                    Config.config.textBox2.AppendText(jObject["status"].ToString() + "\r\n");
+                    Config.config.textBox2.AppendText(res["status"].ToString() + "\r\n");
                 }
-                if (jObject["status"].ToString() == "success")
+
+                if (res["status"].ToString() == "success")
                 {
                     bookedSeatId = seatId;
                     if (alert)
                     {
-                        PrintBookInf(jObject);
+                        PrintBookInf(res);
                         if (Config.config.checkBox2.Checked)
                         {
-                            jObject.Add("username", username);
-                            jObject.Add("name", name);
-                            jObject.Add("client", "C#");
-                            jObject.Add("version", Application.ProductVersion);
-                            SendMail(jObject.ToString(), to_addr);
+                            res.Add("username", username);
+                            res.Add("name", name);
+                            res.Add("client", "C#");
+                            res.Add("version", Application.ProductVersion);
+                            SendMail(res.ToString(), to_addr);
                         }
                     }
                     return "Success";
@@ -657,7 +705,7 @@ namespace SeatKiller_UI
                 {
                     if (alert)
                     {
-                        Config.config.textBox2.AppendText("\r\n预约座位失败，原因：" + jObject["message"].ToString());
+                        Config.config.textBox2.AppendText("\r\n预约座位失败，原因：" + res["message"].ToString());
                     }
                     return "Failed";
                 }
@@ -672,17 +720,17 @@ namespace SeatKiller_UI
             }
         }
 
-        public static void PrintBookInf(JObject jObject)
+        public static void PrintBookInf(JObject res)
         {
             Config.config.textBox2.AppendText("\r\n---------------------------座位预约成功---------------------------");
-            Config.config.textBox2.AppendText("\r\nID：" + jObject["data"]["id"]);
-            Config.config.textBox2.AppendText("\r\n凭证号码：" + jObject["data"]["receipt"]);
-            Config.config.textBox2.AppendText("\r\n时间：" + jObject["data"]["onDate"] + " " + jObject["data"]["begin"] + " ~ " + jObject["data"]["end"]);
-            if (jObject["data"]["checkedIn"].ToString() == "False")
+            Config.config.textBox2.AppendText("\r\nID：" + res["data"]["id"]);
+            Config.config.textBox2.AppendText("\r\n凭证号码：" + res["data"]["receipt"]);
+            Config.config.textBox2.AppendText("\r\n时间：" + res["data"]["onDate"] + " " + res["data"]["begin"] + " ~ " + res["data"]["end"]);
+            if (res["data"]["checkedIn"].ToString() == "False")
                 Config.config.textBox2.AppendText("\r\n状态：预约");
             else
                 Config.config.textBox2.AppendText("\r\n状态：已签到");
-            Config.config.textBox2.AppendText("\r\n地址：" + jObject["data"]["location"]);
+            Config.config.textBox2.AppendText("\r\n地址：" + res["data"]["location"]);
             Config.config.textBox2.AppendText("\r\n--------------------------------------------------------------------");
         }
 
@@ -693,7 +741,7 @@ namespace SeatKiller_UI
                 Config.config.textBox2.AppendText("\r\n\r\n尝试连接邮件服务器");
                 byte[] data = new byte[5];
                 Socket socketClient = new Socket(SocketType.Stream, ProtocolType.Tcp);
-                IPAddress ip = IPAddress.Parse(server);
+                IPAddress ip = IPAddress.Parse(SERVER);
                 IPEndPoint point = new IPEndPoint(ip, 5210);
 
                 try
@@ -752,7 +800,7 @@ namespace SeatKiller_UI
         {
             byte[] data = new byte[5];
             Socket socketClient = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            IPAddress ip = IPAddress.Parse(server);
+            IPAddress ip = IPAddress.Parse(SERVER);
             IPEndPoint point = new IPEndPoint(ip, 5210);
 
             try
@@ -773,118 +821,6 @@ namespace SeatKiller_UI
                 }
             }
             catch { }
-        }
-
-        public static bool CheckStartTime(string seatId, string date, string startTime)
-        {
-            if (startTime == "-1")
-            {
-                startTime = "now";
-            }
-
-            string url = startTime_url + seatId + "/" + date;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "GET";
-            SetHeaderValues(request);
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-            request.Timeout = 5000;
-
-            Config.config.textBox2.AppendText("\r\nTry checking start time of seat No." + seatId + ".....Status : ");
-            try
-            {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream stream = response.GetResponseStream();
-                Encoding encoding = Encoding.GetEncoding("UTF-8");
-                StreamReader streamReader = new StreamReader(stream, encoding);
-                string json = streamReader.ReadToEnd();
-                JObject jObject = JObject.Parse(json);
-                if (jObject["status"].ToString() == "success")
-                {
-                    startTimes.Clear();
-                    JToken getStartTimes = jObject["data"]["startTimes"];
-                    foreach (var time in getStartTimes)
-                    {
-                        startTimes.Add((time["id"].ToString()));
-                    }
-
-                    if (startTimes.Contains(startTime))
-                    {
-                        Config.config.textBox2.AppendText("success");
-                        return true;
-                    }
-                    else
-                    {
-                        Config.config.textBox2.AppendText("fail");
-                        return false;
-                    }
-                }
-                else
-                {
-                    Config.config.textBox2.AppendText("fail");
-                    return false;
-                }
-            }
-            catch
-            {
-                Config.config.textBox2.AppendText("Connection lost");
-                return false;
-            }
-        }
-
-        public static bool CheckEndTime(string seatId, string date, string startTime, string endTime)
-        {
-            if (startTime == "-1")
-            {
-                startTime = ((int)DateTime.Now.TimeOfDay.TotalMinutes).ToString();
-            }
-
-            string url = endTime_url + seatId + "/" + date + "/" + startTime;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "GET";
-            SetHeaderValues(request);
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-            request.Timeout = 5000;
-
-            Config.config.textBox2.AppendText("\r\nTry checking endTimes of seat No." + seatId + ".....Status : ");
-            try
-            {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream stream = response.GetResponseStream();
-                Encoding encoding = Encoding.GetEncoding("UTF-8");
-                StreamReader streamReader = new StreamReader(stream, encoding);
-                string json = streamReader.ReadToEnd();
-                JObject jObject = JObject.Parse(json);
-                if (jObject["status"].ToString() == "success")
-                {
-                    endTimes.Clear();
-                    JToken getEndTimes = jObject["data"]["endTimes"];
-                    foreach (var time in getEndTimes)
-                    {
-                        endTimes.Add((time["id"].ToString()));
-                    }
-
-                    if (endTimes.Contains(endTime))
-                    {
-                        Config.config.textBox2.AppendText("success");
-                        return true;
-                    }
-                    else
-                    {
-                        Config.config.textBox2.AppendText("fail");
-                        return false;
-                    }
-                }
-                else
-                {
-                    Config.config.textBox2.AppendText("fail");
-                    return false;
-                }
-            }
-            catch
-            {
-                Config.config.textBox2.AppendText("Connection lost");
-                return false;
-            }
         }
 
         public static void LockSeat(string seatId)

@@ -60,8 +60,8 @@ namespace SeatKiller_UI
         {
             Text += " v" + Application.ProductVersion;
 
-            textBox2.AppendText("Try getting token.....Status : success");
-            textBox2.AppendText("\r\nTry getting user information.....Status : success");
+            textBox2.AppendText("Requesting for token.....Status : success");
+            textBox2.AppendText("\r\nFetching user information.....Status : success");
 
             comboBox1.DataSource = building_list;
             comboBox1.DisplayMember = "Value";
@@ -122,7 +122,7 @@ namespace SeatKiller_UI
                     comboBox2.DataSource = new ArrayList
                     {
                         new DictionaryEntry("0", "(自动选择)"),
-                        new DictionaryEntry("1", "只包含2~4楼和1楼云桌面"),
+                        new DictionaryEntry("1", "只包含2~4楼东西区和云桌面"),
                         new DictionaryEntry("5", "一楼创新学习讨论区"),
                         new DictionaryEntry("4", "一楼3C创客空间"),
                         new DictionaryEntry("14", "3C创客-双屏电脑（20台）"),
@@ -267,7 +267,7 @@ namespace SeatKiller_UI
 
                 if (comboBox1.SelectedValue.ToString() == "1" & comboBox2.SelectedValue.ToString() == "1")
                 {
-                    Main.rooms = SeatKiller.xt_less;
+                    Main.rooms = SeatKiller.xt_elite;
                     Main.roomId = "0";
                 }
                 else
