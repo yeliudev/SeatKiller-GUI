@@ -618,7 +618,7 @@ namespace SeatKiller_UI
             }
 
             string url = API_V2_ROOT + "endTimesForSeat/" + seatId + "/" + date + "/" + startTime;
-            Config.config.textBox2.AppendText("\r\nChecking endTimes of seat No." + seatId + ".....Status : ");
+            Config.config.textBox2.AppendText("\r\nChecking end time of seat No." + seatId + ".....Status : ");
 
             try
             {

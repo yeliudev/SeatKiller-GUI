@@ -284,7 +284,7 @@ namespace SeatKiller_UI
             }
             else
             {
-                if (SeatKiller.GetToken() == "Success")
+                if (SeatKiller.GetToken(false) == "Success")
                 {
                     if (SeatKiller.CheckResInf(false))
                     {
