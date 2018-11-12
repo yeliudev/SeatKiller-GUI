@@ -1019,11 +1019,20 @@ namespace SeatKiller_UI
         {
             Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入捡漏模式---------------------------\r\n");
             string date = DateTime.Now.ToString("yyyy-MM-dd");
+
             if (DateTime.Now.TimeOfDay.TotalMinutes < 60 || DateTime.Now.TimeOfDay.TotalMinutes > 1420)
             {
                 Wait("01", "00", "00", false);
             }
+            else if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
+            {
+                Config.config.textBox2.AppendText("\r\n捡漏失败，超出运行时间\r\n");
+                Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
+                return false;
+            }
+
             GetRooms(buildingId);
+
             if (seatId != "0" && !Config.config.checkBox1.Checked)
             {
                 Config.config.textBox2.AppendText("\r\n正在监控座位，ID: " + seatId + "\r\n");
@@ -1032,6 +1041,7 @@ namespace SeatKiller_UI
             {
                 Config.config.textBox2.AppendText("\r\n正在监控区域，ID: " + roomId + "\r\n");
             }
+
             while (true)
             {
                 if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
@@ -1120,21 +1130,30 @@ namespace SeatKiller_UI
                     }
                 }
 
-                Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + (79200 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
-                Thread.Sleep(3000);
+                Config.config.textBox2.AppendText("\r\n\r\n循环结束，10秒后进入下一个循环，运行时间剩余" + (79200 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
+                Thread.Sleep(10000);
             }
         }
 
         public static bool ExchangeLoop(string buildingId, string[] rooms, string startTime, string endTime, string roomId = "0", string seatId = "0")
         {
             Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入改签模式---------------------------\r\n");
+            bool cancelled = false;
+            string date = DateTime.Now.ToString("yyyy-MM-dd");
+
             if (DateTime.Now.TimeOfDay.TotalMinutes < 60 || DateTime.Now.TimeOfDay.TotalMinutes > 1420)
             {
                 Wait("01", "00", "00", false);
             }
-            bool cancelled = false;
-            string date = DateTime.Now.ToString("yyyy-MM-dd");
+            else if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
+            {
+                Config.config.textBox2.AppendText("\r\n改签失败，超出运行时间\r\n");
+                Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
+                return false;
+            }
+
             GetRooms(buildingId);
+
             if (seatId != "0" && !Config.config.checkBox1.Checked)
             {
                 Config.config.textBox2.AppendText("\r\n正在监控座位，ID: " + seatId + "\r\n");
@@ -1143,6 +1162,7 @@ namespace SeatKiller_UI
             {
                 Config.config.textBox2.AppendText("\r\n正在监控区域，ID: " + roomId + "\r\n");
             }
+
             while (true)
             {
                 if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
@@ -1293,8 +1313,8 @@ namespace SeatKiller_UI
                     }
                 }
 
-                Config.config.textBox2.AppendText("\r\n\r\n循环结束，3秒后进入下一个循环，运行时间剩余" + (79200 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
-                Thread.Sleep(3000);
+                Config.config.textBox2.AppendText("\r\n\r\n循环结束，10秒后进入下一个循环，运行时间剩余" + (79200 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
+                Thread.Sleep(10000);
             }
         }
     }

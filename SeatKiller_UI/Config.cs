@@ -122,7 +122,7 @@ namespace SeatKiller_UI
                     comboBox2.DataSource = new ArrayList
                     {
                         new DictionaryEntry("0", "(自动选择)"),
-                        new DictionaryEntry("1", "只包含2~4楼东西区和云桌面"),
+                        new DictionaryEntry("1", "只包含2~4楼和1楼云桌面"),
                         new DictionaryEntry("5", "一楼创新学习讨论区"),
                         new DictionaryEntry("4", "一楼3C创客空间"),
                         new DictionaryEntry("14", "3C创客-双屏电脑（20台）"),

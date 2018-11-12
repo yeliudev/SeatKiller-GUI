@@ -76,7 +76,7 @@ namespace SeatKiller_UI
             }
             else if (response == "System Maintenance")
             {
-                MessageBox.Show("系统正在维护（23:45 ~ 0:15）", "登录失败");
+                MessageBox.Show("系统维护中（23:45 ~ 0:15）", "登录失败");
                 if (!backgroundWorker1.IsBusy)
                 {
                     backgroundWorker1.RunWorkerAsync();
