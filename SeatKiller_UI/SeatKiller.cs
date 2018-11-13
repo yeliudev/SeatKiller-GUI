@@ -1239,6 +1239,12 @@ namespace SeatKiller_UI
                             }
                         }
                     }
+                    else if (Config.config.checkBox1.Checked)
+                    {
+                        Config.config.textBox2.AppendText("\r\n\r\n指定座位改签失败，尝试检索其他空位.....\r\n");
+                        seatId = "0";
+                        continue;
+                    }
                 }
                 else
                 {
