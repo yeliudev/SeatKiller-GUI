@@ -24,7 +24,7 @@ namespace SeatKiller_UI
         private const string SERVER = "134.175.186.17";
 
         public static readonly string[] xt = { "6", "7", "8", "9", "10", "11", "12", "16", "4", "5", "14", "15" };
-        public static readonly string[] xt_elite = { "6", "7", "8", "9", "10", "11", "16" };
+        public static readonly string[] xt_lite = { "9", "11", "8", "10", "6", "7", "16" };
         public static readonly string[] gt = { "19", "29", "31", "32", "33", "34", "35", "37", "38" };
         public static readonly string[] yt = { "20", "21", "23", "24", "26", "27" };
         public static readonly string[] zt = { "39", "40", "51", "52", "56", "59", "60", "61", "62", "65", "66" };
@@ -705,7 +705,7 @@ namespace SeatKiller_UI
                 {
                     if (alert)
                     {
-                        Config.config.textBox2.AppendText("\r\n预约座位失败，原因：" + res["message"].ToString());
+                        Config.config.textBox2.AppendText("\r\n" + res["message"].ToString() + "\r\n");
                     }
                     return "Failed";
                 }
@@ -1020,13 +1020,13 @@ namespace SeatKiller_UI
             Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入捡漏模式---------------------------\r\n");
             string date = DateTime.Now.ToString("yyyy-MM-dd");
 
-            if (DateTime.Now.TimeOfDay.TotalMinutes < 60 || DateTime.Now.TimeOfDay.TotalMinutes > 1420)
+            if (DateTime.Now.TimeOfDay.TotalMinutes < 60 || DateTime.Now.TimeOfDay.TotalMinutes > 1425)
             {
                 Wait("01", "00", "00", false);
             }
             else if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
             {
-                Config.config.textBox2.AppendText("\r\n捡漏失败，超出运行时间\r\n");
+                Config.config.textBox2.AppendText("\r\n捡漏失败，超出系统开放时间\r\n");
                 Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
                 return false;
             }
@@ -1046,7 +1046,7 @@ namespace SeatKiller_UI
             {
                 if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
                 {
-                    Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出运行时间\r\n");
+                    Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出系统开放时间\r\n");
                     Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
                     return false;
                 }
@@ -1082,11 +1082,18 @@ namespace SeatKiller_UI
                     {
                         foreach (var room in rooms)
                         {
-                            if (SearchFreeSeat(buildingId, room, date, startTime, endTime) == "Connection lost")
+                            string res = SearchFreeSeat(buildingId, room, date, startTime, endTime);
+                            if (res == "Success")
+                            {
+                                break;
+                            }
+                            else if (res == "Connection lost")
                             {
                                 Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续检索空位\r\n");
                                 Thread.Sleep(30000);
+                                continue;
                             }
+                            Thread.Sleep(1500);
                         }
                     }
                     else
@@ -1096,17 +1103,25 @@ namespace SeatKiller_UI
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续检索空位\r\n");
                             Thread.Sleep(30000);
+                            continue;
                         }
                         else if (res == "Failed" && Config.config.checkBox1.Checked)
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n当前区域暂无空位，尝试全馆检索空位.....\r\n");
                             foreach (var room in rooms)
                             {
-                                if (SearchFreeSeat(buildingId, room, date, startTime, endTime) == "Connection lost")
+                                string result = SearchFreeSeat(buildingId, room, date, startTime, endTime);
+                                if (result == "Success")
+                                {
+                                    break;
+                                }
+                                else if (result == "Connection lost")
                                 {
                                     Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续检索空位\r\n");
                                     Thread.Sleep(30000);
+                                    continue;
                                 }
+                                Thread.Sleep(1500);
                             }
                         }
                     }
@@ -1120,18 +1135,18 @@ namespace SeatKiller_UI
                                 Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
                                 return true;
                             case "Failed":
-                                Thread.Sleep(2000);
-                                continue;
+                                Thread.Sleep(1500);
+                                break;
                             case "Connection lost":
                                 Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续预约空位\r\n");
                                 Thread.Sleep(30000);
-                                continue;
+                                break;
                         }
                     }
                 }
 
-                Config.config.textBox2.AppendText("\r\n\r\n循环结束，10秒后进入下一个循环，运行时间剩余" + (79200 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
-                Thread.Sleep(10000);
+                Config.config.textBox2.AppendText("\r\n\r\n暂无可用座位，系统开放时间剩余" + (79200 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
+                Thread.Sleep(1500);
             }
         }
 
@@ -1141,13 +1156,13 @@ namespace SeatKiller_UI
             bool cancelled = false;
             string date = DateTime.Now.ToString("yyyy-MM-dd");
 
-            if (DateTime.Now.TimeOfDay.TotalMinutes < 60 || DateTime.Now.TimeOfDay.TotalMinutes > 1420)
+            if (DateTime.Now.TimeOfDay.TotalMinutes < 60 || DateTime.Now.TimeOfDay.TotalMinutes > 1425)
             {
                 Wait("01", "00", "00", false);
             }
             else if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
             {
-                Config.config.textBox2.AppendText("\r\n改签失败，超出运行时间\r\n");
+                Config.config.textBox2.AppendText("\r\n改签失败，超出系统开放时间\r\n");
                 Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
                 return false;
             }
@@ -1167,7 +1182,7 @@ namespace SeatKiller_UI
             {
                 if (DateTime.Now.TimeOfDay.TotalMinutes > 1320)
                 {
-                    Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出运行时间\r\n");
+                    Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出系统开放时间\r\n");
                     Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
                     return false;
                 }
@@ -1233,11 +1248,18 @@ namespace SeatKiller_UI
                     {
                         foreach (var room in rooms)
                         {
-                            if (SearchFreeSeat(buildingId, room, date, startTime, endTime) == "Connection lost")
+                            string res = SearchFreeSeat(buildingId, room, date, startTime, endTime);
+                            if (res == "Success")
+                            {
+                                break;
+                            }
+                            else if (res == "Connection lost")
                             {
                                 Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续检索空位\r\n");
                                 Thread.Sleep(30000);
+                                continue;
                             }
+                            Thread.Sleep(1500);
                         }
                     }
                     else
@@ -1247,17 +1269,25 @@ namespace SeatKiller_UI
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续检索空位\r\n");
                             Thread.Sleep(30000);
+                            continue;
                         }
                         else if (res == "Failed" && Config.config.checkBox1.Checked)
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n当前区域暂无空位，尝试全馆检索空位.....\r\n");
                             foreach (var room in rooms)
                             {
-                                if (SearchFreeSeat(buildingId, room, date, startTime, endTime) == "Connection lost")
+                                string result = SearchFreeSeat(buildingId, room, date, startTime, endTime);
+                                if (result == "Success")
+                                {
+                                    break;
+                                }
+                                else if (result == "Connection lost")
                                 {
                                     Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续检索空位\r\n");
                                     Thread.Sleep(30000);
+                                    continue;
                                 }
+                                Thread.Sleep(1500);
                             }
                         }
                     }
@@ -1301,20 +1331,20 @@ namespace SeatKiller_UI
                                         Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
                                         return true;
                                     case "Failed":
-                                        Thread.Sleep(2000);
-                                        continue;
+                                        Thread.Sleep(1500);
+                                        break;
                                     case "Connection lost":
                                         Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续预约空位\r\n");
                                         Thread.Sleep(30000);
-                                        continue;
+                                        break;
                                 }
                             }
                         }
                     }
                 }
 
-                Config.config.textBox2.AppendText("\r\n\r\n循环结束，10秒后进入下一个循环，运行时间剩余" + (79200 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
-                Thread.Sleep(10000);
+                Config.config.textBox2.AppendText("\r\n\r\n暂无可用座位，系统开放时间剩余" + (79200 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
+                Thread.Sleep(1500);
             }
         }
     }

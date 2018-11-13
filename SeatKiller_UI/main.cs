@@ -77,7 +77,7 @@ namespace SeatKiller_UI
                     }
                     else if (DateTime.Now.TimeOfDay.TotalMinutes > 1425)
                     {
-                        Config.config.textBox2.AppendText("\r\n预约系统开放时间已过");
+                        Config.config.textBox2.AppendText("\r\n预约系统已关闭");
 
                         if (exchange)
                         {
@@ -112,9 +112,41 @@ namespace SeatKiller_UI
                     {
                         if (DateTime.Now.TimeOfDay.TotalMinutes > 1425)
                         {
-                            Config.config.textBox2.AppendText("\r\n\r\n抢座失败，座位预约系统已关闭\r\n");
-                            Config.config.textBox2.AppendText("\r\n---------------------------退出抢座模式---------------------------\r\n");
-                            EnableControls();
+                            Config.config.textBox2.AppendText("\r\n\r\n抢座失败，座位预约系统已关闭");
+
+                            if (exchange)
+                            {
+                                if (SeatKiller.ExchangeLoop(buildingId, rooms, startTime, endTime, roomId, seatId))
+                                {
+                                    SeatKiller.LockSeat(SeatKiller.bookedSeatId);
+                                }
+
+                                if (Config.config.checkBox6.Checked)
+                                {
+                                    Config.config.backgroundWorker4.RunWorkerAsync();
+                                }
+                                else
+                                {
+                                    EnableControls();
+                                }
+                            }
+                            else
+                            {
+                                if (SeatKiller.Loop(buildingId, rooms, startTime, endTime, roomId, seatId))
+                                {
+                                    SeatKiller.LockSeat(SeatKiller.bookedSeatId);
+                                }
+
+                                if (Config.config.checkBox6.Checked)
+                                {
+                                    Config.config.backgroundWorker4.RunWorkerAsync();
+                                }
+                                else
+                                {
+                                    EnableControls();
+                                }
+                            }
+
                             return;
                         }
 
@@ -168,6 +200,7 @@ namespace SeatKiller_UI
                             {
                                 Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续预约空位\r\n");
                                 Thread.Sleep(30000);
+                                continue;
                             }
                             else if (Config.config.checkBox1.Checked)
                             {
@@ -184,11 +217,18 @@ namespace SeatKiller_UI
                             {
                                 foreach (var room in rooms)
                                 {
-                                    if (SeatKiller.SearchFreeSeat(buildingId, room, date, startTime, endTime) == "Connection lost")
+                                    string res = SeatKiller.SearchFreeSeat(buildingId, room, date, startTime, endTime);
+                                    if (res == "Success")
+                                    {
+                                        break;
+                                    }
+                                    else if (res == "Connection lost")
                                     {
                                         Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续检索空位\r\n");
                                         Thread.Sleep(30000);
+                                        continue;
                                     }
+                                    Thread.Sleep(1500);
                                 }
                             }
                             else
@@ -198,17 +238,25 @@ namespace SeatKiller_UI
                                 {
                                     Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续检索空位\r\n");
                                     Thread.Sleep(30000);
+                                    continue;
                                 }
                                 else if (res == "Failed" && Config.config.checkBox1.Checked)
                                 {
                                     Config.config.textBox2.AppendText("\r\n\r\n当前区域暂无空位，尝试全馆检索空位.....\r\n");
                                     foreach (var room in rooms)
                                     {
-                                        if (SeatKiller.SearchFreeSeat(buildingId, room, date, startTime, endTime) == "Connection lost")
+                                        string result = SeatKiller.SearchFreeSeat(buildingId, room, date, startTime, endTime);
+                                        if (result == "Success")
+                                        {
+                                            break;
+                                        }
+                                        else if (result == "Connection lost")
                                         {
                                             Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后尝试继续检索空位\r\n");
                                             Thread.Sleep(30000);
+                                            continue;
                                         }
+                                        Thread.Sleep(1500);
                                     }
                                 }
                             }
@@ -260,18 +308,18 @@ namespace SeatKiller_UI
                                         }
                                         return;
                                     case "Failed":
-                                        Thread.Sleep(2000);
-                                        continue;
+                                        Thread.Sleep(1500);
+                                        break;
                                     case "Connection lost":
                                         Config.config.textBox2.AppendText("\r\n\r\n连接丢失，30秒后重新尝试抢座，系统开放时间剩余" + (85500 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
                                         Thread.Sleep(30000);
-                                        continue;
+                                        break;
                                 }
                             }
                         }
 
-                        Config.config.textBox2.AppendText("\r\n\r\n当前暂无空位，10秒后尝试继续检索空位.....\r\n");
-                        Thread.Sleep(10000);
+                        Config.config.textBox2.AppendText("\r\n\r\n暂无可用座位，系统开放时间剩余" + (85200 - (int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + "秒\r\n");
+                        Thread.Sleep(1500);
                     }
                 }
                 else
@@ -292,26 +340,40 @@ namespace SeatKiller_UI
                         if (SeatKiller.ExchangeLoop(buildingId, rooms, startTime, endTime, roomId, seatId))
                         {
                             SeatKiller.LockSeat(SeatKiller.bookedSeatId);
-                            if (Config.config.checkBox6.Checked)
-                            {
-                                Config.config.backgroundWorker4.RunWorkerAsync();
-                            }
                         }
-                    }
-                    else if (SeatKiller.Loop(buildingId, rooms, startTime, endTime, roomId, seatId))
-                    {
-                        SeatKiller.LockSeat(SeatKiller.bookedSeatId);
+
                         if (Config.config.checkBox6.Checked)
                         {
                             Config.config.backgroundWorker4.RunWorkerAsync();
+                        }
+                        else
+                        {
+                            EnableControls();
+                        }
+                    }
+                    else
+                    {
+                        if (SeatKiller.Loop(buildingId, rooms, startTime, endTime, roomId, seatId))
+                        {
+                            SeatKiller.LockSeat(SeatKiller.bookedSeatId);
+                        }
+
+                        if (Config.config.checkBox6.Checked)
+                        {
+                            Config.config.backgroundWorker4.RunWorkerAsync();
+                        }
+                        else
+                        {
+                            EnableControls();
                         }
                     }
                 }
                 else
                 {
                     Config.config.textBox2.AppendText("\r\n\r\n获取token失败，请检查网络后重试\r\n");
+                    EnableControls();
                 }
-                EnableControls();
+
                 return;
             }
         }
