@@ -75,7 +75,7 @@ namespace SeatKiller_UI
                         SeatKiller.GetRooms(buildingId);
                         SeatKiller.Wait("22", "45", "00");
                     }
-                    else if (DateTime.Now.TimeOfDay.TotalMinutes > 1425)
+                    else if (DateTime.Now.TimeOfDay.TotalMinutes > 1420)
                     {
                         Config.config.textBox2.AppendText("\r\n预约系统已关闭");
 
@@ -110,7 +110,7 @@ namespace SeatKiller_UI
 
                     while (try_booking)
                     {
-                        if (DateTime.Now.TimeOfDay.TotalMinutes > 1425)
+                        if (DateTime.Now.TimeOfDay.TotalMinutes > 1420)
                         {
                             Config.config.textBox2.AppendText("\r\n\r\n抢座失败，座位预约系统已关闭");
 
@@ -152,7 +152,7 @@ namespace SeatKiller_UI
 
                         if (seatId != "0")
                         {
-                            if (exchange & !SeatKiller.reserving & !cancelled)
+                            if (exchange && !SeatKiller.reserving && !cancelled)
                             {
                                 if (SeatKiller.StopUsing())
                                 {
@@ -166,7 +166,7 @@ namespace SeatKiller_UI
                                     return;
                                 }
                             }
-                            else if (exchange & SeatKiller.reserving & !cancelled)
+                            else if (exchange && SeatKiller.reserving && !cancelled)
                             {
                                 if (SeatKiller.CancelReservation(SeatKiller.res_id))
                                 {
@@ -263,7 +263,7 @@ namespace SeatKiller_UI
 
                             foreach (var freeSeat in SeatKiller.freeSeats)
                             {
-                                if (exchange & !SeatKiller.reserving & !cancelled)
+                                if (exchange && !SeatKiller.reserving && !cancelled)
                                 {
                                     if (SeatKiller.StopUsing())
                                     {
@@ -277,7 +277,7 @@ namespace SeatKiller_UI
                                         return;
                                     }
                                 }
-                                else if (exchange & SeatKiller.reserving & !cancelled)
+                                else if (exchange && SeatKiller.reserving && !cancelled)
                                 {
                                     if (SeatKiller.CancelReservation(SeatKiller.res_id))
                                     {

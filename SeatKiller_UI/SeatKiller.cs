@@ -841,7 +841,7 @@ namespace SeatKiller_UI
                     break;
                 }
 
-                if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 400 & DateTime.Now.TimeOfDay.TotalMinutes < 1320)
+                if (historyDate == DateTime.Now.ToString("yyyy-M-d") && DateTime.Now.TimeOfDay.TotalMinutes > 400 && DateTime.Now.TimeOfDay.TotalMinutes < 1320)
                 {
                     if (GetToken(false) == "Success")
                     {
@@ -864,7 +864,7 @@ namespace SeatKiller_UI
                                 break;
                             }
 
-                            if (reserving & !checkedIn)
+                            if (reserving && !checkedIn)
                             {
                                 int historyStartTimeInt = int.Parse(historyStartTime.Substring(0, 2)) * 60 + int.Parse(historyStartTime.Substring(3, 2));
 
@@ -1001,7 +1001,7 @@ namespace SeatKiller_UI
                         continue;
                     }
                 }
-                else if (historyDate == DateTime.Now.ToString("yyyy-M-d") & DateTime.Now.TimeOfDay.TotalMinutes > 1320)
+                else if (historyDate == DateTime.Now.ToString("yyyy-M-d") && DateTime.Now.TimeOfDay.TotalMinutes > 1320)
                 {
                     return;
                 }
@@ -1020,7 +1020,7 @@ namespace SeatKiller_UI
             Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入捡漏模式---------------------------\r\n");
             string date = DateTime.Now.ToString("yyyy-MM-dd");
 
-            if (DateTime.Now.TimeOfDay.TotalMinutes < 60 || DateTime.Now.TimeOfDay.TotalMinutes > 1425)
+            if (DateTime.Now.TimeOfDay.TotalMinutes < 60 || DateTime.Now.TimeOfDay.TotalMinutes > 1420)
             {
                 Wait("01", "00", "00", false);
             }
@@ -1156,7 +1156,7 @@ namespace SeatKiller_UI
             bool cancelled = false;
             string date = DateTime.Now.ToString("yyyy-MM-dd");
 
-            if (DateTime.Now.TimeOfDay.TotalMinutes < 60 || DateTime.Now.TimeOfDay.TotalMinutes > 1425)
+            if (DateTime.Now.TimeOfDay.TotalMinutes < 60 || DateTime.Now.TimeOfDay.TotalMinutes > 1420)
             {
                 Wait("01", "00", "00", false);
             }

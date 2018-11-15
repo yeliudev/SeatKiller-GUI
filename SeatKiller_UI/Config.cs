@@ -201,7 +201,7 @@ namespace SeatKiller_UI
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
             displayStartTimeList = new ArrayList();
-            if (comboBox3.SelectedIndex == 0 & DateTime.Now.TimeOfDay.TotalMinutes > 480)
+            if (comboBox3.SelectedIndex == 0 && DateTime.Now.TimeOfDay.TotalMinutes > 480)
             {
                 displayStartTimeList.Add(new DictionaryEntry("-1", "现在"));
                 for (int i = 0; i < startTimeList.Count; i++)
@@ -249,10 +249,21 @@ namespace SeatKiller_UI
             if (button1.Text == "开始抢座")
             {
                 Main.buildingId = comboBox1.SelectedValue.ToString();
+                Main.roomId = comboBox2.SelectedValue.ToString();
+                Main.seatId = comboBox6.SelectedValue.ToString();
+                Main.date = comboBox3.SelectedValue.ToString();
+                Main.startTime = comboBox4.SelectedValue.ToString();
+                Main.endTime = comboBox5.SelectedValue.ToString();
+
+                SeatKiller.to_addr = textBox1.Text;
+                SeatKiller.onlyPower = checkBox3.Checked;
+                SeatKiller.onlyWindow = checkBox4.Checked;
+                SeatKiller.onlyComputer = checkBox5.Checked;
+
                 switch (Main.buildingId)
                 {
                     case "1":
-                        Main.rooms = SeatKiller.xt;
+                        Main.rooms = (((IList)SeatKiller.xt_lite).Contains(Main.roomId) || Main.roomId == "1") ? SeatKiller.xt_lite : SeatKiller.xt;
                         break;
                     case "2":
                         Main.rooms = SeatKiller.gt;
@@ -264,26 +275,6 @@ namespace SeatKiller_UI
                         Main.rooms = SeatKiller.zt;
                         break;
                 }
-
-                if (comboBox1.SelectedValue.ToString() == "1" & comboBox2.SelectedValue.ToString() == "1")
-                {
-                    Main.rooms = SeatKiller.xt_lite;
-                    Main.roomId = "0";
-                }
-                else
-                {
-                    Main.roomId = comboBox2.SelectedValue.ToString();
-                }
-
-                Main.seatId = comboBox6.SelectedValue.ToString();
-                Main.date = comboBox3.SelectedValue.ToString();
-                Main.startTime = comboBox4.SelectedValue.ToString();
-                Main.endTime = comboBox5.SelectedValue.ToString();
-
-                SeatKiller.to_addr = textBox1.Text;
-                SeatKiller.onlyPower = checkBox3.Checked;
-                SeatKiller.onlyWindow = checkBox4.Checked;
-                SeatKiller.onlyComputer = checkBox5.Checked;
 
                 label2.Enabled = false;
                 label3.Enabled = false;
@@ -464,7 +455,7 @@ namespace SeatKiller_UI
                     e.Cancel = true;
                     return;
                 }
-                if (!booking & DateTime.Now.TimeOfDay.TotalMinutes >= 1360 & DateTime.Now.TimeOfDay.TotalMinutes <= 1365)
+                if (!booking && DateTime.Now.TimeOfDay.TotalMinutes >= 1360 && DateTime.Now.TimeOfDay.TotalMinutes <= 1365)
                 {
                     break;
                 }
