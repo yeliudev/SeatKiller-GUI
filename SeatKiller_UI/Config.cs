@@ -8,7 +8,6 @@ namespace SeatKiller_UI
     public partial class Config : Form
     {
         public static Config config;
-        public bool booking = false;
         ArrayList displayStartTimeList;
         readonly ArrayList building_list = new ArrayList
         {
@@ -60,8 +59,8 @@ namespace SeatKiller_UI
         {
             Text += " v" + Application.ProductVersion;
 
-            textBox2.AppendText("Requesting for token.....Status : success");
-            textBox2.AppendText("\r\nFetching user information.....Status : success");
+            textBox2.AppendText("Requesting for token.....success");
+            textBox2.AppendText("\r\nFetching user information.....success");
 
             comboBox1.DataSource = building_list;
             comboBox1.DisplayMember = "Value";
@@ -307,7 +306,6 @@ namespace SeatKiller_UI
             {
                 Main.Stop();
 
-                booking = false;
                 label2.Enabled = true;
                 label3.Enabled = true;
                 label4.Enabled = true;
@@ -455,7 +453,7 @@ namespace SeatKiller_UI
                     e.Cancel = true;
                     return;
                 }
-                if (!booking && DateTime.Now.TimeOfDay.TotalMinutes >= 1360 && DateTime.Now.TimeOfDay.TotalMinutes <= 1365)
+                if (DateTime.Now.TimeOfDay.TotalMinutes >= 1360 && DateTime.Now.TimeOfDay.TotalMinutes <= 1365)
                 {
                     break;
                 }
@@ -464,7 +462,6 @@ namespace SeatKiller_UI
             comboBox3.SelectedIndex = 1;
             Main.date = comboBox3.SelectedValue.ToString();
             Main.startTime = comboBox4.SelectedValue.ToString() == "-1" ? "480" : comboBox4.SelectedValue.ToString();
-            booking = true;
             textBox2.Text = "";
             Main.Start(true);
         }

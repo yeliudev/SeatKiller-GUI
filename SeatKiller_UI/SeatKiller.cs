@@ -21,6 +21,7 @@ namespace SeatKiller_UI
     {
         private const string API_ROOT = "https://seat.lib.whu.edu.cn:8443/rest/";
         private const string API_V2_ROOT = "https://seat.lib.whu.edu.cn:8443/rest/v2/";
+        private const string API_UPDATE = "https://api.github.com/repos/goolhanrry/Seatkiller_UI/releases/latest";
         private const string SERVER = "134.175.186.17";
 
         public static readonly string[] xt = { "6", "7", "8", "9", "10", "11", "12", "16", "4", "5", "14", "15" };
@@ -47,14 +48,9 @@ namespace SeatKiller_UI
 
         private static void SetHeaderValues(HttpWebRequest request)
         {
-            SetHeaderValue(request.Headers, "Host", "seat.lib.whu.edu.cn:8443");
             SetHeaderValue(request.Headers, "Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-            SetHeaderValue(request.Headers, "Connection", "keep-alive");
-            SetHeaderValue(request.Headers, "Accept", "*/*");
             SetHeaderValue(request.Headers, "User-Agent", "doSingle/11 CFNetwork/893.14.2 Darwin/17.3.0");
-            SetHeaderValue(request.Headers, "Accept-Language", "zh-cn");
             SetHeaderValue(request.Headers, "token", token);
-            SetHeaderValue(request.Headers, "Accept-Encoding", "gzip, deflate");
         }
 
         private static JObject HttpGetRequest(string url, int timeout = 5000)
@@ -96,21 +92,10 @@ namespace SeatKiller_UI
 
         public static bool CheckUpdate()
         {
-            string url = "https://api.github.com/repos/goolhanrry/Seatkiller_UI/releases/latest";
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "GET";
-            SetHeaderValue(request.Headers, "User-Agent", "doSingle/11 CFNetwork/893.14.2 Darwin/17.3.0");
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-            request.Timeout = 3000;
-
             try
             {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream stream = response.GetResponseStream();
-                Encoding encoding = Encoding.GetEncoding("UTF-8");
-                StreamReader streamReader = new StreamReader(stream, encoding);
-                string json = streamReader.ReadToEnd();
-                JObject res = JObject.Parse(json);
+                JObject res = HttpGetRequest(API_UPDATE, 3000);
+
                 if (new Version(res["tag_name"].ToString().Substring(1)) > new Version(Application.ProductVersion))
                 {
                     newVersion = res["tag_name"].ToString().Substring(1);
@@ -164,7 +149,7 @@ namespace SeatKiller_UI
 
             if (alert)
             {
-                Config.config.textBox2.AppendText("\r\nRequesting for token.....Status : ");
+                Config.config.textBox2.AppendText("\r\nRequesting for token.....");
             }
 
             try
@@ -285,7 +270,7 @@ namespace SeatKiller_UI
 
             if (alert)
             {
-                Config.config.textBox2.AppendText("\r\nFetching user information.....Status : ");
+                Config.config.textBox2.AppendText("\r\nFetching user information.....");
             }
 
             try
@@ -338,7 +323,7 @@ namespace SeatKiller_UI
         public static bool GetRooms(string buildingId)
         {
             string url = API_V2_ROOT + "room/stats2/" + buildingId;
-            Config.config.textBox2.AppendText("\r\nFetching room information.....Status : ");
+            Config.config.textBox2.AppendText("\r\nFetching room information.....");
 
             try
             {
@@ -373,7 +358,7 @@ namespace SeatKiller_UI
         public static bool GetSeats(string roomId, ArrayList seats)
         {
             string url = API_V2_ROOT + "room/layoutByDate/" + roomId + "/" + DateTime.Now.ToString("yyyy-MM-dd");
-            Config.config.textBox2.AppendText("\r\nFetching seat information in room " + roomId + ".....Status : ");
+            Config.config.textBox2.AppendText("\r\nFetching seat information in room " + roomId + ".....");
 
             try
             {
@@ -421,7 +406,7 @@ namespace SeatKiller_UI
 
             if (alert)
             {
-                Config.config.textBox2.AppendText("\r\nCancelling reservation.....Status : ");
+                Config.config.textBox2.AppendText("\r\nCancelling reservation.....");
             }
 
             try
@@ -462,7 +447,7 @@ namespace SeatKiller_UI
 
             if (alert)
             {
-                Config.config.textBox2.AppendText("\r\nReleasing seat.....Status : ");
+                Config.config.textBox2.AppendText("\r\nReleasing seat.....");
             }
 
             try
@@ -505,7 +490,7 @@ namespace SeatKiller_UI
             }
 
             string url = API_V2_ROOT + "searchSeats/" + date + "/" + startTime + "/" + endTime;
-            Config.config.textBox2.AppendText("\r\nFetching free seats in room " + roomId + ".....Status : ");
+            Config.config.textBox2.AppendText("\r\nFetching free seats in room " + roomId + ".....");
 
             StringBuilder buffer = new StringBuilder();
             buffer.AppendFormat("{0}={1}", "t", "1");
@@ -571,7 +556,7 @@ namespace SeatKiller_UI
             }
 
             string url = API_V2_ROOT + "startTimesForSeat/" + seatId + "/" + date;
-            Config.config.textBox2.AppendText("\r\nChecking start time of seat No." + seatId + ".....Status : ");
+            Config.config.textBox2.AppendText("\r\nChecking start time of seat No." + seatId + ".....");
 
             try
             {
@@ -618,7 +603,7 @@ namespace SeatKiller_UI
             }
 
             string url = API_V2_ROOT + "endTimesForSeat/" + seatId + "/" + date + "/" + startTime;
-            Config.config.textBox2.AppendText("\r\nChecking end time of seat No." + seatId + ".....Status : ");
+            Config.config.textBox2.AppendText("\r\nChecking end time of seat No." + seatId + ".....");
 
             try
             {
@@ -672,7 +657,7 @@ namespace SeatKiller_UI
 
             if (alert)
             {
-                Config.config.textBox2.AppendText("\r\n\r\nBooking seat No." + seatId + ".....Status : ");
+                Config.config.textBox2.AppendText("\r\n\r\nBooking seat No." + seatId + ".....");
             }
 
             try
@@ -689,6 +674,10 @@ namespace SeatKiller_UI
                     bookedSeatId = seatId;
                     if (alert)
                     {
+                        res.Remove("status");
+                        res.Remove("message");
+                        res.Remove("code");
+
                         PrintBookInf(res);
                         if (Config.config.checkBox2.Checked)
                         {
@@ -696,7 +685,8 @@ namespace SeatKiller_UI
                             res.Add("name", name);
                             res.Add("client", "C#");
                             res.Add("version", Application.ProductVersion);
-                            SendMail(res.ToString(), to_addr);
+                            res.Add("to_addr", to_addr);
+                            SendMail(res.ToString().Replace("false", "False"));
                         }
                     }
                     return "Success";
@@ -720,70 +710,47 @@ namespace SeatKiller_UI
             }
         }
 
-        public static void PrintBookInf(JObject res)
+        public static void PrintBookInf(JObject info)
         {
             Config.config.textBox2.AppendText("\r\n---------------------------座位预约成功---------------------------");
-            Config.config.textBox2.AppendText("\r\nID：" + res["data"]["id"]);
-            Config.config.textBox2.AppendText("\r\n凭证号码：" + res["data"]["receipt"]);
-            Config.config.textBox2.AppendText("\r\n时间：" + res["data"]["onDate"] + " " + res["data"]["begin"] + " ~ " + res["data"]["end"]);
-            if (res["data"]["checkedIn"].ToString() == "False")
-                Config.config.textBox2.AppendText("\r\n状态：预约");
-            else
-                Config.config.textBox2.AppendText("\r\n状态：已签到");
-            Config.config.textBox2.AppendText("\r\n地址：" + res["data"]["location"]);
+            Config.config.textBox2.AppendText("\r\nID：" + info["data"]["id"]);
+            Config.config.textBox2.AppendText("\r\n凭证号码：" + info["data"]["receipt"]);
+            Config.config.textBox2.AppendText("\r\n时间：" + info["data"]["onDate"] + " " + info["data"]["begin"] + " ~ " + info["data"]["end"]);
+            Config.config.textBox2.AppendText("\r\n状态：" + (info["data"]["checkedIn"].ToString() == "True" ? "已签到" : "预约"));
+            Config.config.textBox2.AppendText("\r\n地址：" + info["data"]["location"]);
             Config.config.textBox2.AppendText("\r\n--------------------------------------------------------------------");
         }
 
-        public static void SendMail(string json, string to_addr)
+        public static void SendMail(string json)
         {
             if (Regex.IsMatch(to_addr, @"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$"))
             {
-                Config.config.textBox2.AppendText("\r\n\r\n尝试连接邮件服务器");
-                byte[] data = new byte[5];
+                Config.config.textBox2.AppendText("\r\n\r\n正在发送邮件提醒至\"" + to_addr + "\"");
                 Socket socketClient = new Socket(SocketType.Stream, ProtocolType.Tcp);
                 IPAddress ip = IPAddress.Parse(SERVER);
                 IPEndPoint point = new IPEndPoint(ip, 5210);
 
                 try
                 {
+                    byte[] buffer = new byte[5];
                     socketClient.Connect(point);
-                    socketClient.Receive(data);
-                    string stringData = Encoding.UTF8.GetString(data);
+                    socketClient.Receive(buffer);
+                    string stringData = Encoding.UTF8.GetString(buffer);
 
-                    if (stringData == "Hello")
+                    if (stringData == "hello")
                     {
-                        Config.config.textBox2.AppendText("\r\n连接成功");
-
-                        data = new byte[128];
-                        socketClient.Send(Encoding.UTF8.GetBytes("json" + json));
-                        socketClient.Receive(data);
-                        Config.config.textBox2.AppendText("\r\n" + Encoding.UTF8.GetString(data));
-
-                        data = new byte[128];
-                        socketClient.Send(Encoding.UTF8.GetBytes("to" + to_addr));
-                        socketClient.Receive(data);
-                        Config.config.textBox2.AppendText("\r\n" + Encoding.UTF8.GetString(data));
-
-                        Config.config.textBox2.AppendText("\r\n正在发送邮件提醒至\"" + to_addr + "\"");
-                        data = new byte[7];
-                        socketClient.Send(Encoding.UTF8.GetBytes("SendMail"));
-                        socketClient.Receive(data);
-                        stringData = Encoding.UTF8.GetString(data);
-                        if (stringData == "success")
-                        {
-                            Config.config.textBox2.AppendText("\r\n\r\n邮件提醒发送成功\r\n若接收不到提醒，请将\"seatkiller@outlook.com\"添加至邮箱白名单");
-                        }
-                        else
-                        {
-                            Config.config.textBox2.AppendText("\r\n\r\n邮箱提醒发送失败");
-                        }
-                        socketClient.Send(Encoding.UTF8.GetBytes("exit"));
-                        socketClient.Close();
+                        buffer = new byte[7];
+                        socketClient.Send(Encoding.UTF8.GetBytes("json " + json));
+                        socketClient.Receive(buffer);
+                        stringData = Encoding.UTF8.GetString(buffer);
+                        Config.config.textBox2.AppendText(stringData == "success" ? "\r\n发送成功\r\n若接收不到提醒，请将\"seatkiller@outlook.com\"添加至邮箱白名单" : "\r\n发送失败");
                     }
+
+                    socketClient.Close();
                 }
                 catch
                 {
-                    Config.config.textBox2.AppendText("\r\n连接失败，邮件发送取消");
+                    Config.config.textBox2.AppendText("连接丢失");
                 }
             }
             else if (to_addr == "")
@@ -798,27 +765,23 @@ namespace SeatKiller_UI
 
         public static void LoggedIn()
         {
-            byte[] data = new byte[5];
             Socket socketClient = new Socket(SocketType.Stream, ProtocolType.Tcp);
             IPAddress ip = IPAddress.Parse(SERVER);
             IPEndPoint point = new IPEndPoint(ip, 5210);
 
             try
             {
+                byte[] buffer = new byte[5];
                 socketClient.Connect(point);
-                socketClient.Receive(data);
-                string stringData = Encoding.UTF8.GetString(data);
+                socketClient.Receive(buffer);
+                string stringData = Encoding.UTF8.GetString(buffer);
 
-                if (stringData == "Hello")
+                if (stringData == "hello")
                 {
-
-                    data = new byte[128];
-                    socketClient.Send(Encoding.UTF8.GetBytes("login" + username + name + " (" + Application.ProductVersion + ")"));
-                    Thread.Sleep(1000);
-
-                    socketClient.Send(Encoding.UTF8.GetBytes("exit"));
-                    socketClient.Close();
+                    socketClient.Send(Encoding.UTF8.GetBytes(string.Format("login {0} {1} {2}", username, name, Application.ProductVersion)));
                 }
+
+                socketClient.Close();
             }
             catch { }
         }

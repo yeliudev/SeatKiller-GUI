@@ -56,7 +56,6 @@ namespace SeatKiller_UI
                 {
                     SeatKiller.Wait("22", "44", "40", false);
                 }
-                bool try_booking = true;
 
                 if (SeatKiller.GetToken() == "Success")
                 {
@@ -108,7 +107,7 @@ namespace SeatKiller_UI
                         return;
                     }
 
-                    while (try_booking)
+                    while (true)
                     {
                         if (DateTime.Now.TimeOfDay.TotalMinutes > 1420)
                         {
