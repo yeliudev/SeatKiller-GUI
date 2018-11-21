@@ -248,7 +248,7 @@ namespace SeatKiller_UI
             if (button1.Text == "开始抢座")
             {
                 Main.buildingId = comboBox1.SelectedValue.ToString();
-                Main.roomId = comboBox2.SelectedValue.ToString();
+                Main.roomId = comboBox2.SelectedValue.ToString() == "1" ? "0" : comboBox2.SelectedValue.ToString();
                 Main.seatId = comboBox6.SelectedValue.ToString();
                 Main.date = comboBox3.SelectedValue.ToString();
                 Main.startTime = comboBox4.SelectedValue.ToString();
@@ -262,7 +262,7 @@ namespace SeatKiller_UI
                 switch (Main.buildingId)
                 {
                     case "1":
-                        Main.rooms = (((IList)SeatKiller.xt_lite).Contains(Main.roomId) || Main.roomId == "1") ? SeatKiller.xt_lite : SeatKiller.xt;
+                        Main.rooms = (((IList)SeatKiller.xt_lite).Contains(Main.roomId) || comboBox2.SelectedValue.ToString() == "1") ? SeatKiller.xt_lite : SeatKiller.xt;
                         break;
                     case "2":
                         Main.rooms = SeatKiller.gt;

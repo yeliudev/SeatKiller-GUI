@@ -750,7 +750,7 @@ namespace SeatKiller_UI
                 }
                 catch
                 {
-                    Config.config.textBox2.AppendText("连接丢失");
+                    Config.config.textBox2.AppendText("\r\n连接丢失");
                 }
             }
             else if (to_addr == "")
@@ -981,7 +981,6 @@ namespace SeatKiller_UI
         public static bool Loop(string buildingId, string[] rooms, string startTime, string endTime, string roomId = "0", string seatId = "0")
         {
             Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入捡漏模式---------------------------\r\n");
-            string date = DateTime.Now.ToString("yyyy-MM-dd");
 
             if (DateTime.Now.TimeOfDay.TotalMinutes < 60 || DateTime.Now.TimeOfDay.TotalMinutes > 1420)
             {
@@ -994,6 +993,7 @@ namespace SeatKiller_UI
                 return false;
             }
 
+            string date = DateTime.Now.ToString("yyyy-MM-dd");
             GetRooms(buildingId);
 
             if (seatId != "0" && !Config.config.checkBox1.Checked)
@@ -1012,6 +1012,11 @@ namespace SeatKiller_UI
                     Config.config.textBox2.AppendText("\r\n\r\n捡漏失败，超出系统开放时间\r\n");
                     Config.config.textBox2.AppendText("\r\n---------------------------退出捡漏模式---------------------------\r\n");
                     return false;
+                }
+
+                if (startTime != "-1" && (int)DateTime.Now.TimeOfDay.TotalMinutes > int.Parse(startTime))
+                {
+                    startTime = "-1";
                 }
 
                 if (seatId != "0")
@@ -1116,8 +1121,6 @@ namespace SeatKiller_UI
         public static bool ExchangeLoop(string buildingId, string[] rooms, string startTime, string endTime, string roomId = "0", string seatId = "0")
         {
             Config.config.textBox2.AppendText("\r\n\r\n---------------------------进入改签模式---------------------------\r\n");
-            bool cancelled = false;
-            string date = DateTime.Now.ToString("yyyy-MM-dd");
 
             if (DateTime.Now.TimeOfDay.TotalMinutes < 60 || DateTime.Now.TimeOfDay.TotalMinutes > 1420)
             {
@@ -1130,6 +1133,8 @@ namespace SeatKiller_UI
                 return false;
             }
 
+            bool cancelled = false;
+            string date = DateTime.Now.ToString("yyyy-MM-dd");
             GetRooms(buildingId);
 
             if (seatId != "0" && !Config.config.checkBox1.Checked)
@@ -1148,6 +1153,11 @@ namespace SeatKiller_UI
                     Config.config.textBox2.AppendText("\r\n\r\n改签失败，超出系统开放时间\r\n");
                     Config.config.textBox2.AppendText("\r\n---------------------------退出改签模式---------------------------\r\n");
                     return false;
+                }
+
+                if (startTime != "-1" && (int)DateTime.Now.TimeOfDay.TotalMinutes > int.Parse(startTime))
+                {
+                    startTime = "-1";
                 }
 
                 if (seatId != "0")
