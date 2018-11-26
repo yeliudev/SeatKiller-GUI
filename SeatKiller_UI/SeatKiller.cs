@@ -746,12 +746,16 @@ namespace SeatKiller_UI
                         stringData = Encoding.UTF8.GetString(buffer);
                         Config.config.textBox2.AppendText(stringData == "success" ? "\r\n\r\n发送成功\r\n若接收不到提醒，请将\"seatkiller@outlook.com\"添加至邮箱白名单" : "\r\n\r\n发送失败");
                     }
+                    else
+                    {
+                        Config.config.textBox2.AppendText("\r\n\r\n发送失败，服务器连接丢失");
+                    }
 
                     socketClient.Close();
                 }
                 catch
                 {
-                    Config.config.textBox2.AppendText("\r\n连接丢失");
+                    Config.config.textBox2.AppendText("\r\n\r\n发送失败，服务器连接丢失");
                 }
             }
             else if (to_addr == "")
