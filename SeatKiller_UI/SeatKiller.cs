@@ -679,6 +679,7 @@ namespace SeatKiller_UI
                         res.Remove("code");
 
                         PrintBookInf(res);
+
                         if (Config.config.checkBox2.Checked)
                         {
                             res.Add("username", username);
@@ -743,7 +744,7 @@ namespace SeatKiller_UI
                         socketClient.Send(Encoding.UTF8.GetBytes("json " + json));
                         socketClient.Receive(buffer);
                         stringData = Encoding.UTF8.GetString(buffer);
-                        Config.config.textBox2.AppendText(stringData == "success" ? "\r\n发送成功\r\n若接收不到提醒，请将\"seatkiller@outlook.com\"添加至邮箱白名单" : "\r\n发送失败");
+                        Config.config.textBox2.AppendText(stringData == "success" ? "\r\n\r\n发送成功\r\n若接收不到提醒，请将\"seatkiller@outlook.com\"添加至邮箱白名单" : "\r\n\r\n发送失败");
                     }
 
                     socketClient.Close();
