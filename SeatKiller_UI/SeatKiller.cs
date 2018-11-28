@@ -786,6 +786,8 @@ namespace SeatKiller_UI
                     socketClient.Send(Encoding.UTF8.GetBytes(string.Format("login {0} {1} {2}", username, name, Application.ProductVersion)));
                 }
 
+                Thread.Sleep(2000);
+
                 socketClient.Close();
             }
             catch { }
