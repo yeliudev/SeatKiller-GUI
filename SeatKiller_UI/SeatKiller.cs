@@ -25,7 +25,7 @@ namespace SeatKiller_UI
         private const string SERVER = "134.175.186.17";
 
         public static readonly string[] xt = { "6", "7", "8", "9", "10", "11", "12", "16", "4", "5", "14", "15" };
-        public static readonly string[] xt_lite = { "9", "11", "8", "10", "6", "7", "16" };
+        public static readonly string[] xt_lite = { "9", "11", "6", "7", "8", "10", "16" };
         public static readonly string[] gt = { "19", "29", "31", "32", "33", "34", "35", "37", "38" };
         public static readonly string[] yt = { "20", "21", "23", "24", "26", "27" };
         public static readonly string[] zt = { "39", "40", "51", "52", "56", "59", "60", "61", "62", "65", "66" };
