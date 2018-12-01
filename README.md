@@ -5,9 +5,9 @@
 [![Github All Releases](https://img.shields.io/github/downloads/goolhanrry/Seatkiller_UI/total.svg)](https://github.com/goolhanrry/SeatKiller_UI/releases)
 [![GitHub repo size in bytes](https://img.shields.io/github/repo-size/goolhanrry/SeatKiller_UI.svg?colorB=ff7e00#)](https://github.com/goolhanrry/SeatKiller_UI)
 
-用 C# 重写的 [SeatKiller](https://github.com/goolhanrry/SeatKiller) GUI 版本，新增了座位改签和座位锁定等功能，欢迎添加我的微信：`aweawds` 交流讨论
+用 C# 重写的 [SeatKiller](https://github.com/goolhanrry/SeatKiller) GUI 版本，新增了座位改签和座位锁定等功能，[点击此处](https://github.com/goolhanrry/SeatKiller_UI/releases) 下载编译好的最新版本的软件
 
-不想折腾的话可以 [点击此处](https://github.com/goolhanrry/SeatKiller_UI/releases) 下载编译好的最新版本的软件
+本工具仅供学习交流，因使用本工具而造成的一切不良后果由使用者自行承担，与作者无关
 
 ## 已经实现的功能
 
