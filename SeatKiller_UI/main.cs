@@ -398,8 +398,8 @@ namespace SeatKiller_UI
             Config.config.checkBox4.Enabled = true;
             Config.config.checkBox5.Enabled = true;
             Config.config.checkBox6.Enabled = true;
-            Config.config.pictureBox2.Enabled = true;
-            Config.config.pictureBox2.Image = Properties.Resources.description_active;
+            Config.config.pictureBox3.Enabled = true;
+            Config.config.pictureBox3.Image = Properties.Resources.description_active;
             if (Config.config.checkBox2.Checked)
             {
                 Config.config.label7.Enabled = true;

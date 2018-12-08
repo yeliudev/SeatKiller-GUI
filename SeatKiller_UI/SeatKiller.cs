@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Drawing;
@@ -14,6 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using Newtonsoft.Json.Linq;
 
 namespace SeatKiller_UI
 {
@@ -33,7 +33,7 @@ namespace SeatKiller_UI
         public static ArrayList freeSeats = new ArrayList();
         private static ArrayList startTimes = new ArrayList(), endTimes = new ArrayList();
         public static string to_addr, res_id, username, password, newVersion, newVersionSize, updateInfo, downloadURL, status, bookedSeatId, historyDate, historyStartTime, historyEndTime, historyAwayStartTime, token, name, last_login_time, state, violationCount;
-        public static bool checkedIn, reserving, onlyPower, onlyWindow, onlyComputer, exitFlag = true;
+        public static bool checkedIn, reserving, onlyPower, onlyWindow, onlyComputer;
         public static DateTime time;
 
         private static void SetHeaderValue(WebHeaderCollection header, string name, string value)
@@ -185,7 +185,7 @@ namespace SeatKiller_UI
             }
         }
 
-        public static bool CheckResInf(bool alert = true)
+        public static bool CheckResInf(bool alert = true, bool modal = false)
         {
             string url = API_V2_ROOT + "history/1/30";
             string[] probableStatus = { "RESERVE", "CHECK_IN", "AWAY" };
@@ -203,7 +203,7 @@ namespace SeatKiller_UI
                             res_id = reservations["id"].ToString();
                             if (alert)
                             {
-                                Reservation reservation = new Reservation();
+                                Reservation reservation = new Reservation(modal);
                                 reservation.label2.Text = " ID: " + reservations["id"] + "\r\n 时间: " + reservations["date"] + " " + reservations["begin"] + "~" + reservations["end"];
                                 status = reservations["stat"].ToString();
                                 switch (status)
@@ -232,7 +232,14 @@ namespace SeatKiller_UI
                                         break;
                                 }
                                 reservation.label2.Text = reservation.label2.Text + "\r\n 地址: " + reservations["loc"].ToString() + "\r\n----------------------------------------------------------------";
-                                reservation.Show();
+                                if (modal)
+                                {
+                                    reservation.ShowDialog();
+                                }
+                                else
+                                {
+                                    reservation.Show();
+                                }
                             }
                             else
                             {
@@ -784,6 +791,15 @@ namespace SeatKiller_UI
                 if (stringData == "hello")
                 {
                     socketClient.Send(Encoding.UTF8.GetBytes(string.Format("login {0} {1} {2}", username, name, Application.ProductVersion)));
+                    buffer = new byte[1024];
+                    socketClient.Receive(buffer);
+                    stringData = Encoding.UTF8.GetString(buffer);
+                    string[] notice = stringData.Split('&');
+                    MessageBox.Show(Config.config, notice[1], notice[0]);
+                    if (notice.Last().TrimEnd('\0') == "shutdown")
+                    {
+                        Environment.Exit(0);
+                    }
                 }
 
                 Thread.Sleep(2000);

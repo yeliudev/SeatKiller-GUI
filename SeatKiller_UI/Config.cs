@@ -296,8 +296,8 @@ namespace SeatKiller_UI
                 checkBox5.Enabled = false;
                 checkBox6.Enabled = false;
                 textBox1.Enabled = false;
-                pictureBox2.Enabled = false;
-                pictureBox2.Image = Properties.Resources.description;
+                pictureBox3.Enabled = false;
+                pictureBox3.Image = Properties.Resources.description;
                 button1.Text = "停止运行";
 
                 Main.Start();
@@ -325,8 +325,8 @@ namespace SeatKiller_UI
                 checkBox4.Enabled = true;
                 checkBox5.Enabled = true;
                 checkBox6.Enabled = true;
-                pictureBox2.Enabled = true;
-                pictureBox2.Image = Properties.Resources.description_active;
+                pictureBox3.Enabled = true;
+                pictureBox3.Image = Properties.Resources.description_active;
                 if (checkBox2.Checked)
                 {
                     label7.Enabled = true;
@@ -356,6 +356,14 @@ namespace SeatKiller_UI
         }
 
         private void pictureBox2_Click(object sender, EventArgs e)
+        {
+            if (!SeatKiller.CheckResInf(true, true))
+            {
+                MessageBox.Show("暂无有效预约", "提示");
+            }
+        }
+
+        private void pictureBox3_Click(object sender, EventArgs e)
         {
             MessageBox.Show("循环抢座功能需要保持软件开启，可用于每天自动抢上一次预约的座位，无需手动点击开始~", "帮助");
         }

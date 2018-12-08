@@ -5,14 +5,11 @@ namespace SeatKiller_UI
 {
     public partial class Reservation : Form
     {
-        public Reservation()
+        bool modal, exitFlag = true;
+        public Reservation(bool modal)
         {
+            this.modal = modal;
             InitializeComponent();
-        }
-
-        private void Reservation_Load(object sender, EventArgs e)
-        {
-            SeatKiller.exitFlag = false;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -21,38 +18,38 @@ namespace SeatKiller_UI
             {
                 if (!SeatKiller.CancelReservation(SeatKiller.res_id, false))
                 {
-                    MessageBox.Show("取消预约失败，请稍后重试", "失败");
+                    MessageBox.Show("取消预约失败，请稍后重试", "提示");
                 }
             }
             else
             {
                 if (!SeatKiller.StopUsing(false))
                 {
-                    MessageBox.Show("释放座位失败，请稍后重试", "失败");
+                    MessageBox.Show("释放座位失败，请稍后重试", "提示");
                 }
             }
 
-            SeatKiller.exitFlag = true;
-            Config config = new Config();
-            Hide();
-            config.Show();
+            exitFlag = false;
             Close();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            SeatKiller.exitFlag = true;
-            Config config = new Config();
-            Hide();
-            config.Show();
+            exitFlag = false;
             Close();
         }
 
         private void Reservation_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (!SeatKiller.exitFlag)
+            if (!modal && exitFlag)
             {
                 Environment.Exit(0);
+            }
+            else if (!modal)
+            {
+                Config config = new Config();
+                Hide();
+                config.Show();
             }
         }
     }

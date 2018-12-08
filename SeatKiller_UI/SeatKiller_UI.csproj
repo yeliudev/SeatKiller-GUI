@@ -188,13 +188,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\about.png" />
-    <None Include="assets\description.png" />
-    <None Include="assets\description-active.png" />
-    <None Include="assets\forkme.png" />
-    <None Include="assets\logo.png" />
-    <None Include="assets\description_active.png" />
-    <None Include="assets\cat.png" />
+    <None Include="Properties\assets\logo.png" />
+    <None Include="Properties\assets\history.png" />
+    <None Include="Properties\assets\forkme.png" />
+    <None Include="Properties\assets\description_active.png" />
+    <None Include="Properties\assets\description.png" />
+    <None Include="Properties\assets\cat.png" />
+    <None Include="Properties\assets\about.png" />
     <Content Include="icon.ico" />
     <EmbeddedResource Include="Newtonsoft.Json.dll" />
   </ItemGroup>

@@ -9,6 +9,7 @@ namespace SeatKiller_UI
     {
         public static Login login;
         BindingSource bs = new BindingSource();
+        bool exitFlag = true;
         public Login()
         {
             InitializeComponent();
@@ -60,6 +61,7 @@ namespace SeatKiller_UI
             string response = SeatKiller.GetToken(false);
             if (response == "Success")
             {
+                exitFlag = false;
                 if (checkBox1.Checked)
                 {
                     User.SetValue(comboBox1.Text, textBox1.Text);
@@ -68,7 +70,6 @@ namespace SeatKiller_UI
                 Hide();
                 if (!SeatKiller.CheckResInf())
                 {
-                    SeatKiller.exitFlag = false;
                     Config config = new Config();
                     config.Show();
                 }
@@ -115,7 +116,7 @@ namespace SeatKiller_UI
             {
                 return;
             }
-            else if (SeatKiller.exitFlag)
+            else if (exitFlag)
             {
                 Environment.Exit(0);
             }
