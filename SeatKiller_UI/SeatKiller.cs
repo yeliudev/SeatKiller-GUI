@@ -49,7 +49,7 @@ namespace SeatKiller_UI
         private static void SetHeaderValues(HttpWebRequest request)
         {
             SetHeaderValue(request.Headers, "Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-            SetHeaderValue(request.Headers, "User-Agent", "doSingle/11 CFNetwork/893.14.2 Darwin/17.3.0");
+            SetHeaderValue(request.Headers, "Connection", "Keep-Alive");
             SetHeaderValue(request.Headers, "token", token);
         }
 
@@ -775,7 +775,7 @@ namespace SeatKiller_UI
             }
         }
 
-        public static void LoggedIn()
+        public static void GetNotice(bool loggedIn = false)
         {
             Socket socketClient = new Socket(SocketType.Stream, ProtocolType.Tcp);
             IPAddress ip = IPAddress.Parse(SERVER);
@@ -790,7 +790,7 @@ namespace SeatKiller_UI
 
                 if (stringData == "hello")
                 {
-                    socketClient.Send(Encoding.UTF8.GetBytes(string.Format("login {0} {1} {2}", username, name, Application.ProductVersion)));
+                    socketClient.Send(Encoding.UTF8.GetBytes(loggedIn ? string.Format("login {0} {1} {2}", username, name, Application.ProductVersion) : "notice"));
                     buffer = new byte[1024];
                     socketClient.Receive(buffer);
                     stringData = Encoding.UTF8.GetString(buffer);

@@ -23,6 +23,7 @@ namespace SeatKiller_UI
 
             backgroundWorker1.RunWorkerAsync();
             backgroundWorker2.RunWorkerAsync();
+            backgroundWorker3.RunWorkerAsync();
             User.CreateSubKey();
             User.GetKey();
 
@@ -176,6 +177,11 @@ namespace SeatKiller_UI
         {
             Update update = new Update();
             update.ShowDialog();
+        }
+
+        private void backgroundWorker3_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            SeatKiller.GetNotice();
         }
     }
 }

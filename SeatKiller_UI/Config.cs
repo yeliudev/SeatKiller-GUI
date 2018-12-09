@@ -416,7 +416,7 @@ namespace SeatKiller_UI
                     label1.Text = "你好 , " + SeatKiller.name + "  上次网页登录时间 : " + SeatKiller.last_login_time + "  状态 : " + SeatKiller.state + "  违约记录 : " + SeatKiller.violationCount + "次";
                     if (flag)
                     {
-                        SeatKiller.LoggedIn();
+                        SeatKiller.GetNotice(true);
                         flag = false;
                     }
                 }
