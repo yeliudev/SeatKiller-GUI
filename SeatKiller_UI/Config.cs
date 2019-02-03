@@ -425,7 +425,7 @@ namespace SeatKiller_UI
                     Thread.Sleep(30000);
                     SeatKiller.GetToken(false);
                 }
-                Thread.Sleep(10000);
+                Thread.Sleep(60000);
             }
         }
 

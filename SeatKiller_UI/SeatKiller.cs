@@ -49,11 +49,12 @@ namespace SeatKiller_UI
         private static void SetHeaderValues(HttpWebRequest request)
         {
             SetHeaderValue(request.Headers, "Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            SetHeaderValue(request.Headers, "User-Agent", "doSingle/11 CFNetwork/893.14.2 Darwin/17.3.0");
             SetHeaderValue(request.Headers, "Connection", "Keep-Alive");
             SetHeaderValue(request.Headers, "token", token);
         }
 
-        private static JObject HttpGetRequest(string url, int timeout = 5000)
+        private static JObject HttpGetRequest(string url, int timeout = 10000)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
@@ -154,7 +155,7 @@ namespace SeatKiller_UI
 
             try
             {
-                JObject res = HttpGetRequest(url, 3000);
+                JObject res = HttpGetRequest(url);
 
                 if (alert)
                 {
@@ -277,7 +278,7 @@ namespace SeatKiller_UI
 
             if (alert)
             {
-                Config.config.textBox2.AppendText("\r\nFetching user information.....");
+                Config.config.textBox2.AppendText("\r\nFetching user info.....");
             }
 
             try
@@ -330,7 +331,7 @@ namespace SeatKiller_UI
         public static bool GetRooms(string buildingId)
         {
             string url = API_V2_ROOT + "room/stats2/" + buildingId;
-            Config.config.textBox2.AppendText("\r\nFetching room information.....");
+            Config.config.textBox2.AppendText("\r\nFetching room info.....");
 
             try
             {
@@ -365,7 +366,7 @@ namespace SeatKiller_UI
         public static bool GetSeats(string roomId, ArrayList seats)
         {
             string url = API_V2_ROOT + "room/layoutByDate/" + roomId + "/" + DateTime.Now.ToString("yyyy-MM-dd");
-            Config.config.textBox2.AppendText("\r\nFetching seat information in room " + roomId + ".....");
+            Config.config.textBox2.AppendText("\r\nFetching seat info in room " + roomId + ".....");
 
             try
             {

@@ -148,7 +148,7 @@ namespace SeatKiller_UI
             {
                 try
                 {
-                    label4.Text = "Enable";
+                    label4.Text = "Available";
                     label4.ForeColor = Color.ForestGreen;
                 }
                 catch { }
@@ -157,7 +157,7 @@ namespace SeatKiller_UI
             {
                 try
                 {
-                    label4.Text = "Unable";
+                    label4.Text = "Unavailable";
                     label4.ForeColor = Color.Red;
                 }
                 catch { }
