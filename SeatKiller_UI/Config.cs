@@ -177,7 +177,14 @@ namespace SeatKiller_UI
                         new DictionaryEntry("65", "B1"),
                         new DictionaryEntry("59", "B2"),
                         new DictionaryEntry("56", "B3"),
-                        new DictionaryEntry("40", "C1自习区")
+                        new DictionaryEntry("40", "C1自习区"),
+                        new DictionaryEntry("92", "E1信息共享空间双屏云桌面区"),
+                        new DictionaryEntry("84", "E2报刊阅览区"),
+                        new DictionaryEntry("89", "E2大厅"),
+                        new DictionaryEntry("85", "E3学位论文阅览区"),
+                        new DictionaryEntry("86", "E4港台文献阅览区"),
+                        new DictionaryEntry("87", "E5地方文献阅览区"),
+                        new DictionaryEntry("88", "E6影印文献阅览区"),
                     };
                     break;
             }

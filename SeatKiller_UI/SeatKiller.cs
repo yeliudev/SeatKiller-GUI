@@ -28,7 +28,7 @@ namespace SeatKiller_UI
         public static readonly string[] xt_lite = { "9", "11", "6", "7", "8", "10", "16" };
         public static readonly string[] gt = { "19", "29", "31", "32", "33", "34", "35", "37", "38" };
         public static readonly string[] yt = { "20", "21", "23", "24", "26", "27" };
-        public static readonly string[] zt = { "39", "40", "51", "52", "56", "59", "60", "61", "62", "65", "66" };
+        public static readonly string[] zt = { "39", "40", "51", "52", "56", "59", "60", "61", "62", "65", "66", "84", "85", "86", "87", "88", "89", "92" };
 
         public static ArrayList freeSeats = new ArrayList();
         private static ArrayList startTimes = new ArrayList(), endTimes = new ArrayList();
