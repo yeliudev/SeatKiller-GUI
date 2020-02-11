@@ -2,10 +2,10 @@
 
 [![License](https://img.shields.io/badge/license-MPL--2.0-red.svg)](LICENSE)
 [![Language](https://img.shields.io/badge/language-C%23-blue.svg)](https://docs.microsoft.com/en-us/dotnet/csharp/)
-[![Github All Releases](https://img.shields.io/github/downloads/goolhanrry/Seatkiller_UI/total.svg)](https://github.com/goolhanrry/SeatKiller_UI/releases)
-[![GitHub repo size in bytes](https://img.shields.io/github/repo-size/goolhanrry/SeatKiller_UI.svg?colorB=ff7e00#)](https://github.com/goolhanrry/SeatKiller_UI)
+[![Github All Releases](https://img.shields.io/github/downloads/c1aris/Seatkiller_UI/total.svg)](https://github.com/c1aris/SeatKiller_UI/releases)
+[![GitHub repo size in bytes](https://img.shields.io/github/repo-size/c1aris/SeatKiller_UI.svg?colorB=ff7e00#)](https://github.com/c1aris/SeatKiller_UI)
 
-用 C# 重写的 [SeatKiller](https://github.com/goolhanrry/SeatKiller) GUI 版本，新增了座位改签和座位锁定等功能，[点击此处](https://github.com/goolhanrry/SeatKiller_UI/releases) 下载编译好的最新版本的软件
+用 C# 重写的 [SeatKiller](https://github.com/c1aris/SeatKiller) GUI 版本，新增了座位改签和座位锁定等功能，[点击此处](https://github.com/c1aris/SeatKiller_UI/releases) 下载编译好的最新版本的软件
 
 本工具仅供学习交流，因使用本工具而造成的一切不良后果由使用者自行承担，与作者无关
 
@@ -30,20 +30,20 @@
 ## 软件截图
 
 <p align="center">
-  <img width="340" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot1.png" alt="screenshot1">
+  <img width="340" src="assets/screenshot1.png" alt="screenshot1">
 </p>
 <p align="center">
-  <img width="376" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot2.png" alt="screenshot2">
+  <img width="376" src="assets/screenshot2.png" alt="screenshot2">
 </p>
 <p align="center">
-  <img width="598" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot3.png" alt="screenshot3">
+  <img width="598" src="assets/screenshot3.png" alt="screenshot3">
 </p>
 <p align="center">
-  <img width="598" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot4.png" alt="screenshot4">
+  <img width="598" src="assets/screenshot4.png" alt="screenshot4">
 </p>
 <p align="center">
-  <img width="376" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot5.png" alt="screenshot5">
+  <img width="376" src="assets/screenshot5.png" alt="screenshot5">
 </p>
 <p align="center">
-  <img width="598" src="https://github.com/goolhanrry/SeatKiller_UI/blob/master/Screenshots/SeatKiller_UI_Screenshot6.png" alt="screenshot6">
+  <img width="598" src="assets/screenshot6.png" alt="screenshot6">
 </p>

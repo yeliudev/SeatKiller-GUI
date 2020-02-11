@@ -21,7 +21,7 @@ namespace SeatKiller_UI
     {
         private const string API_ROOT = "https://seat.lib.whu.edu.cn:8443/rest/";
         private const string API_V2_ROOT = "https://seat.lib.whu.edu.cn:8443/rest/v2/";
-        private const string API_UPDATE = "https://api.github.com/repos/goolhanrry/Seatkiller_UI/releases/latest";
+        private const string API_UPDATE = "https://api.github.com/repos/c1aris/Seatkiller_UI/releases/latest";
         private const string SERVER = "134.175.186.17";
 
         public static readonly string[] xt = { "6", "7", "8", "9", "10", "11", "12", "16", "4", "5", "14", "15" };

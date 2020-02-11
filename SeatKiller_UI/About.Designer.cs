@@ -81,7 +81,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(309, 28);
             this.label2.TabIndex = 6;
-            this.label2.Text = "Brought to you by goolhanrry";
+            this.label2.Text = "Brought to you by c1aris";
             // 
             // pictureBox2
             // 
