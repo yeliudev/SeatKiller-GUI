@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace SeatKiller_UI
+namespace SeatKiller_GUI
 {
     public partial class Update : Form
     {

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Threading;
 
-namespace SeatKiller_UI
+namespace SeatKiller_GUI
 {
     public partial class Config : Form
     {

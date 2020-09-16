@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace SeatKiller_UI
+namespace SeatKiller_GUI
 {
     public partial class Login : Form
     {

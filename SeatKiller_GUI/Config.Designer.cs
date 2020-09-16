@@ -1,4 +1,4 @@
-﻿namespace SeatKiller_UI
+﻿namespace SeatKiller_GUI
 {
     partial class Config
     {
@@ -443,7 +443,7 @@
             this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.pictureBox2.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox2.ErrorImage = null;
-            this.pictureBox2.Image = global::SeatKiller_UI.Properties.Resources.history;
+            this.pictureBox2.Image = global::SeatKiller_GUI.Properties.Resources.history;
             this.pictureBox2.InitialImage = null;
             this.pictureBox2.Location = new System.Drawing.Point(1058, 12);
             this.pictureBox2.Name = "pictureBox2";

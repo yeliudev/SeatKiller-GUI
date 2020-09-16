@@ -1,4 +1,4 @@
-﻿namespace SeatKiller_UI
+﻿namespace SeatKiller_GUI
 {
     partial class Update
     {

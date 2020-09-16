@@ -1,4 +1,4 @@
-﻿namespace SeatKiller_UI
+﻿namespace SeatKiller_GUI
 {
     partial class About
     {
@@ -55,7 +55,7 @@
             // pictureBox1
             // 
             this.pictureBox1.ErrorImage = null;
-            this.pictureBox1.Image = global::SeatKiller_UI.Properties.Resources.logo;
+            this.pictureBox1.Image = global::SeatKiller_GUI.Properties.Resources.logo;
             this.pictureBox1.InitialImage = null;
             this.pictureBox1.Location = new System.Drawing.Point(128, 49);
             this.pictureBox1.Name = "pictureBox1";
@@ -77,11 +77,11 @@
             // 
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label2.Location = new System.Drawing.Point(39, 307);
+            this.label2.Location = new System.Drawing.Point(68, 307);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(309, 28);
+            this.label2.Size = new System.Drawing.Size(260, 28);
             this.label2.TabIndex = 6;
-            this.label2.Text = "Brought to you by c1aris";
+            this.label2.Text = "Brought to you by Ye Liu";
             // 
             // pictureBox2
             // 

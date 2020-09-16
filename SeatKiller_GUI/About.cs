@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace SeatKiller_UI
+namespace SeatKiller_GUI
 {
     public partial class About : Form
     {
@@ -21,7 +21,7 @@ namespace SeatKiller_UI
 
         private void pictureBox2_Click(object sender, System.EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/c1aris/SeatKiller_UI");
+            System.Diagnostics.Process.Start("https://github.com/yeliudev/SeatKiller-GUI");
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -42,7 +42,7 @@ namespace SeatKiller_UI
 
         private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/c1aris/SeatKiller_UI/issues/new");
+            System.Diagnostics.Process.Start("https://github.com/yeliudev/SeatKiller-GUI/issues/new");
         }
     }
 }

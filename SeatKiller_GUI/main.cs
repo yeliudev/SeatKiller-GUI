@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace SeatKiller_UI
+namespace SeatKiller_GUI
 {
     public static class Main
     {

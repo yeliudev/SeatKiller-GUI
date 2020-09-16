@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace SeatKiller_UI
+namespace SeatKiller_GUI
 {
     class NewComparer : IComparer
     {

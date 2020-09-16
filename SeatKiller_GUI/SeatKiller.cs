@@ -15,17 +15,17 @@ using System.Threading;
 using System.Windows.Forms;
 using Newtonsoft.Json.Linq;
 
-namespace SeatKiller_UI
+namespace SeatKiller_GUI
 {
     public static class SeatKiller
     {
         private const string API_ROOT = "https://seat.lib.whu.edu.cn:8443/rest/";
         private const string API_V2_ROOT = "https://seat.lib.whu.edu.cn:8443/rest/v2/";
-        private const string API_UPDATE = "https://api.github.com/repos/c1aris/Seatkiller_UI/releases/latest";
+        private const string API_UPDATE = "https://api.github.com/repos/yeliudev/Seatkiller-GUI/releases/latest";
         private const string SERVER = "134.175.186.17";
 
-        public static readonly string[] xt = { "6", "7", "8", "9", "10", "11", "12", "16", "4", "5", "14", "15" };
         public static readonly string[] xt_lite = { "9", "11", "6", "7", "8", "10", "16" };
+        public static readonly string[] xt = { "6", "7", "8", "9", "10", "11", "12", "16", "4", "5", "14", "15" };
         public static readonly string[] gt = { "19", "29", "31", "32", "33", "34", "35", "37", "38" };
         public static readonly string[] yt = { "20", "21", "23", "24", "26", "27" };
         public static readonly string[] zt = { "39", "40", "51", "52", "56", "59", "60", "61", "62", "65", "66", "84", "85", "86", "87", "88", "89", "92" };

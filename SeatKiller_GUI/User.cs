@@ -5,7 +5,7 @@ using System.Collections;
 using System.Text;
 using System.Security.Cryptography;
 
-namespace SeatKiller_UI
+namespace SeatKiller_GUI
 {
     public static class User
     {
@@ -16,7 +16,7 @@ namespace SeatKiller_UI
         {
             try
             {
-                RegistryKey sk = key.CreateSubKey(@"SeatKiller_UI");
+                RegistryKey sk = key.CreateSubKey(@"SeatKiller_GUI");
                 return true;
             }
             catch (Exception ex)
@@ -30,7 +30,7 @@ namespace SeatKiller_UI
         {
             try
             {
-                RegistryKey SK_Key = key.OpenSubKey(@"SeatKiller_UI", true);
+                RegistryKey SK_Key = key.OpenSubKey(@"SeatKiller_GUI", true);
                 SK_Key.SetValue(Encrypt(username), Encrypt(password));
                 SK_Key.Close();
                 return true;
@@ -47,7 +47,7 @@ namespace SeatKiller_UI
             try
             {
                 users.Clear();
-                RegistryKey SK_Key = key.OpenSubKey(@"SeatKiller_UI");
+                RegistryKey SK_Key = key.OpenSubKey(@"SeatKiller_GUI");
                 foreach (string encrypted_username in SK_Key.GetValueNames())
                 {
                     users.Add(Decrypt(encrypted_username));
@@ -63,7 +63,7 @@ namespace SeatKiller_UI
 
         public static string GetValue(string username)
         {
-            RegistryKey SK_Key = key.OpenSubKey(@"SeatKiller_UI");
+            RegistryKey SK_Key = key.OpenSubKey(@"SeatKiller_GUI");
             if (username == "")
             {
                 return "";
@@ -78,7 +78,7 @@ namespace SeatKiller_UI
         {
             try
             {
-                RegistryKey SK_Key = key.OpenSubKey(@"SeatKiller_UI", true);
+                RegistryKey SK_Key = key.OpenSubKey(@"SeatKiller_GUI", true);
                 foreach (string username in SK_Key.GetValueNames())
                 {
                     SK_Key.DeleteValue(username);
@@ -93,7 +93,7 @@ namespace SeatKiller_UI
             }
         }
 
-        public static string Encrypt(string encryptStr, string key = "goolhanrrylikeschocolateverymuch")
+        public static string Encrypt(string encryptStr, string key = "catslovechocolateandmilkverymuch")
         {
             byte[] keyArray = Encoding.UTF8.GetBytes(key);
             byte[] toEncryptArray = Encoding.UTF8.GetBytes(encryptStr);
@@ -111,7 +111,7 @@ namespace SeatKiller_UI
             return Convert.ToBase64String(resultArray, 0, resultArray.Length);
         }
 
-        public static string Decrypt(string decryptStr, string key = "goolhanrrylikeschocolateverymuch")
+        public static string Decrypt(string decryptStr, string key = "catslovechocolateandmilkverymuch")
         {
             byte[] keyArray = Encoding.UTF8.GetBytes(key);
             byte[] toEncryptArray = Convert.FromBase64String(decryptStr);

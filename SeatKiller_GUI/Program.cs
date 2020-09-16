@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using System.Reflection;
 
-namespace SeatKiller_UI
+namespace SeatKiller_GUI
 {
     static class Program
     {
@@ -24,7 +24,7 @@ namespace SeatKiller_UI
         private static extern bool SetProcessDPIAware();
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            string resourceName = "SeatKiller_UI." + new AssemblyName(args.Name).Name + ".dll";
+            string resourceName = "SeatKiller_GUI." + new AssemblyName(args.Name).Name + ".dll";
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
             {
                 byte[] assemblyData = new byte[stream.Length];
